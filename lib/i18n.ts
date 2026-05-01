@@ -15,7 +15,7 @@ export const resources = {
   en: { common: enCommon },
   fr: { common: frCommon },
   rw: { common: rwCommon },
-} as const;
+};
 
 if (!i18n.isInitialized) {
   i18n
@@ -30,8 +30,10 @@ if (!i18n.isInitialized) {
       detection: {
         order: ["cookie", "localStorage", "navigator"],
         caches: ["cookie"],
-        cookieName: "twihugure_lang",
-        cookieMinutes: 60 * 24 * 365, // 1 year
+        cookieOptions: {
+          name: "twihugure_lang",
+          maxAge: 60 * 60 * 24 * 365, // 1 year in seconds
+        },
       },
 
       interpolation: {
