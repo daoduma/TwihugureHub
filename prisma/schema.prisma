@@ -1,0 +1,107 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  FARMER
+  TRAINER
+  ADMIN
+  MBAZA_STAFF
+}
+
+enum Language {
+  en
+  fr
+  rw
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id                String     @id @default(cuid())
+  name              String
+  email             String     @unique
+  passwordHash      String
+  role              Role       @default(FARMER)
+  preferredLanguage Language   @default(en)
+  isActive          Boolean    @default(true)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  // Relations
+  sessions          Session[]
+  accounts          Account[]
+  auditLogs         AuditLog[]
+
+  @@map("users")
+}
+
+// NextAuth Account model (for future OAuth providers)
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+// NextAuth Session model
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// NextAuth VerificationToken model
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// Audit log for tracking user actions
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String   // e.g. "LOGIN", "CREATE_COURSE", "UPDATE_PROFILE"
+  entity    String   // e.g. "User", "Course", "Quiz"
+  entityId  String?  // ID of the affected entity
+  metadata  Json?    // Additional context as JSON
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
