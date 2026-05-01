@@ -1,7 +1,7 @@
 // lib/i18n.ts
 "use client";
 
-import i18n from "i18next";
+import i18n, { Resource } from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
@@ -11,7 +11,7 @@ import frCommon from "@/locales/fr/common.json";
 import rwCommon from "@/locales/rw/common.json";
 
 export const defaultNS = "common";
-export const resources = {
+export const resources: Resource = {
   en: { common: enCommon },
   fr: { common: frCommon },
   rw: { common: rwCommon },
@@ -30,8 +30,8 @@ if (!i18n.isInitialized) {
       detection: {
         order: ["cookie", "localStorage", "navigator"],
         caches: ["cookie"],
+        lookupCookie: "twihugure_lang",
         cookieOptions: {
-          name: "twihugure_lang",
           maxAge: 60 * 60 * 24 * 365, // 1 year in seconds
         },
       },
