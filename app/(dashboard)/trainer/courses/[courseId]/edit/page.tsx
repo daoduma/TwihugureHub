@@ -251,7 +251,7 @@ function ModuleRow({
       {expanded && (
         <div className="divide-y divide-gray-50">
           {(module.lessons ?? []).map((lesson) => {
-            const lessonTitle = (lesson.title as Record<string, string>)[lang] || lesson.title.en || t("trainer.lessons.untitled" as never);
+            const lessonTitle = lesson.title[lang as keyof typeof lesson.title] || lesson.title.en || t("trainer.lessons.untitled" as never);
             return (
               <div key={lesson.id} className="flex items-center gap-2 px-6 py-2.5 hover:bg-gray-50 group">
                 <GripVertical size={12} className="text-gray-200 cursor-grab" />

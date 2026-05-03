@@ -71,6 +71,7 @@ export interface MultilingualText {
   en: string;
   fr: string;
   rw: string;
+  [key: string]: string;
 }
 
 export interface LessonAttachment {
