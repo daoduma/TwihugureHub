@@ -209,7 +209,7 @@ function ModuleRow({
   const [editing, setEditing] = useState(false);
   const [titleDraft, setTitleDraft] = useState(module.title as { en: string; fr: string; rw: string });
 
-  const titleText = (module.title as Record<string, string>)[lang] || module.title.en || t("trainer.modules.untitled" as never);
+  const titleText = module.title[lang as keyof typeof module.title] || module.title.en || t("trainer.modules.untitled" as never);
 
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden">
