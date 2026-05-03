@@ -24,12 +24,6 @@ const i18nOptions: InitOptions = {
   fallbackLng: "en",
   supportedLngs: ["en", "fr", "rw"],
 
-  detection: {
-    order: ["cookie", "localStorage", "navigator"],
-    caches: ["cookie"],
-    cookieName: "twihugure_lang",
-  },
-
   interpolation: {
     escapeValue: false,
   },
