@@ -39,3 +39,8 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+".env" 
+".env.local" 
+"node_modules/" 
+".next/" 
+"*.log" 
