@@ -144,9 +144,6 @@ function ManageMembersModal({ group, onClose }: { group: Group; onClose: () => v
 }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Farmer Groups" };
-
 export default function GroupsPage() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);

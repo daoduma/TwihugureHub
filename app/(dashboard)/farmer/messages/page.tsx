@@ -20,9 +20,6 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Messages" };
-
 export default function FarmerMessagesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);

@@ -170,9 +170,6 @@ function EditUserModal({ user, onClose, onSaved }: { user: User; onClose: () => 
 }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Manage Users" };
-
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [total, setTotal] = useState(0);

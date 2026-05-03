@@ -125,9 +125,6 @@ function MessageModal({ farmer, onClose }: { farmer: FlagItem["farmer"]; onClose
 }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Interventions" };
-
 export default function InterventionsPage() {
   const [activeTab, setActiveTab] = useState<"active" | "resolved">("active");
   const [flags, setFlags] = useState<FlagItem[]>([]);

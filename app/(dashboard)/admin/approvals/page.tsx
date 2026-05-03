@@ -117,9 +117,6 @@ function CoursePreview({ course, onClose, onApprove, onReject }: {
 }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Course Approvals" };
-
 export default function ApprovalsPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);

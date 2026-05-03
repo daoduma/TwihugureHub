@@ -22,9 +22,6 @@ interface Stats {
 }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Dashboard" };
-
 export default function TrainerDashboardPage() {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || "en") as "en" | "fr" | "rw";

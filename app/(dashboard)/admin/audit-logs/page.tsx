@@ -27,9 +27,6 @@ const ACTION_COLORS: Record<string, string> = {
 };
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Audit Logs" };
-
 export default function AuditLogsPage() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [total, setTotal] = useState(0);

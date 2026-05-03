@@ -36,9 +36,6 @@ function getText(obj: Record<string, string>, lang: string): string {
 }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Dashboard" };
-
 export default function FarmerDashboard() {
   const { data: session } = useSession();
   const { t } = useTranslation();

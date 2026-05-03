@@ -10,9 +10,6 @@ import Link from "next/link";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Offline Lessons" };
-
 export default function OfflineLessonsPage() {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language ?? "en") as "en" | "fr" | "rw";

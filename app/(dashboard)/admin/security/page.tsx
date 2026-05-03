@@ -18,9 +18,6 @@ interface SecuritySettings {
 }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Security" };
-
 export default function SecurityPage() {
   const [settings, setSettings] = useState<SecuritySettings>({
     passwordPolicy: {

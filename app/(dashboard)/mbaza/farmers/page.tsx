@@ -32,9 +32,6 @@ const FLAG_LABELS: Record<string, string> = {
 };
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Farmers" };
-
 export default function FarmersPage() {
   const [farmers, setFarmers] = useState<FarmerRow[]>([]);
   const [total, setTotal] = useState(0);

@@ -19,9 +19,6 @@ interface Certificate {
 }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "My Certificates" };
-
 export default function FarmerCertificatesPage() {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language ?? "en") as "en" | "fr" | "rw";

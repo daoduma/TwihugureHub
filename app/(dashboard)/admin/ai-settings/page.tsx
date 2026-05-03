@@ -45,9 +45,6 @@ function formatCtx(n: number) {
 }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "AI Settings" };
-
 export default function AISettingsPage() {
   const [providers, setProviders] = useState<ProviderConfig[]>([]);
   const [currentConfig, setCurrentConfig] = useState<CurrentConfig | null>(null);

@@ -18,9 +18,6 @@ interface Farmer { id: string; name: string; email: string; preferredLanguage: s
 interface Group { id: string; name: string; }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Messages" };
-
 export default function MessagesPage() {
   const [sent, setSent] = useState<SentMessage[]>([]);
   const [farmers, setFarmers] = useState<Farmer[]>([]);

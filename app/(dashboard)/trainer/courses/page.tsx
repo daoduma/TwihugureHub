@@ -9,9 +9,6 @@ import { StatusBadge } from "@/components/trainer/StatusBadge";
 import type { Course } from "@/types";
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "My Courses" };
-
 export default function TrainerCoursesPage() {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || "en") as "en" | "fr" | "rw";

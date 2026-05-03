@@ -42,9 +42,6 @@ function StatusLabel({ status }: { status: TStatus }) {
 }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Translation Queue" };
-
 export default function TranslationsPage() {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || "en") as Lang;

@@ -29,9 +29,6 @@ function fmt(col: string) {
 }
 
 
-// CHANGED: Added page title for browser <title> tags
-export const metadata = { title: "Reports" };
-
 export default function ReportsPage() {
   const [reportType, setReportType] = useState<ReportType>("completion");
   const [from, setFrom] = useState("");
