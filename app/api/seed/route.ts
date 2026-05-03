@@ -214,11 +214,10 @@ export async function POST(req: Request) {
             rw: "<p>Ubutaka buzima ni ishingiro ry'ubuhinzi bubyara umusaruro.</p>",
           },
           order: 0,
-          translationStatus: { en: "MANUAL", fr: "MANUAL", rw: "MANUAL" },
         },
       });
 
-      log.push(`✅ Sample course: "${course.title.en}"`);
+      log.push(`✅ Sample course: "${(course.title as { en: string }).en}"`);
     } else {
       log.push("⏭️  Sample course already exists, skipped");
     }
