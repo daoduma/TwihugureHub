@@ -141,22 +141,29 @@ export async function POST(req: Request) {
     );
     log.push(`✅ Farmers: ${farmerData.length} users`);
 
-    // ── 5. LLM CONFIG (Groq) ─────────────────────────────────────────────────
+    // ── 5. LLM CONFIG (Groq via OpenAI-compatible API) ────────────────────────
+    // Groq exposes an OpenAI-compatible REST API, so we use LLMProvider.CUSTOM
+    // (the schema has no OPENAI_COMPATIBLE variant). The rest of the app reads
+    // this row via `singleton: 1` and checks provider.toLowerCase() === "custom"
+    // to route through the openai-compatible code path in translationClient.ts.
     const rawKey = process.env.AI_API_KEY ?? "";
     const encryptedKey = rawKey ? encryptForSeed(rawKey) : encryptForSeed("placeholder");
     await prisma.lLMConfig.upsert({
-      where: { id: "default" },
+      where: { singleton: 1 },
       update: {},
       create: {
-        id: "default",
-        provider: LLMProvider.OPENAI_COMPATIBLE,
-        model: process.env.AI_MODEL ?? "llama-3.3-70b-versatile",
+        singleton: 1,
+        // FIX: use LLMProvider.CUSTOM — the enum has no OPENAI_COMPATIBLE value.
+        // translationClient.ts already handles "custom" as the openai-compatible
+        // provider by reading baseUrl and calling the OpenAI SDK against it.
+        provider: LLMProvider.CUSTOM,
+        modelId: process.env.AI_MODEL ?? "llama-3.3-70b-versatile",
         baseUrl: process.env.AI_BASE_URL ?? "https://api.groq.com/openai/v1",
-        encryptedApiKey: encryptedKey,
+        apiKey: encryptedKey,
         isActive: true,
       },
     });
-    log.push("✅ LLM config");
+    log.push("✅ LLM config (Groq / CUSTOM provider)");
 
     // ── 6. SAMPLE COURSE ──────────────────────────────────────────────────────
     const existingCourse = await prisma.course.findFirst({
