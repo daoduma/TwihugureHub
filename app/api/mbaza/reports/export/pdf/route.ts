@@ -122,7 +122,7 @@ export async function GET(req: NextRequest) {
   const buffer = await renderToBuffer(doc);
   const filename = `${report.title.replace(/\s+/g, "_")}_${new Date().toISOString().slice(0, 10)}.pdf`;
 
-  return new NextResponse(buffer, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${filename}"`,
