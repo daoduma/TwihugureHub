@@ -109,6 +109,12 @@ body {
   }
 }
 
+/* ── Auth pages background ──────────────────────────────────────── */
+.auth-bg {
+  background: linear-gradient(135deg, #1f5239 0%, #2D6A4F 50%, #17442d 100%);
+  background-attachment: fixed;
+}
+
 /* ── Print styles for certificates ─────────────────────────────── */
 @media print {
   .no-print { display: none !important; }
