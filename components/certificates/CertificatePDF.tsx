@@ -9,7 +9,7 @@ import {
   Font,
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
-import { enUS, fr, rw } from "date-fns/locale";
+import { enUS, fr } from "date-fns/locale";
 
 const dateLocales: Record<string, Locale> = { en: enUS, fr, rw: enUS };
 
