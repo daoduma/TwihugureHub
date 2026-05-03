@@ -1,5 +1,6 @@
 // lib/audit.ts
 import { db } from "./db";
+import { Prisma } from "@prisma/client";
 
 interface AuditOptions {
   userId: string;
@@ -17,7 +18,7 @@ export async function createAuditLog(options: AuditOptions): Promise<void> {
         action: options.action,
         entity: options.entity,
         entityId: options.entityId,
-        metadata: options.metadata ?? {},
+        metadata: (options.metadata ?? {}) as Prisma.InputJsonValue,
       },
     });
   } catch (error) {
