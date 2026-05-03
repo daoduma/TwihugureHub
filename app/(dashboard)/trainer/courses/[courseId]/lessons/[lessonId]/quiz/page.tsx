@@ -14,25 +14,27 @@ type Lang = "en" | "fr" | "rw";
 type QuestionType = "MULTIPLE_CHOICE" | "TRUE_FALSE" | "SHORT_ANSWER";
 type TStatus = "MANUAL" | "AI" | "PENDING";
 
+type MLText = { en: string; fr: string; rw: string };
+
 interface TranslationStatus { en: TStatus; fr: TStatus; rw: TStatus }
 
 interface AnswerOption {
   id: string;
-  text: { en: string; fr: string; rw: string };
+  text: MLText;
   isCorrect: boolean;
   order: number;
 }
 
 interface QuestionFeedback {
-  correctFeedback: { en: string; fr: string; rw: string };
-  incorrectFeedback: { en: string; fr: string; rw: string };
+  correctFeedback: MLText;
+  incorrectFeedback: MLText;
 }
 
 interface Question {
   id: string;
   quizId: string;
   type: QuestionType;
-  stem: { en: string; fr: string; rw: string };
+  stem: MLText;
   order: number;
   translationStatus: TranslationStatus;
   options: AnswerOption[];
@@ -42,13 +44,13 @@ interface Question {
 interface Quiz {
   id: string;
   lessonId: string;
-  title: { en: string; fr: string; rw: string };
+  title: MLText;
   passingScore: number;
   allowRetry: boolean;
   questions: Question[];
 }
 
-const EMPTY_ML = { en: "", fr: "", rw: "" };
+const EMPTY_ML: MLText = { en: "", fr: "", rw: "" };
 
 // ─── Translation status badge ─────────────────────────────────────────────────
 function TStatusBadge({ status }: { status: TStatus }) {
@@ -106,12 +108,11 @@ function OptionsEditor({
   }
 
   if (question.type === "TRUE_FALSE") {
-    const correctIdx = question.options.findIndex((o) => o.isCorrect);
     return (
       <div className="space-y-1">
         <p className="text-xs font-medium text-gray-600 mb-1">{t("quiz.correctAnswer" as never)}</p>
         {question.options.map((opt, i) => {
-          const label = (opt.text as Record<string, string>)["en"] || (i === 0 ? "True" : "False");
+          const label = opt.text.en || (i === 0 ? "True" : "False");
           return (
             <label key={opt.id} className="flex items-center gap-2 cursor-pointer">
               <input
@@ -166,10 +167,12 @@ function OptionsEditor({
           />
           <input
             type="text"
-            value={(opt.text as Record<string, string>)[activeLang] ?? ""}
+            value={opt.text[activeLang]}
             onChange={(e) => {
-              const updated = question.options.map((o, j) =>
-                j === i ? { ...o, text: { ...(o.text as Record<string, string>), [activeLang]: e.target.value } } : o
+              const updated: AnswerOption[] = question.options.map((o, j) =>
+                j === i
+                  ? { ...o, text: { ...o.text, [activeLang]: e.target.value } as MLText }
+                  : o
               );
               onChange(updated);
             }}
