@@ -2,6 +2,7 @@
 // NEW: Central audit logging utility. Mirrors lib/audit.ts but uses the spec name.
 // CHANGED: Extended AuditActions with all sensitive operations per spec.
 import { db } from "./db";
+import { Prisma } from "@prisma/client";
 
 export interface AuditLogOptions {
   userId: string;
@@ -21,7 +22,7 @@ export async function logAction(
 ): Promise<void> {
   try {
     await db.auditLog.create({
-      data: { userId, action, entity, entityId, metadata: metadata ?? {} },
+      data: { userId, action, entity, entityId, metadata: (metadata ?? {}) as Prisma.InputJsonValue },
     });
   } catch (err) {
     console.error("[AuditLog] Failed to write audit log:", err);
