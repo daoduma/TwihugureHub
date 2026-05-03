@@ -2,13 +2,14 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
-import { LogOut, Bell, Menu } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/lib/useTranslation";
 import { getInitials, getRoleI18nKey } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 interface NavbarProps {
   onMenuToggle?: () => void;
@@ -72,13 +73,7 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
       <div className="flex items-center gap-2">
         <LanguageSelector variant="light" />
 
-        <button
-          className="relative rounded-lg p-2 text-gray-500 hover:bg-brand-50 hover:text-brand-700"
-          aria-label="Notifications"
-        >
-          <Bell size={18} />
-          <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-earth-500" />
-        </button>
+        <NotificationBell />
 
         {/* User menu */}
         <div className="relative">

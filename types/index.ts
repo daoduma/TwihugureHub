@@ -62,3 +62,114 @@ export const SUPPORTED_LANGUAGES: { code: Language; label: string; nativeLabel: 
   { code: "fr", label: "French", nativeLabel: "Français" },
   { code: "rw", label: "Kinyarwanda", nativeLabel: "Ikinyarwanda" },
 ];
+
+// ─── CMS Types ────────────────────────────────────────────────────────────────
+
+export type CourseStatus = "DRAFT" | "PENDING_APPROVAL" | "PUBLISHED" | "ARCHIVED";
+
+export interface MultilingualText {
+  en: string;
+  fr: string;
+  rw: string;
+}
+
+export interface LessonAttachment {
+  id: string;
+  lessonId: string;
+  fileUrl: string;
+  fileName: string;
+  fileType: string;
+  createdAt: Date;
+}
+
+export interface Lesson {
+  id: string;
+  moduleId: string;
+  title: MultilingualText;
+  body: MultilingualText;
+  videoUrl?: string | null;
+  audioUrl?: string | null;
+  imageUrls: string[];
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+  attachments?: LessonAttachment[];
+}
+
+export interface Module {
+  id: string;
+  courseId: string;
+  title: MultilingualText;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+  lessons?: Lesson[];
+}
+
+export interface Course {
+  id: string;
+  title: MultilingualText;
+  description: MultilingualText;
+  trainerId: string;
+  status: CourseStatus;
+  thumbnailUrl?: string | null;
+  availableLanguages: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  modules?: Module[];
+  trainer?: { id: string; name: string; email: string };
+  _count?: { modules: number };
+}
+
+export interface TrainerStats {
+  totalCourses: number;
+  publishedCourses: number;
+  pendingApproval: number;
+  totalEnrolledFarmers: number;
+}
+
+// ─── Quiz Types ───────────────────────────────────────────────────────────────
+
+export type QuestionType = "MULTIPLE_CHOICE" | "TRUE_FALSE" | "SHORT_ANSWER";
+export type TranslationStatusValue = "MANUAL" | "AI" | "PENDING";
+
+export interface TranslationStatus {
+  en: TranslationStatusValue;
+  fr: TranslationStatusValue;
+  rw: TranslationStatusValue;
+}
+
+export interface AnswerOption {
+  id: string;
+  questionId: string;
+  text: MultilingualText;
+  isCorrect: boolean;
+  order: number;
+}
+
+export interface QuestionFeedback {
+  id: string;
+  questionId: string;
+  correctFeedback: MultilingualText;
+  incorrectFeedback: MultilingualText;
+}
+
+export interface Question {
+  id: string;
+  quizId: string;
+  type: QuestionType;
+  stem: MultilingualText;
+  order: number;
+  translationStatus: TranslationStatus;
+  options: AnswerOption[];
+  feedback?: QuestionFeedback;
+}
+
+export interface Quiz {
+  id: string;
+  lessonId: string;
+  title: MultilingualText;
+  passingScore: number;
+  allowRetry: boolean;
+  questions: Question[];
+}

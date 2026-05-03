@@ -26,6 +26,10 @@ interface FieldErrors {
   confirmPassword?: string;
 }
 
+
+// CHANGED: Added page title for browser <title> tags
+export const metadata = { title: "Register" };
+
 export default function RegisterPage() {
   const { t } = useTranslation();
   const router = useRouter();

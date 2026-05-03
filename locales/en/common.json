@@ -17,7 +17,16 @@
     "knowledgeBase": "Knowledge Base",
     "supportTickets": "Support Tickets",
     "analytics": "Analytics",
-    "profile": "Profile"
+    "profile": "Profile",
+    "translations": "Translation Review",
+    "approvals": "Approvals",
+    "aiSettings": "AI / LLM",
+    "security": "Security",
+    "groups": "Groups",
+    "interventions": "Interventions",
+    "messages": "Messages",
+    "certificates": "My Certificates",
+    "offlineLessons": "Offline Lessons"
   },
   "auth": {
     "login": {
@@ -115,5 +124,588 @@
     "unauthorized": "You are not authorized to access this page",
     "notFound": "Page not found",
     "serverError": "Internal server error. Please try again later."
+  },
+  "trainer": {
+    "dashboard": {
+      "title": "Trainer Dashboard",
+      "subtitle": "Manage your courses and track learner progress",
+      "totalCourses": "Total Courses",
+      "publishedCourses": "Published",
+      "pendingApproval": "Pending Approval",
+      "enrolledFarmers": "Enrolled Farmers",
+      "recentActivity": "Recent Activity",
+      "noActivity": "No recent activity yet",
+      "lastUpdated": "Last updated"
+    },
+    "courses": {
+      "title": "My Courses",
+      "subtitle": "Create and manage your training courses",
+      "createNew": "Create New Course",
+      "createSubtitle": "Fill in the basic details to get started",
+      "createAndEdit": "Create & Open Editor",
+      "titleLabel": "Course Title",
+      "descriptionLabel": "Description",
+      "thumbnail": "Thumbnail Image",
+      "metadata": "Course Details",
+      "languageAvailability": "Language Availability",
+      "titleRequired": "Please enter a course title in at least one language",
+      "untitled": "Untitled Course",
+      "empty": "No courses yet",
+      "emptyHint": "Click 'Create New Course' to get started",
+      "preview": "Preview",
+      "submitApproval": "Submit for Approval",
+      "archive": "Archive",
+      "confirmSubmit": "Submit this course for admin approval?",
+      "confirmArchive": "Archive this course? It will no longer be visible to farmers.",
+      "col": {
+        "course": "Course",
+        "modules": "Modules"
+      }
+    },
+    "modules": {
+      "title": "Modules & Lessons",
+      "label": "modules",
+      "add": "Add Module",
+      "untitled": "Untitled Module",
+      "empty": "No modules yet",
+      "emptyHint": "Click 'Add Module' to build your course structure",
+      "confirmDelete": "Delete this module and all its lessons?"
+    },
+    "lessons": {
+      "label": "lessons",
+      "add": "Add Lesson",
+      "untitled": "Untitled Lesson",
+      "editor": "Lesson Editor",
+      "title": "Lesson Title",
+      "body": "Lesson Content",
+      "videoUrl": "Video URL",
+      "audio": "Audio File",
+      "images": "Images",
+      "addImage": "Add Image",
+      "attachments": "Attachments",
+      "addAttachment": "Add Attachment (PDF, DOCX)",
+      "selectLesson": "Select a lesson from the sidebar to preview it",
+      "confirmDelete": "Delete this lesson?"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending_approval": "Pending Approval",
+      "published": "Published",
+      "archived": "Archived"
+    }
+  },
+  "quiz": {
+    "designer": "Quiz Designer",
+    "createQuiz": "Create Quiz",
+    "noQuizYet": "No Quiz Yet",
+    "noQuizHint": "Create a quiz to assess learners on this lesson",
+    "settings": "Quiz Settings",
+    "quizTitle": "Quiz Title",
+    "passingScore": "Passing Score",
+    "allowRetry": "Allow Retry",
+    "saveSettings": "Save Settings",
+    "questions": "Questions",
+    "addQuestion": "Add Question",
+    "noQuestions": "No questions yet",
+    "noQuestionsHint": "Click 'Add Question' to build your quiz",
+    "questionType": "Question Type",
+    "questionStem": "Question",
+    "answerOptions": "Answer Options",
+    "addOption": "Add Option",
+    "correctAnswer": "Correct Answer",
+    "correctFeedback": "Correct Feedback",
+    "incorrectFeedback": "Incorrect Feedback",
+    "shortAnswerNote": "Short answer questions are graded manually by the trainer",
+    "untitledQuestion": "Untitled Question",
+    "confirmDeleteQuestion": "Delete this question?",
+    "aiTranslate": "AI Translation",
+    "targetLanguage": "Target Language",
+    "translateAll": "Translate All Questions",
+    "translateAllHint": "Already translated questions will be skipped",
+    "translating": "Translating…",
+    "translationQueue": "Translation Review Queue",
+    "translationQueueSubtitle": "Review and approve AI-generated translations",
+    "filterLanguage": "Language",
+    "items": "items",
+    "original": "Original",
+    "translation": "Translation",
+    "translatedFrom": "Translated from",
+    "approve": "Approve",
+    "editApprove": "Edit & Approve",
+    "reject": "Reject",
+    "saveAndApprove": "Save & Approve",
+    "translationApproved": "Approved — this translation is marked as manual",
+    "noTranslations": "No translation items match your filters"
+  },
+  "farmer": {
+    "dashboard": {
+      "welcome": "Welcome back",
+      "subtitle": "Your agricultural learning journey",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "completedCourses": "Completed Courses",
+      "recommended": "Recommended",
+      "continueLearning": "Continue Learning",
+      "enrolled": "My Enrolled Courses",
+      "noCourses": "No courses available yet",
+      "checkBack": "Check back soon for new training content."
+    },
+    "courses": {
+      "title": "Course Catalog",
+      "subtitle": "Explore all available training courses",
+      "enrolled": "Enrolled"
+    },
+    "course": {
+      "modules": "modules",
+      "lessons": "lessons",
+      "enroll": "Enroll in this Course",
+      "enrollNow": "Enroll →",
+      "continueLearning": "Continue Learning",
+      "progress": "Progress",
+      "complete": "complete",
+      "curriculum": "Course Curriculum",
+      "reviews": "Reviews",
+      "leaveReview": "Leave a Review",
+      "reviewPlaceholder": "Share your experience with this course...",
+      "submitReview": "Submit Review"
+    },
+    "lesson": {
+      "backToCourse": "Back to Course",
+      "previous": "Previous",
+      "next": "Next",
+      "markComplete": "Mark as Complete",
+      "completed": "Lesson completed!",
+      "takeQuiz": "Take Quiz",
+      "audio": "Audio",
+      "attachments": "Attachments",
+      "languageFallback": "This lesson is not yet available in your preferred language. Showing the best available version."
+    },
+    "quiz": {
+      "translating": "Preparing quiz in your language...",
+      "translatingHint": "This may take a few seconds. Your translated quiz will be cached for future learners.",
+      "passed": "Congratulations! You Passed!",
+      "failed": "Not Quite There Yet",
+      "correct": "correct",
+      "passingScore": "Passing score",
+      "breakdown": "Question Breakdown",
+      "yourAnswer": "Your answer:",
+      "correctAnswer": "Correct answer:",
+      "continueNext": "Continue to Next Lesson",
+      "tryAgain": "Try Again",
+      "contactTrainer": "Please contact your trainer for assistance.",
+      "nextQuestion": "Next Question",
+      "submit": "Submit Quiz",
+      "typeAnswer": "Type your answer here...",
+      "passingRequired": "Passing score required:"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "welcome": "Platform overview",
+      "kpi": {
+        "users": "Total Users",
+        "courses": "Total Courses",
+        "pending": "Pending Approvals",
+        "llm": "AI / LLM Status"
+      },
+      "recentActivity": "Recent Audit Activity",
+      "quickLinks": "Admin Sections",
+      "actionRequired": "Action required"
+    },
+    "users": {
+      "title": "User Management",
+      "createUser": "Create User",
+      "searchPlaceholder": "Search by name or email…",
+      "allRoles": "All Roles",
+      "allStatuses": "All Statuses",
+      "active": "Active",
+      "inactive": "Inactive",
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "language": "Lang",
+        "status": "Status",
+        "joined": "Joined",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "deactivate": "Deactivate",
+        "activate": "Activate"
+      },
+      "createModal": {
+        "title": "Create Staff Account",
+        "hint": "Farmers self-register. This form creates Trainer, Admin, or Mbaza Staff accounts.",
+        "name": "Full Name",
+        "email": "Email",
+        "password": "Temporary Password",
+        "role": "Role",
+        "language": "Preferred Language",
+        "submit": "Create Account",
+        "creating": "Creating…"
+      },
+      "editModal": {
+        "title": "Edit User",
+        "newPassword": "New Password (leave blank to keep)",
+        "save": "Save",
+        "saving": "Saving…"
+      }
+    },
+    "approvals": {
+      "title": "Content Approval Queue",
+      "empty": "All caught up!",
+      "emptyHint": "No courses awaiting approval.",
+      "preview": "Preview",
+      "approve": "Approve",
+      "approveFull": "Approve & Publish",
+      "reject": "Reject",
+      "rejectModal": {
+        "title": "Reject Course",
+        "hint": "Please provide feedback for the trainer explaining why this course was rejected.",
+        "notesPlaceholder": "Rejection notes (required)…",
+        "confirm": "Confirm Rejection",
+        "confirming": "Rejecting…"
+      },
+      "previewModal": {
+        "pending": "PENDING REVIEW",
+        "by": "By",
+        "description": "Description",
+        "modules": "Modules"
+      }
+    },
+    "aiSettings": {
+      "title": "AI / LLM Settings",
+      "subtitle": "Configure the AI model that powers translations and intelligent features.",
+      "currentConfig": "Current Configuration",
+      "testConnection": "Test Connection",
+      "rotate": "Rotate / Change",
+      "steps": {
+        "provider": "1. Choose Provider",
+        "model": "2. Select Model",
+        "key": "3. Enter API Key"
+      },
+      "providerStep": {
+        "title": "Choose a Provider",
+        "active": "ACTIVE",
+        "models": "models",
+        "custom": "Custom endpoint"
+      },
+      "modelStep": {
+        "primary": "Primary Model",
+        "fallback": "Fallback Model (optional)",
+        "none": "None",
+        "customModelId": "Model ID",
+        "customModelPlaceholder": "e.g. llama-3.1-70b-instruct",
+        "reasoning": "Reasoning",
+        "continue": "Continue to API Key →"
+      },
+      "keyStep": {
+        "title": "Enter API Key",
+        "apiKeyLabel": "API Key",
+        "apiKeyHint": "Stored AES-256 encrypted. Never transmitted in plaintext.",
+        "baseUrlLabel": "Base URL",
+        "baseUrlPlaceholder": "https://api.your-provider.com/v1",
+        "validateAndSave": "Validate & Save",
+        "validating": "Validating…",
+        "saving": "Saving…",
+        "success": "Key validated — configuration saved successfully!",
+        "failed": "Validation failed:",
+        "configSummary": "Configuration Summary"
+      },
+      "config": {
+        "provider": "Provider",
+        "model": "Model",
+        "apiKey": "API Key",
+        "validated": "Validated",
+        "never": "Never",
+        "fallback": "Fallback"
+      }
+    },
+    "auditLogs": {
+      "title": "Audit Log Viewer",
+      "exportCsv": "Export CSV",
+      "filterAction": "Filter by action (e.g. LOGIN)…",
+      "from": "From",
+      "to": "To",
+      "clear": "Clear",
+      "columns": {
+        "timestamp": "Timestamp",
+        "user": "User",
+        "action": "Action",
+        "entity": "Entity",
+        "details": "Details"
+      },
+      "expand": "expand",
+      "collapse": "collapse",
+      "empty": "No audit logs found"
+    },
+    "security": {
+      "title": "Security Settings",
+      "subtitle": "Configure platform-wide security policies.",
+      "passwordPolicy": {
+        "title": "Password Policy",
+        "minLength": "Minimum Password Length:",
+        "requireUppercase": "Require at least one uppercase letter (A-Z)",
+        "requireNumber": "Require at least one number (0-9)",
+        "requireSymbol": "Require at least one symbol (!@#$…)"
+      },
+      "session": {
+        "title": "Session Settings",
+        "timeout": "Session Timeout:"
+      },
+      "twoFA": {
+        "title": "Two-Factor Authentication",
+        "subtitle": "Require 2FA for elevated-privilege roles.",
+        "adminLabel": "Require 2FA for Admin accounts",
+        "mbazaLabel": "Require 2FA for Mbaza Staff accounts",
+        "note": "Note: Full 2FA implementation requires an authenticator app integration."
+      },
+      "saveButton": "Save Security Settings",
+      "saved": "Saved!",
+      "danger": {
+        "title": "Danger Zone",
+        "forceLogout": "Force All Users to Re-login",
+        "forceLogoutHint": "Invalidates all active sessions immediately. All users will need to sign in again.",
+        "forceLogoutButton": "Force Re-login",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "done": "All sessions have been invalidated."
+      }
+    }
+  },
+  "mbaza": {
+    "dashboard": {
+      "title": "Mbaza Staff Dashboard",
+      "subtitle": "Farmer progress overview",
+      "kpi": {
+        "totalFarmers": "Total Farmers",
+        "avgCompletion": "Avg Completion",
+        "completedThisMonth": "Completed This Month",
+        "activeFlags": "Active Flags"
+      },
+      "completionByCoursChart": "Completion Rate by Course",
+      "weeklyActivityChart": "Weekly Quiz Attempts (7 Weeks)",
+      "quickAccess": "Quick Access"
+    },
+    "farmers": {
+      "title": "Farmer Progress List",
+      "tracked": "farmers tracked",
+      "searchPlaceholder": "Search by name or email…",
+      "allFarmers": "All Farmers",
+      "flaggedOnly": "Flagged Only",
+      "noFlags": "No Flags",
+      "columns": {
+        "name": "Name",
+        "groups": "Groups",
+        "courses": "Courses",
+        "avgProgress": "Avg Progress",
+        "avgScore": "Avg Score",
+        "lastActive": "Last Active",
+        "flags": "Flags"
+      },
+      "never": "Never",
+      "view": "View →"
+    },
+    "farmerDetail": {
+      "back": "← Back to Farmer List",
+      "joinedAt": "Joined",
+      "activeFlags": "Active Flags",
+      "enrollments": "Course Enrollments",
+      "noEnrollments": "No courses enrolled.",
+      "enrolledAt": "Enrolled",
+      "aiTranslatedBadge": "AI-Translated Quiz (rw)",
+      "completed": "Completed",
+      "module": "Module",
+      "notes": "Staff Notes (Private)",
+      "noNotes": "No notes yet.",
+      "addNote": "Add Note",
+      "addingNote": "Adding…",
+      "notePlaceholder": "Add a private note about this farmer…",
+      "pass": "PASS",
+      "fail": "FAIL",
+      "attempt": "Attempt"
+    },
+    "groups": {
+      "title": "Group Management",
+      "groups": "groups",
+      "createGroup": "Create Group",
+      "editGroup": "Edit Group",
+      "farmers": "Farmers",
+      "avgProgress": "Avg Progress",
+      "manageMembers": "Manage Members",
+      "viewDetail": "View Detail →",
+      "deleteConfirm": "Delete this group? Farmers will not be deleted.",
+      "noGroups": "No groups yet.",
+      "createFirst": "Create First Group",
+      "form": {
+        "name": "Group Name",
+        "region": "Region",
+        "description": "Description",
+        "namePlaceholder": "e.g. Northern Sector Farmers",
+        "regionPlaceholder": "e.g. Northern Province",
+        "descriptionPlaceholder": "Optional notes about this group…",
+        "save": "Save Group",
+        "saving": "Saving…"
+      },
+      "members": {
+        "title": "Manage Members",
+        "selected": "selected",
+        "searchPlaceholder": "Search farmers…",
+        "save": "Save Members",
+        "saving": "Saving…"
+      }
+    },
+    "interventions": {
+      "title": "Intervention Flags",
+      "subtitle": "Farmers who may need support",
+      "runCheck": "Run Flag Check",
+      "running": "Running…",
+      "newFlagsCreated": "new flags created",
+      "tabs": {
+        "active": "Active Flags",
+        "resolved": "Resolved"
+      },
+      "columns": {
+        "farmer": "Farmer",
+        "flagType": "Flag Type",
+        "course": "Related Course",
+        "daysSince": "Days Since Flag",
+        "resolvedBy": "Resolved By",
+        "actions": "Actions"
+      },
+      "flagLabels": {
+        "FLAG_INACTIVE": "Inactive 14d+",
+        "FLAG_FAILING": "Failing Quizzes",
+        "FLAG_STALLED": "Stalled Progress"
+      },
+      "noActive": "No active flags 🎉",
+      "noResolved": "No resolved flags",
+      "actions": {
+        "resolve": "Resolve",
+        "message": "Message"
+      },
+      "resolveModal": {
+        "title": "Mark as Resolved",
+        "farmer": "Farmer",
+        "flag": "Flag",
+        "notesPlaceholder": "Resolution notes (optional)…",
+        "confirm": "Mark Resolved",
+        "confirming": "Resolving…"
+      },
+      "messageModal": {
+        "title": "Send Message",
+        "to": "To",
+        "subject": "Subject",
+        "body": "Message",
+        "language": "Language",
+        "subjectPlaceholder": "Regarding your course progress…",
+        "bodyPlaceholder": "Dear farmer…",
+        "send": "Send Message",
+        "sending": "Sending…",
+        "sent": "Message sent!"
+      }
+    },
+    "messages": {
+      "title": "Messaging",
+      "subtitle": "Send messages to individual farmers or entire groups",
+      "compose": "Compose Message",
+      "individual": "Individual",
+      "group": "Group",
+      "recipientFarmer": "Recipient Farmer",
+      "recipientGroup": "Recipient Group",
+      "selectFarmer": "Select farmer…",
+      "selectGroup": "Select group…",
+      "language": "Language",
+      "subject": "Subject",
+      "body": "Message Body",
+      "send": "Send Message",
+      "sending": "Sending…",
+      "sent": "Sent Messages",
+      "noMessages": "No messages sent yet",
+      "read": "Read",
+      "delivered": "Delivered",
+      "subjectPlaceholder": "Course reminder, progress update…",
+      "bodyPlaceholder": "Dear farmer…"
+    },
+    "reports": {
+      "title": "Report Builder",
+      "subtitle": "Generate, preview, and export platform reports.",
+      "reportType": "Report Type",
+      "filters": "Filters",
+      "from": "From Date",
+      "to": "To Date",
+      "group": "Group",
+      "course": "Course",
+      "quizLanguage": "Quiz Language",
+      "allGroups": "All Groups",
+      "allCourses": "All Courses",
+      "allLanguages": "All Languages",
+      "generate": "Generate Report",
+      "generating": "Generating…",
+      "exportExcel": "Excel",
+      "exportPdf": "PDF",
+      "exporting": "Exporting…",
+      "noData": "No data found for the selected filters.",
+      "noReport": "Select a report type and click Generate",
+      "building": "Building report…",
+      "showingRows": "Showing 100 of {total} rows. Export to see all data.",
+      "types": {
+        "completion": "Completion Report",
+        "completionDesc": "Completion rates per course, group, date range",
+        "performance": "Performance Report",
+        "performanceDesc": "Quiz scores, pass rates, score distributions",
+        "engagement": "Engagement Report",
+        "engagementDesc": "Lessons viewed, time on platform",
+        "intervention": "Intervention Report",
+        "interventionDesc": "Flag counts, types, resolution rates"
+      }
+    },
+    "farmerMessages": {
+      "title": "My Messages",
+      "unread": "unread",
+      "noMessages": "No messages yet",
+      "selectMessage": "Select a message to read",
+      "from": "From",
+      "read": "Read"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications yet",
+    "viewAll": "View all notifications",
+    "total": "total"
+  },
+  "certificates": {
+    "myTitle": "My Certificates",
+    "mySubtitle": "Download your earned certificates",
+    "issuedOn": "Issued on",
+    "download": "Download PDF",
+    "verify": "Verify",
+    "noneYet": "No certificates yet",
+    "noneYetHint": "Complete a course to earn your certificate",
+    "browseCourses": "Browse Courses"
+  },
+  "offline": {
+    "banner": "You are offline.",
+    "bannerHint": "Downloaded lessons are still available.",
+    "download": "Download for Offline",
+    "downloaded": "Downloaded ✓",
+    "removeDownload": "Remove download",
+    "myLessons": "Offline Lessons",
+    "myLessonsSubtitle": "Lessons saved for offline access",
+    "noLessons": "No offline lessons yet",
+    "noLessonsHint": "Open a lesson and tap 'Download for Offline' to save it.",
+    "savedOn": "Saved on",
+    "viewLesson": "View",
+    "quizSavedTitle": "Quiz Saved Offline",
+    "quizSavedBody": "Your answers have been saved. They will be automatically submitted when you reconnect to the internet."
+  },
+  "common": {
+    "loading": "Loading…",
+    "previous": "Previous",
+    "next": "Next"
   }
 }

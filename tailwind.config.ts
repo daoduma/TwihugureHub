@@ -1,5 +1,7 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+// tailwind.config.ts — CHANGED: Added TwihugureHub brand palette as theme tokens
+import type { Config } from "tailwindcss";
+
+const config: Config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,57 +10,53 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50:  "#f0fdf4",
-          100: "#dcfce7",
-          200: "#bbf7d0",
-          300: "#86efac",
-          400: "#4ade80",
-          500: "#22c55e",
-          600: "#16a34a",
-          700: "#15803d",
-          800: "#166534",
-          900: "#14532d",
-          950: "#052e16",
+        // TwihugureHub brand palette
+        primary: {
+          DEFAULT: "#2D6A4F",
+          50:  "#e8f5f0",
+          100: "#c3e6d8",
+          200: "#9bd5bf",
+          300: "#6ec2a3",
+          400: "#4db38e",
+          500: "#2D6A4F",
+          600: "#276045",
+          700: "#1f5239",
+          800: "#17442d",
+          900: "#0e3221",
         },
-        earth: {
-          50:  "#fdf8f0",
-          100: "#faefd9",
-          200: "#f4dab3",
-          300: "#ecbf82",
-          400: "#e09a50",
-          500: "#d4802e",
-          600: "#c56824",
-          700: "#a35020",
-          800: "#834121",
-          900: "#6a361d",
-          950: "#391a0d",
+        secondary: {
+          DEFAULT: "#E9C46A",
+          50:  "#fdf8ec",
+          100: "#faedce",
+          200: "#f6dfab",
+          300: "#F2D181",
+          400: "#E9C46A",
+          500: "#d9aa44",
+          600: "#b98d33",
+          700: "#96701f",
+          800: "#73530f",
+          900: "#4e3802",
+        },
+        brand: {
+          bg:   "#F8F9FA",
+          text: "#1B1B1B",
+          green: "#2D6A4F",
+          gold:  "#E9C46A",
         },
       },
       fontFamily: {
-        display: ["var(--font-display)", "serif"],
-        body: ["var(--font-body)", "sans-serif"],
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
-      animation: {
-        "fade-in": "fadeIn 0.4s ease-out forwards",
-        "slide-up": "slideUp 0.4s ease-out forwards",
-        "slide-in-left": "slideInLeft 0.3s ease-out forwards",
+      backgroundImage: {
+        "gradient-brand": "linear-gradient(135deg, #2D6A4F 0%, #1f5239 100%)",
       },
-      keyframes: {
-        fadeIn: {
-          from: { opacity: "0" },
-          to: { opacity: "1" },
-        },
-        slideUp: {
-          from: { opacity: "0", transform: "translateY(16px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
-        },
-        slideInLeft: {
-          from: { opacity: "0", transform: "translateX(-16px)" },
-          to: { opacity: "1", transform: "translateX(0)" },
-        },
+      boxShadow: {
+        card: "0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)",
+        "card-hover": "0 4px 12px rgba(45,106,79,0.15)",
       },
     },
   },
   plugins: [],
 };
+
+export default config;

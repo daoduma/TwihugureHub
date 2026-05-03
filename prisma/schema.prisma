@@ -24,6 +24,13 @@ enum Language {
   rw
 }
 
+enum CourseStatus {
+  DRAFT
+  PENDING_APPROVAL
+  PUBLISHED
+  ARCHIVED
+}
+
 // ─── Models ───────────────────────────────────────────────────────────────────
 
 model User {
@@ -37,15 +44,29 @@ model User {
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 
-  // Relations
-  sessions          Session[]
-  accounts          Account[]
-  auditLogs         AuditLog[]
+  sessions        Session[]
+  accounts        Account[]
+  auditLogs       AuditLog[]
+  courses         Course[]
+  enrollments     Enrollment[]     @relation("FarmerEnrollments")
+  lessonProgress  LessonProgress[] @relation("FarmerLessonProgress")
+  quizAttempts    QuizAttempt[]    @relation("FarmerQuizAttempts")
+  reviews         CourseReview[]   @relation("FarmerReviews")
+  adminReviews    CourseApproval[]         @relation("AdminReviews")
+  groupMemberships FarmerGroupMembership[]  @relation("FarmerGroupMemberships")
+  createdGroups   FarmerGroup[]            @relation("GroupCreator")
+  interventionFlags InterventionFlag[]     @relation("FarmerFlags")
+  resolvedFlags   InterventionFlag[]       @relation("FlagResolver")
+  farmerNotes     FarmerNote[]             @relation("FarmerNotes")
+  authoredNotes   FarmerNote[]             @relation("NoteAuthor")
+  sentMessages    Message[]                @relation("MessageSender")
+  receivedMessages Message[]               @relation("MessageRecipient")
+  notifications   Notification[]
+  certificates    Certificate[]            @relation("FarmerCertificates")
 
   @@map("users")
 }
 
-// NextAuth Account model (for future OAuth providers)
 model Account {
   id                String   @id @default(cuid())
   userId            String
@@ -66,7 +87,6 @@ model Account {
   @@map("accounts")
 }
 
-// NextAuth Session model
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
@@ -78,7 +98,6 @@ model Session {
   @@map("sessions")
 }
 
-// NextAuth VerificationToken model
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -88,14 +107,13 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-// Audit log for tracking user actions
 model AuditLog {
   id        String   @id @default(cuid())
   userId    String
-  action    String   // e.g. "LOGIN", "CREATE_COURSE", "UPDATE_PROFILE"
-  entity    String   // e.g. "User", "Course", "Quiz"
-  entityId  String?  // ID of the affected entity
-  metadata  Json?    // Additional context as JSON
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -104,4 +122,435 @@ model AuditLog {
   @@index([entity, entityId])
   @@index([createdAt])
   @@map("audit_logs")
+}
+
+// ─── CMS Models ───────────────────────────────────────────────────────────────
+
+model Course {
+  id                 String       @id @default(cuid())
+  title              Json
+  description        Json
+  trainerId          String
+  status             CourseStatus @default(DRAFT)
+  thumbnailUrl       String?
+  availableLanguages String[]     @default([])
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  trainer     User             @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  modules     Module[]
+  enrollments Enrollment[]
+  reviews     CourseReview[]
+  approvals          CourseApproval[]
+  interventionFlags  InterventionFlag[]
+  certificates       Certificate[]
+
+  @@index([trainerId])
+  @@index([status])
+  @@map("courses")
+}
+
+model Module {
+  id        String   @id @default(cuid())
+  courseId  String
+  title     Json
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+
+  @@index([courseId])
+  @@map("modules")
+}
+
+model Lesson {
+  id        String   @id @default(cuid())
+  moduleId  String
+  title     Json
+  body      Json     @default("{}")
+  videoUrl  String?
+  audioUrl  String?
+  imageUrls String[] @default([])
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  module      Module             @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  attachments LessonAttachment[]
+  quiz        Quiz?
+  progress    LessonProgress[]
+
+  @@index([moduleId])
+  @@map("lessons")
+}
+
+model LessonAttachment {
+  id        String   @id @default(cuid())
+  lessonId  String
+  fileUrl   String
+  fileName  String
+  fileType  String
+  createdAt DateTime @default(now())
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+  @@map("lesson_attachments")
+}
+
+// ─── Quiz Models ───────────────────────────────────────────────────────────────
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
+enum TranslationStatusValue {
+  MANUAL
+  AI
+  PENDING
+}
+
+model Quiz {
+  id           String   @id @default(cuid())
+  lessonId     String   @unique
+  title        Json
+  passingScore Int      @default(70)
+  allowRetry   Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  lesson    Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  questions Question[]
+  attempts  QuizAttempt[]
+
+  @@map("quizzes")
+}
+
+model Question {
+  id                 String       @id @default(cuid())
+  quizId             String
+  type               QuestionType @default(MULTIPLE_CHOICE)
+  // stem: { en: string; fr: string; rw: string }
+  stem               Json
+  order              Int          @default(0)
+  // translationStatus: { en: "MANUAL"|"AI"|"PENDING", fr: ..., rw: ... }
+  translationStatus  Json         @default("{\"en\":\"PENDING\",\"fr\":\"PENDING\",\"rw\":\"PENDING\"}")
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  quiz     Quiz               @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options  AnswerOption[]
+  feedback QuestionFeedback?
+  answers  QuizAnswer[]
+
+  @@index([quizId])
+  @@map("questions")
+}
+
+model AnswerOption {
+  id         String   @id @default(cuid())
+  questionId String
+  // text: { en: string; fr: string; rw: string }
+  text       Json
+  isCorrect  Boolean  @default(false)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@map("answer_options")
+}
+
+model QuestionFeedback {
+  id                 String   @id @default(cuid())
+  questionId         String   @unique
+  // correctFeedback: { en: string; fr: string; rw: string }
+  correctFeedback    Json     @default("{\"en\":\"\",\"fr\":\"\",\"rw\":\"\"}")
+  // incorrectFeedback: { en: string; fr: string; rw: string }
+  incorrectFeedback  Json     @default("{\"en\":\"\",\"fr\":\"\",\"rw\":\"\"}")
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("question_feedback")
+}
+
+// ─── Farmer Learning Models ────────────────────────────────────────────────────
+
+model Enrollment {
+  id              String    @id @default(cuid())
+  farmerId        String
+  courseId        String
+  enrolledAt      DateTime  @default(now())
+  completedAt     DateTime?
+  progressPercent Int       @default(0)
+
+  farmer   User           @relation("FarmerEnrollments", fields: [farmerId], references: [id], onDelete: Cascade)
+  course   Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  certificates Certificate[]
+
+  @@unique([farmerId, courseId])
+  @@index([farmerId])
+  @@index([courseId])
+  @@map("enrollments")
+}
+
+model LessonProgress {
+  id               String    @id @default(cuid())
+  farmerId         String
+  lessonId         String
+  completedAt      DateTime?
+  timeSpentSeconds Int       @default(0)
+
+  farmer User   @relation("FarmerLessonProgress", fields: [farmerId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([farmerId, lessonId])
+  @@index([farmerId])
+  @@index([lessonId])
+  @@map("lesson_progress")
+}
+
+model QuizAttempt {
+  id           String    @id @default(cuid())
+  farmerId     String
+  quizId       String
+  attemptNumber Int
+  score        Int
+  passed       Boolean
+  languageUsed String
+  startedAt    DateTime  @default(now())
+  completedAt  DateTime?
+
+  farmer  User         @relation("FarmerQuizAttempts", fields: [farmerId], references: [id], onDelete: Cascade)
+  quiz    Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers QuizAnswer[]
+
+  @@index([farmerId])
+  @@index([quizId])
+  @@map("quiz_attempts")
+}
+
+model QuizAnswer {
+  id               String  @id @default(cuid())
+  attemptId        String
+  questionId       String
+  selectedOptionId String?
+  shortAnswerText  String?
+  isCorrect        Boolean
+
+  attempt  QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([attemptId])
+  @@map("quiz_answers")
+}
+
+model CourseReview {
+  id        String   @id @default(cuid())
+  farmerId  String
+  courseId  String
+  rating    Int
+  comment   String   @db.Text
+  createdAt DateTime @default(now())
+
+  farmer User   @relation("FarmerReviews", fields: [farmerId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([farmerId, courseId])
+  @@index([courseId])
+  @@map("course_reviews")
+}
+
+// ─── Admin Models ─────────────────────────────────────────────────────────────
+
+enum LLMProvider {
+  OPENAI
+  ANTHROPIC
+  GOOGLE
+  MISTRAL
+  COHERE
+  CUSTOM
+}
+
+enum ApprovalDecision {
+  APPROVED
+  REJECTED
+}
+
+model LLMConfig {
+  id              String      @id @default(cuid())
+  singleton       Int         @unique @default(1)
+  provider        LLMProvider
+  modelId         String
+  apiKey          String      @db.Text
+  baseUrl         String?
+  fallbackModelId String?
+  isActive        Boolean     @default(true)
+  validatedAt     DateTime?
+  updatedAt       DateTime    @updatedAt
+
+  @@map("llm_configs")
+}
+
+model CourseApproval {
+  id           String           @id @default(cuid())
+  courseId     String
+  reviewedById String
+  decision     ApprovalDecision
+  notes        String           @db.Text
+  reviewedAt   DateTime         @default(now())
+
+  course     Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  reviewedBy User   @relation("AdminReviews", fields: [reviewedById], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([reviewedById])
+  @@map("course_approvals")
+}
+
+// ─── Notification Models ──────────────────────────────────────────────────────
+
+enum NotificationType {
+  COURSE_APPROVED
+  COURSE_REJECTED
+  COURSE_ENROLLED
+  QUIZ_PASSED
+  QUIZ_FAILED
+  INTERVENTION_FLAG
+  MESSAGE_RECEIVED
+  TRANSLATION_READY
+  SYSTEM_ANNOUNCEMENT
+}
+
+model Notification {
+  id                String           @id @default(cuid())
+  userId            String
+  type              NotificationType
+  title             Json
+  body              Json
+  isRead            Boolean          @default(false)
+  relatedEntityType String?
+  relatedEntityId   String?
+  createdAt         DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+// ─── Certificate Models ───────────────────────────────────────────────────────
+
+model Certificate {
+  id              String   @id @default(cuid())
+  farmerId        String
+  courseId        String
+  enrollmentId    String
+  issuedAt        DateTime @default(now())
+  certificateCode String   @unique
+  pdfUrl          String?
+
+  farmer     User       @relation("FarmerCertificates", fields: [farmerId], references: [id], onDelete: Cascade)
+  course     Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@index([farmerId])
+  @@index([courseId])
+  @@map("certificates")
+}
+
+// ─── Mbaza Staff Models ───────────────────────────────────────────────────────
+
+enum FlagType {
+  FLAG_INACTIVE
+  FLAG_FAILING
+  FLAG_STALLED
+}
+
+model FarmerGroup {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  region      String?
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy   User                   @relation("GroupCreator", fields: [createdById], references: [id])
+  memberships FarmerGroupMembership[]
+
+  @@map("farmer_groups")
+}
+
+model FarmerGroupMembership {
+  id       String   @id @default(cuid())
+  groupId  String
+  farmerId String
+  joinedAt DateTime @default(now())
+
+  group  FarmerGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  farmer User        @relation("FarmerGroupMemberships", fields: [farmerId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, farmerId])
+  @@index([farmerId])
+  @@map("farmer_group_memberships")
+}
+
+model InterventionFlag {
+  id           String    @id @default(cuid())
+  farmerId     String
+  flagType     FlagType
+  courseId     String?
+  isResolved   Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  resolvedAt   DateTime?
+  resolvedById String?
+  notes        String?   @db.Text
+
+  farmer     User   @relation("FarmerFlags", fields: [farmerId], references: [id], onDelete: Cascade)
+  course     Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  resolvedBy User?  @relation("FlagResolver", fields: [resolvedById], references: [id])
+
+  @@index([farmerId])
+  @@index([isResolved])
+  @@map("intervention_flags")
+}
+
+model FarmerNote {
+  id        String   @id @default(cuid())
+  farmerId  String
+  authorId  String
+  body      String   @db.Text
+  createdAt DateTime @default(now())
+
+  farmer User @relation("FarmerNotes", fields: [farmerId], references: [id], onDelete: Cascade)
+  author User @relation("NoteAuthor", fields: [authorId], references: [id])
+
+  @@index([farmerId])
+  @@map("farmer_notes")
+}
+
+model Message {
+  id          String    @id @default(cuid())
+  senderId    String
+  recipientId String?
+  groupId     String?
+  subject     String
+  body        String    @db.Text
+  language    Language  @default(en)
+  sentAt      DateTime  @default(now())
+  readAt      DateTime?
+
+  sender    User  @relation("MessageSender", fields: [senderId], references: [id])
+  recipient User? @relation("MessageRecipient", fields: [recipientId], references: [id])
+
+  @@index([recipientId])
+  @@index([senderId])
+  @@map("messages")
 }

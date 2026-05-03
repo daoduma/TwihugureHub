@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none">
+  <rect x="0" y="4" width="32" height="32" rx="8" fill="#2D6A4F"/>
+  <path d="M16 34 C16 34 8 28 8 20 C8 16 11 13 16 13 C21 13 24 16 24 20 C24 28 16 34 16 34Z" fill="#E9C46A"/>
+  <path d="M16 13 L16 34" stroke="#2D6A4F" strokeWidth="1.5" strokeLinecap="round"/>
+  <text x="40" y="26" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="16" fill="#2D6A4F">TwihugureHub</text>
+</svg>

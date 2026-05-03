@@ -17,6 +17,14 @@ import {
   Ticket,
   User,
   Sprout,
+  Languages,
+  ClipboardCheck,
+  Cpu,
+  ShieldCheck,
+  ShieldAlert,
+  MessageSquare,
+  Award,
+  WifiOff,
 } from "lucide-react";
 import { useTranslation } from "@/lib/useTranslation";
 import { cn } from "@/lib/utils";
@@ -31,28 +39,33 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   // Shared
-  { href: "/farmer/dashboard",  labelKey: "nav.dashboard",      icon: LayoutDashboard, roles: ["FARMER"] },
-  { href: "/farmer/courses",    labelKey: "nav.myLearning",     icon: BookOpen,        roles: ["FARMER"] },
-  { href: "/farmer/profile",    labelKey: "nav.profile",        icon: User,            roles: ["FARMER"] },
+  { href: "/farmer/dashboard",       labelKey: "nav.dashboard",       icon: LayoutDashboard, roles: ["FARMER"] },
+  { href: "/farmer/courses",         labelKey: "nav.myLearning",      icon: BookOpen,        roles: ["FARMER"] },
+  { href: "/farmer/certificates",    labelKey: "nav.certificates",    icon: Award,           roles: ["FARMER"] },
+  { href: "/farmer/offline-lessons", labelKey: "nav.offlineLessons",  icon: WifiOff,         roles: ["FARMER"] },
+  { href: "/farmer/messages",        labelKey: "nav.messages",        icon: MessageSquare,   roles: ["FARMER"] },
+  { href: "/farmer/profile",         labelKey: "nav.profile",         icon: User,            roles: ["FARMER"] },
 
   { href: "/trainer/dashboard", labelKey: "nav.dashboard",      icon: LayoutDashboard, roles: ["TRAINER"] },
   { href: "/trainer/courses",   labelKey: "nav.courses",        icon: GraduationCap,   roles: ["TRAINER"] },
+  { href: "/trainer/translations", labelKey: "nav.translations",  icon: Languages,       roles: ["TRAINER"] },
   { href: "/trainer/farmers",   labelKey: "nav.farmers",        icon: Sprout,          roles: ["TRAINER"] },
   { href: "/trainer/reports",   labelKey: "nav.reports",        icon: BarChart2,       roles: ["TRAINER"] },
   { href: "/trainer/profile",   labelKey: "nav.profile",        icon: User,            roles: ["TRAINER"] },
 
-  { href: "/admin/dashboard",   labelKey: "nav.dashboard",      icon: LayoutDashboard, roles: ["ADMIN"] },
-  { href: "/admin/users",       labelKey: "nav.users",          icon: Users,           roles: ["ADMIN"] },
-  { href: "/admin/courses",     labelKey: "nav.courses",        icon: BookOpen,        roles: ["ADMIN"] },
-  { href: "/admin/reports",     labelKey: "nav.reports",        icon: BarChart2,       roles: ["ADMIN"] },
-  { href: "/admin/audit-logs",  labelKey: "nav.auditLogs",      icon: ScrollText,      roles: ["ADMIN"] },
-  { href: "/admin/settings",    labelKey: "nav.settings",       icon: Settings,        roles: ["ADMIN"] },
+  { href: "/admin/dashboard",   labelKey: "nav.dashboard",      icon: LayoutDashboard,  roles: ["ADMIN"] },
+  { href: "/admin/users",       labelKey: "nav.users",          icon: Users,            roles: ["ADMIN"] },
+  { href: "/admin/approvals",   labelKey: "nav.approvals",      icon: ClipboardCheck,   roles: ["ADMIN"] },
+  { href: "/admin/ai-settings", labelKey: "nav.aiSettings",     icon: Cpu,              roles: ["ADMIN"] },
+  { href: "/admin/audit-logs",  labelKey: "nav.auditLogs",      icon: ScrollText,       roles: ["ADMIN"] },
+  { href: "/admin/security",    labelKey: "nav.security",       icon: ShieldCheck,      roles: ["ADMIN"] },
 
-  { href: "/mbaza/dashboard",   labelKey: "nav.dashboard",      icon: LayoutDashboard, roles: ["MBAZA_STAFF"] },
-  { href: "/mbaza/knowledge",   labelKey: "nav.knowledgeBase",  icon: Database,        roles: ["MBAZA_STAFF"] },
-  { href: "/mbaza/tickets",     labelKey: "nav.supportTickets", icon: Ticket,          roles: ["MBAZA_STAFF"] },
-  { href: "/mbaza/analytics",   labelKey: "nav.analytics",      icon: BarChart2,       roles: ["MBAZA_STAFF"] },
-  { href: "/mbaza/profile",     labelKey: "nav.profile",        icon: User,            roles: ["MBAZA_STAFF"] },
+  { href: "/mbaza/dashboard",     labelKey: "nav.dashboard",       icon: LayoutDashboard, roles: ["MBAZA_STAFF"] },
+  { href: "/mbaza/farmers",       labelKey: "nav.farmers",         icon: Users,           roles: ["MBAZA_STAFF"] },
+  { href: "/mbaza/groups",        labelKey: "nav.groups",          icon: Database,        roles: ["MBAZA_STAFF"] },
+  { href: "/mbaza/interventions", labelKey: "nav.interventions",   icon: ShieldAlert,     roles: ["MBAZA_STAFF"] },
+  { href: "/mbaza/messages",      labelKey: "nav.messages",        icon: ScrollText,      roles: ["MBAZA_STAFF"] },
+  { href: "/mbaza/reports",       labelKey: "nav.reports",         icon: BarChart2,       roles: ["MBAZA_STAFF"] },
 ];
 
 interface SidebarProps {

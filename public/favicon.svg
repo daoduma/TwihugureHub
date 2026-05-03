@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="8" fill="#2D6A4F"/>
+  <!-- Leaf/plant icon -->
+  <path d="M16 28 C16 28 8 22 8 14 C8 10 11 7 16 7 C21 7 24 10 24 14 C24 22 16 28 16 28Z" fill="#E9C46A" opacity="0.9"/>
+  <path d="M16 7 L16 28" stroke="#2D6A4F" strokeWidth="1.5" strokeLinecap="round"/>
+  <path d="M16 16 C16 16 12 12 10 10" stroke="#2D6A4F" strokeWidth="1" strokeLinecap="round" opacity="0.6"/>
+  <path d="M16 20 C16 20 20 16 22 14" stroke="#2D6A4F" strokeWidth="1" strokeLinecap="round" opacity="0.6"/>
+</svg>

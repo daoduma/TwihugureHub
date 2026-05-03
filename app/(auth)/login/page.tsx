@@ -10,6 +10,10 @@ import { useTranslation } from "@/lib/useTranslation";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { cn } from "@/lib/utils";
 
+
+// CHANGED: Added page title for browser <title> tags
+export const metadata = { title: "Sign In" };
+
 export default function LoginPage() {
   const { t } = useTranslation();
   const router = useRouter();

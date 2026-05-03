@@ -1,239 +1,203 @@
 # TwihugureHub 🌱
 
-> **Multilingual Agricultural Training Platform for Rwanda**
-> Built with Next.js 14, TypeScript, Tailwind CSS, Prisma, PostgreSQL, NextAuth.js, and i18next.
+**Multilingual Agricultural Training Platform for Rwanda**
+
+TwihugureHub connects Rwandan farmers with professional agricultural training through an accessible, multilingual digital platform supporting English, French, and Kinyarwanda. Built by Mbaza and designed for mobile-first access in rural contexts.
 
 ---
 
-## Environment Variables
+## Architecture
 
-Copy `.env.example` to `.env.local` and fill in the values before running the app.
-
-| Variable | Required | Description |
-|---|---|---|
-| `DATABASE_URL` | ✅ | PostgreSQL connection string (Prisma format) |
-| `NEXTAUTH_SECRET` | ✅ | Random secret for signing JWTs — generate with `openssl rand -base64 32` |
-| `NEXTAUTH_URL` | ✅ | Canonical URL of your app, e.g. `http://localhost:3000` |
-
-### Example `.env.local`
-
-```env
-DATABASE_URL="postgresql://postgres:password@localhost:5432/twihugure"
-NEXTAUTH_SECRET="your_super_secret_random_string_here"
-NEXTAUTH_URL="http://localhost:3000"
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        TwihugureHub                         │
+├─────────────────┬───────────────────┬───────────────────────┤
+│   Next.js 14    │    PostgreSQL 15   │      Redis (cache)    │
+│  (App Router)   │    via Prisma ORM  │   (session / queue)  │
+├─────────────────┴───────────────────┴───────────────────────┤
+│                    Multilingual Layer                        │
+│          i18next  ·  en  ·  fr  ·  rw (Kinyarwanda)        │
+├──────────────────────────────────────────────────────────────┤
+│                      AI Translation                          │
+│   Anthropic Claude · OpenAI · Google Gemini · Mistral       │
+│   (Config stored encrypted in DB; fallback to env vars)     │
+├──────────────────────────────────────────────────────────────┤
+│              Role-Based Access Control                       │
+│   ADMIN · TRAINER · MBAZA_STAFF · FARMER                    │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Tech Stack
+## Prerequisites
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 14 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Database ORM | Prisma |
-| Database | PostgreSQL |
-| Auth | NextAuth.js v4 (JWT + Credentials) |
-| i18n | i18next + react-i18next |
-| Validation | Zod |
+- **Node.js** ≥ 20
+- **PostgreSQL** 15
+- **npm** ≥ 10
+- Docker & Docker Compose (for containerised setup)
 
 ---
 
-## User Roles
+## Local Setup
 
-| Role | Dashboard Route | Registration |
-|---|---|---|
-| `FARMER` | `/farmer/dashboard` | Self-registration via `/register` |
-| `TRAINER` | `/trainer/dashboard` | Created by Admin |
-| `ADMIN` | `/admin/dashboard` | Created by Admin (or seeded) |
-| `MBAZA_STAFF` | `/mbaza/dashboard` | Created by Admin |
-
----
-
-## Supported Languages
-
-| Code | Language | Native Name |
-|---|---|---|
-| `en` | English | English |
-| `fr` | French | Français |
-| `rw` | Kinyarwanda | Ikinyarwanda |
-
-The language preference is:
-1. Stored on the `User` record in the database
-2. Loaded into the JWT session on login
-3. Synced to i18next on app load
-4. Also storable in a cookie (`twihugure_lang`) for pre-login use (e.g. login/register pages)
-
----
-
-## Project Structure
-
+### 1. Clone the repository
+```bash
+git clone https://github.com/your-org/twihugure-hub.git
+cd twihugure-hub
 ```
-twihugure-hub/
-├── app/
-│   ├── (auth)/
-│   │   ├── login/page.tsx          # Login form
-│   │   ├── register/page.tsx       # Farmer registration
-│   │   └── layout.tsx              # Auth layout (redirects if logged in)
-│   ├── (dashboard)/
-│   │   ├── farmer/dashboard/       # Farmer dashboard
-│   │   ├── trainer/dashboard/      # Trainer dashboard
-│   │   ├── admin/dashboard/        # Admin dashboard (with live DB stats)
-│   │   ├── mbaza/dashboard/        # Mbaza staff dashboard
-│   │   └── layout.tsx              # Authenticated layout wrapper
-│   ├── api/
-│   │   ├── auth/[...nextauth]/     # NextAuth handler
-│   │   └── auth/register/          # Farmer registration API
-│   ├── globals.css
-│   ├── layout.tsx                  # Root layout (SessionProvider + I18nProvider)
-│   └── page.tsx                    # Root redirect
-├── components/
-│   ├── layout/
-│   │   ├── Navbar.tsx              # Top navbar
-│   │   ├── Sidebar.tsx             # Role-aware sidebar
-│   │   └── DashboardShell.tsx      # Client wrapper for layout
-│   ├── providers/
-│   │   ├── SessionProvider.tsx     # NextAuth session provider
-│   │   └── I18nProvider.tsx        # i18next provider
-│   └── ui/
-│       └── LanguageSelector.tsx    # Language switcher dropdown
-├── lib/
-│   ├── auth.ts                     # NextAuth config + helpers
-│   ├── audit.ts                    # Audit log utility
-│   ├── db.ts                       # Prisma client singleton
-│   ├── i18n.ts                     # i18next initialization
-│   ├── useTranslation.ts           # Custom hook wrappers
-│   └── utils.ts                    # cn(), getInitials(), etc.
-├── locales/
-│   ├── en/common.json              # English translations
-│   ├── fr/common.json              # French translations
-│   └── rw/common.json              # Kinyarwanda translations
-├── prisma/
-│   ├── schema.prisma               # Database models
-│   └── seed.ts                     # Demo data seeder
-├── types/
-│   ├── index.ts                    # Global types + constants
-│   └── next-auth.d.ts              # NextAuth type augmentation
-├── middleware.ts                   # Route protection middleware
-└── .env.example                    # Environment variable template
+
+### 2. Configure environment
+```bash
+cp .env.example .env
+# Edit .env — set DATABASE_URL, NEXTAUTH_SECRET, ENCRYPTION_SECRET
+```
+
+> **ENCRYPTION_SECRET** must be exactly 32 characters — it encrypts the LLM API key stored in the database.
+
+### 3. Option A — Docker Compose (recommended)
+```bash
+docker-compose up -d          # Start db + redis + app
+docker-compose exec app npm run db:migrate
+docker-compose exec app npm run db:seed
+```
+
+### 4. Option B — Local development
+```bash
+npm install
+npx prisma migrate dev
+npm run db:seed               # Seeds all demo data
+npm run dev                   # http://localhost:3000
 ```
 
 ---
 
-## Getting Started
+## Seed Accounts
 
-### Prerequisites
+After running `npm run db:seed`:
 
-- Node.js 18+
-- PostgreSQL 14+
-- `pnpm` (recommended) or `npm`
+| Role        | Email                         | Password      |
+|-------------|-------------------------------|---------------|
+| Admin       | admin@twihugurehub.rw         | Admin@1234    |
+| Trainer 1   | trainer1@twihugurehub.rw      | Trainer@1234  |
+| Trainer 2   | trainer2@twihugurehub.rw      | Trainer@1234  |
+| Mbaza Staff | mbaza@twihugurehub.rw         | Mbaza@1234    |
+| Farmers     | farmer1–10@twihugurehub.rw    | Farmer@1234   |
 
-### Installation
+> ⚠️ Update all passwords before going to production.
+
+---
+
+## Role-Based Access Summary
+
+| Feature                        | Admin | Trainer | Mbaza Staff | Farmer |
+|-------------------------------|:-----:|:-------:|:-----------:|:------:|
+| User management                | ✅    |         |             |        |
+| Course approval / rejection    | ✅    |         |             |        |
+| AI settings (LLM config)       | ✅    |         |             |        |
+| Audit logs                     | ✅    |         |             |        |
+| Create / edit courses          |       | ✅      |             |        |
+| Submit course for approval     |       | ✅      |             |        |
+| AI quiz translation            |       | ✅      |             |        |
+| View farmer progress           |       |         | ✅          |        |
+| Flag / intervene farmers       |       |         | ✅          |        |
+| Generate PDF / XLSX reports    |       |         | ✅          |        |
+| Send messages to farmers       |       |         | ✅          |        |
+| Manage farmer groups           |       |         | ✅          |        |
+| Browse & enroll in courses     |       |         |             | ✅     |
+| Take lessons & quizzes         |       |         |             | ✅     |
+| Download certificates          |       |         |             | ✅     |
+| Offline lesson access          |       |         |             | ✅     |
+
+---
+
+## LLM Configuration Guide
+
+TwihugureHub uses AI to auto-translate quiz questions into French and Kinyarwanda.
+
+### Setting up AI (as Admin)
+
+1. Log in as Admin → go to **Settings > AI Settings**
+2. Select your LLM provider (Anthropic recommended)
+3. Enter your API key — it is encrypted with AES-256-CBC before storage
+4. Click **Validate** to test the connection
+5. Click **Save Configuration**
+
+### Fallback behaviour
+If no DB config exists, the app falls back to environment variables:
+```
+AI_PROVIDER=anthropic
+AI_MODEL=claude-sonnet-4-20250514
+AI_API_KEY=your-key-here
+```
+This is useful for local development without database access.
+
+---
+
+## Testing
 
 ```bash
-# 1. Clone and install
-git clone <repo-url>
-cd twihugure-hub
-pnpm install
+# Unit tests
+npm run test:unit
 
-# 2. Configure environment
-cp .env.example .env.local
-# Edit .env.local with your DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL
+# Integration tests  
+npm run test:integration
 
-# 3. Push the Prisma schema to the database
-pnpm db:push
+# All tests with coverage
+npm run test:coverage
 
-# 4. Generate Prisma client
-pnpm db:generate
-
-# 5. (Optional) Seed demo data
-pnpm db:seed
-
-# 6. Start the development server
-pnpm dev
-```
-
-Visit [http://localhost:3000](http://localhost:3000).
-
-### Demo Credentials (after seeding)
-
-| Role | Email | Password |
-|---|---|---|
-| Admin | admin@twihugure.rw | Admin@2024! |
-| Trainer | trainer@twihugure.rw | Trainer@2024! |
-| Mbaza Staff | mbaza@twihugure.rw | Mbaza@2024! |
-| Farmer | farmer@twihugure.rw | Farmer@2024! |
-
----
-
-## Authentication Flow
-
-1. User submits email + password on `/login`
-2. NextAuth `CredentialsProvider` verifies against DB (bcrypt hash comparison)
-3. On success, a JWT is issued containing `{ id, role, preferredLanguage }`
-4. The middleware reads the JWT and enforces role-based access:
-   - `/farmer/*` → FARMER only
-   - `/trainer/*` → TRAINER only
-   - `/admin/*` → ADMIN only
-   - `/mbaza/*` → MBAZA_STAFF only
-5. Wrong-role access redirects to the user's own dashboard (not a 403)
-
----
-
-## Route Protection
-
-The `middleware.ts` file uses `next-auth/middleware`'s `withAuth` wrapper.
-
-- All routes under `/farmer`, `/trainer`, `/admin`, `/mbaza` are protected
-- Unauthenticated users are redirected to `/login?callbackUrl=<requested-path>`
-- Authenticated users accessing the wrong role route are redirected to their dashboard
-
----
-
-## Internationalization
-
-Translation files are in `/locales/{en,fr,rw}/common.json`.
-
-- **Pre-login**: Language selector in the navbar changes `i18n.language` and writes the `twihugure_lang` cookie
-- **Post-login**: The user's `preferredLanguage` from the DB is loaded into the JWT session and synced to i18next on app mount
-- **Adding a key**: Add it to all three JSON files simultaneously to avoid missing-key warnings
-
----
-
-## Audit Logging
-
-Every login is automatically logged to the `audit_logs` table. Use `createAuditLog()` from `lib/audit.ts` to log any other action:
-
-```ts
-import { createAuditLog, AuditActions } from "@/lib/audit";
-
-await createAuditLog({
-  userId: session.user.id,
-  action: AuditActions.UPDATE_PROFILE,
-  entity: "User",
-  entityId: session.user.id,
-  metadata: { changedFields: ["name"] },
-});
+# E2E tests (requires running app on port 3000)
+npm run dev &
+npm run test:e2e
 ```
 
 ---
 
-## What's Next
+## Deployment Guide
 
-This foundation is ready for the following features:
+### Docker (production)
 
-- [ ] Course creation and management (Trainer)
-- [ ] Course enrollment and progress tracking (Farmer)
-- [ ] Quiz builder and auto-grading
-- [ ] Mbaza knowledge base (Q&A, articles)
-- [ ] Admin user management CRUD
-- [ ] Notification system
-- [ ] Certificate generation (PDF)
-- [ ] Offline-capable PWA mode
+```bash
+# Build and run
+docker-compose -f docker-compose.yml up --build -d
+
+# Run migrations
+docker-compose exec app npx prisma migrate deploy
+
+# Seed initial data (first deploy only)
+docker-compose exec app npm run db:seed
+```
+
+### Environment variables for production
+
+| Variable            | Required | Description                              |
+|---------------------|----------|------------------------------------------|
+| `DATABASE_URL`      | ✅       | PostgreSQL connection string             |
+| `NEXTAUTH_SECRET`   | ✅       | Random 32+ char string for auth          |
+| `NEXTAUTH_URL`      | ✅       | Production URL (e.g. https://your.app)   |
+| `ENCRYPTION_SECRET` | ✅       | Exactly 32 chars — encrypts LLM API key  |
+| `AI_API_KEY`        | Optional | LLM API key fallback (use DB config)     |
+
+### Recommended production checklist
+- [ ] Set all required env vars
+- [ ] Use a strong `NEXTAUTH_SECRET` (run `openssl rand -base64 32`)
+- [ ] Use a proper `ENCRYPTION_SECRET` (exactly 32 chars)
+- [ ] Configure LLM API key via Admin > AI Settings (not env vars)
+- [ ] Set up PostgreSQL backups
+- [ ] Configure a CDN for `/public/uploads`
+
+---
+
+## Color Palette
+
+| Name       | Hex       | Usage                  |
+|------------|-----------|------------------------|
+| Primary    | `#2D6A4F` | Buttons, nav, headings |
+| Secondary  | `#E9C46A` | Accents, highlights    |
+| Background | `#F8F9FA` | Page backgrounds       |
+| Text       | `#1B1B1B` | Body text              |
 
 ---
 
 ## License
 
-Proprietary — TwihugureHub / Rwanda Agricultural Training Initiative
+MIT © TwihugureHub / Mbaza Rwanda

@@ -17,7 +17,16 @@
     "knowledgeBase": "Ububiko bw'ubumenyi",
     "supportTickets": "Ubutabazi",
     "analytics": "Isesengura",
-    "profile": "Umwirondoro"
+    "profile": "Umwirondoro",
+    "translations": "Isuzuma ry'ubuhinduzi",
+    "approvals": "Kwemeza",
+    "aiSettings": "AI / LLM",
+    "security": "Umutekano",
+    "groups": "Amatsinda",
+    "interventions": "Ubufasha",
+    "messages": "Ubutumwa",
+    "certificates": "Impamyabumenyi zanjye",
+    "offlineLessons": "Amasomo ya offline"
   },
   "auth": {
     "login": {
@@ -115,5 +124,588 @@
     "unauthorized": "Ntufite uburenganzira bwo kugera kuri iyi paji",
     "notFound": "Iyi paji ntiboneka",
     "serverError": "Ikosa rya seriveri. Ongera ugerageze nyuma."
+  },
+  "trainer": {
+    "dashboard": {
+      "title": "Ikibaho cy'umuhugura",
+      "subtitle": "Genzura amasomo yawe no gukurikirana iterambere ry'abanyeshuri",
+      "totalCourses": "Amasomo yose",
+      "publishedCourses": "Yasohowe",
+      "pendingApproval": "Biritegereje kwemezwa",
+      "enrolledFarmers": "Abahinzi biyandikishije",
+      "recentActivity": "Ibikorwa biheruka",
+      "noActivity": "Nta bikorwa biheruka",
+      "lastUpdated": "Ivugururwa riheruka"
+    },
+    "courses": {
+      "title": "Amasomo yanjye",
+      "subtitle": "Shiraho no gucunga amasomo yawe y'amahugurwa",
+      "createNew": "Shiraho isomo rishya",
+      "createSubtitle": "Uzuza amakuru y'ibanze kugira ngo utangire",
+      "createAndEdit": "Shiraho no gufungura editor",
+      "titleLabel": "Izina ry'isomo",
+      "descriptionLabel": "Ibisobanuro",
+      "thumbnail": "Ifoto nto y'isomo",
+      "metadata": "Amakuru y'isomo",
+      "languageAvailability": "Indimi zikoreshwa",
+      "titleRequired": "Injiza izina ry'isomo nibura mu rurimi rumwe",
+      "untitled": "Isomo ritunze izina",
+      "empty": "Nta masomo arahari",
+      "emptyHint": "Kanda 'Shiraho isomo rishya' kugira ngo utangire",
+      "preview": "Reba isomo",
+      "submitApproval": "Ohereza kwemezwa",
+      "archive": "Bika mu mateka",
+      "confirmSubmit": "Ohereza iri somo kuri admin kugira ngo bemeze?",
+      "confirmArchive": "Bika iri somo mu mateka? Ntizongera kubonwa n'abahinzi.",
+      "col": {
+        "course": "Isomo",
+        "modules": "Ibice"
+      }
+    },
+    "modules": {
+      "title": "Ibice n'amasomo",
+      "label": "ibice",
+      "add": "Ongeraho igice",
+      "untitled": "Igice kitunze izina",
+      "empty": "Nta bice arahari",
+      "emptyHint": "Kanda 'Ongeraho igice' kugira ngo ubake imiterere y'isomo",
+      "confirmDelete": "Siba iki gice n'amasomo yacyo yose?"
+    },
+    "lessons": {
+      "label": "amasomo",
+      "add": "Ongeraho isomo",
+      "untitled": "Isomo ritunze izina",
+      "editor": "Guhindura isomo",
+      "title": "Izina ry'isomo",
+      "body": "Ibiri mu isomo",
+      "videoUrl": "URL ya vidiyo",
+      "audio": "Dosiye ya audio",
+      "images": "Amafoto",
+      "addImage": "Ongeraho ifoto",
+      "attachments": "Ibimanitswe",
+      "addAttachment": "Ongeraho ikibikiriwe (PDF, DOCX)",
+      "selectLesson": "Hitamo isomo ku ruhande kugira ngo urirebe",
+      "confirmDelete": "Siba iri somo?"
+    },
+    "status": {
+      "draft": "Ibikorwa",
+      "pending_approval": "Biritegereje kwemezwa",
+      "published": "Byasohowe",
+      "archived": "Bikiwe mu mateka"
+    }
+  },
+  "quiz": {
+    "designer": "Gukora ikizamini",
+    "createQuiz": "Shiraho ikizamini",
+    "noQuizYet": "Nta kizamini kirabaho",
+    "noQuizHint": "Shiraho ikizamini kugira ngo usuzume abanyeshuri ku isomo",
+    "settings": "Igenamiterere y'ikizamini",
+    "quizTitle": "Izina ry'ikizamini",
+    "passingScore": "Amanota yo gutunga",
+    "allowRetry": "Reka kongera gukabirwa",
+    "saveSettings": "Bika igenamiterere",
+    "questions": "Ibibazo",
+    "addQuestion": "Ongeraho ikibazo",
+    "noQuestions": "Nta bibazo arahari",
+    "noQuestionsHint": "Kanda 'Ongeraho ikibazo' kugira ngo ubake ikizamini",
+    "questionType": "Ubwoko bw'ikibazo",
+    "questionStem": "Ikibazo",
+    "answerOptions": "Ibisubizo bishoboka",
+    "addOption": "Ongeraho igisubizo",
+    "correctAnswer": "Igisubizo cyiza",
+    "correctFeedback": "Igisubizo cy'ukuri",
+    "incorrectFeedback": "Igisubizo cy'ikosa",
+    "shortAnswerNote": "Ibibazo by'igisubizo gito bisubirwamo n'umuhugura",
+    "untitledQuestion": "Ikibazo kitunze izina",
+    "confirmDeleteQuestion": "Siba iki kibazo?",
+    "aiTranslate": "Guhindura indimi na AI",
+    "targetLanguage": "Ururimi rw'intego",
+    "translateAll": "Hindura ibibazo byose mu ndimi",
+    "translateAllHint": "Ibibazo byahinduwe neza ntibizasubira guhindurwa",
+    "translating": "Guhindura indimi…",
+    "translationQueue": "Urutonde rw'isuzuma ry'ubuhinduzi",
+    "translationQueueSubtitle": "Suzuma no kwemeza ubuhinduzi bwakozwe na AI",
+    "filterLanguage": "Ururimi",
+    "items": "ibintu",
+    "original": "Umwimerere",
+    "translation": "Ubuhinduzi",
+    "translatedFrom": "Byahinduwe uvuye",
+    "approve": "Emeza",
+    "editApprove": "Hindura no kwemeza",
+    "reject": "Tangaza",
+    "saveAndApprove": "Bika no kwemeza",
+    "translationApproved": "Byemejwe — ubu buhinduzi burashyizweho ikimenyetso cyo gukoreshwa",
+    "noTranslations": "Nta gice cy'ubuhinduzi gikwiye ibizinga byawe"
+  },
+  "farmer": {
+    "dashboard": {
+      "welcome": "Murakaza neza",
+      "subtitle": "Inzira yawe yo kwiga ubuhinzi",
+      "inProgress": "Biragenda",
+      "completed": "Byarangiye",
+      "completedCourses": "Amasomo yarangiye",
+      "recommended": "Biteganijwe",
+      "continueLearning": "Komeza kwiga",
+      "enrolled": "Amasomo nanditsemo",
+      "noCourses": "Nta masomo aboneka ubu",
+      "checkBack": "Subira gusura vuba kugirango ubone ibikurikira bishya by'amahugurwa."
+    },
+    "courses": {
+      "title": "Ububiko bw'amasomo",
+      "subtitle": "Reba amasomo yose y'amahugurwa aboneka",
+      "enrolled": "Wanditsemo"
+    },
+    "course": {
+      "modules": "amashuri",
+      "lessons": "amasomo",
+      "enroll": "Iyandikishe muri iri somo",
+      "enrollNow": "Iyandikishe →",
+      "continueLearning": "Komeza kwiga",
+      "progress": "Aho ugeze",
+      "complete": "byarangiye",
+      "curriculum": "Gahunda y'isomo",
+      "reviews": "Ibitekerezo",
+      "leaveReview": "Siga igitekerezo",
+      "reviewPlaceholder": "Sangira uburambe bwawe muri iri somo...",
+      "submitReview": "Ohereza igitekerezo"
+    },
+    "lesson": {
+      "backToCourse": "Subira ku isomo",
+      "previous": "Ibanza",
+      "next": "Ikurikira",
+      "markComplete": "Shyiraho ko byarangiye",
+      "completed": "Isomo ryarangiye!",
+      "takeQuiz": "Fata ikizamini",
+      "audio": "Amajwi",
+      "attachments": "Inyandiko zifatanye",
+      "languageFallback": "Iri somo ntiririmo ikinyarwanda. Aragaragaza verisiyo nziza iri hafi."
+    },
+    "quiz": {
+      "translating": "Gutegura ikizamini mu rurimi rwawe...",
+      "translatingHint": "Ibi bishobora gufata amasegonda make. Ikizamini cyawe cyahinduwe kizabikwa kugirango abiga barekure bakigire vuba.",
+      "passed": "Murakaza neza! Watunga!",
+      "failed": "Ntabwo biragera",
+      "correct": "byiza",
+      "passingScore": "Amanota yo gutunga",
+      "breakdown": "Ibisubizo by'ibibazo",
+      "yourAnswer": "Igisubizo cyawe:",
+      "correctAnswer": "Igisubizo cy'ukuri:",
+      "continueNext": "Komeza ku isomo rikurikira",
+      "tryAgain": "Ongera ugerageze",
+      "contactTrainer": "Baza umuhugura wawe kugirango agufire.",
+      "nextQuestion": "Ikibazo gikurikira",
+      "submit": "Ohereza ikizamini",
+      "typeAnswer": "Andika igisubizo cyawe hano...",
+      "passingRequired": "Amanota asabwa kugirango utunga:"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Ikibaho cy'Umuyobozi",
+      "welcome": "Incamake y'urubuga",
+      "kpi": {
+        "users": "Abakoresha bose",
+        "courses": "Amasomo yose",
+        "pending": "Gutegereza kwemezwa",
+        "llm": "Imimerere ya AI / LLM"
+      },
+      "recentActivity": "Ibikorwa bishya by'audit",
+      "quickLinks": "Ibice by'Umuyobozi",
+      "actionRequired": "Ingingo irasabwa"
+    },
+    "users": {
+      "title": "Gucunga Abakoresha",
+      "createUser": "Shiraho Umukoresha",
+      "searchPlaceholder": "Shakisha izina cyangwa imeri…",
+      "allRoles": "Imyanya yose",
+      "allStatuses": "Imimerere yose",
+      "active": "Birakora",
+      "inactive": "Bihagaritse",
+      "columns": {
+        "name": "Izina",
+        "email": "Imeri",
+        "role": "Urwego",
+        "language": "Ururimi",
+        "status": "Imimerere",
+        "joined": "Yinjiye",
+        "actions": "Ibikorwa"
+      },
+      "actions": {
+        "edit": "Hindura",
+        "deactivate": "Hagarika",
+        "activate": "Fungura"
+      },
+      "createModal": {
+        "title": "Fungura Konti y'Umukozi",
+        "hint": "Abahinzi biyandikisha ubwabo. Uyu murongo uha Abarimu, Abayobozi, cyangwa Abakozi ba Mbaza.",
+        "name": "Amazina yose",
+        "email": "Imeri",
+        "password": "Ijambo ry'ibanga ry'geragereza",
+        "role": "Urwego",
+        "language": "Ururimi rwo guhitamo",
+        "submit": "Fungura Konti",
+        "creating": "Fungura…"
+      },
+      "editModal": {
+        "title": "Hindura Umukoresha",
+        "newPassword": "Ijambo ry'ibanga rishya (siga ubusa niba ushaka gukomeza)",
+        "save": "Zachika",
+        "saving": "Bika…"
+      }
+    },
+    "approvals": {
+      "title": "Urutonde rw'Kwemeza Ibikoresho",
+      "empty": "Byose birangiye!",
+      "emptyHint": "Nta masomo ategereje kwemezwa.",
+      "preview": "Reba",
+      "approve": "Emeza",
+      "approveFull": "Emeza no Gutangaza",
+      "reject": "Hanbya",
+      "rejectModal": {
+        "title": "Hanbya Isomo",
+        "hint": "Tanga impamvu z'ikigeragezo ko isomo ryahanbywe.",
+        "notesPlaceholder": "Impamvu zo kuhanba (bisabwa)…",
+        "confirm": "Emeza Kuhanba",
+        "confirming": "Kuhanba…"
+      },
+      "previewModal": {
+        "pending": "ITEGEREJE ISUZUMA",
+        "by": "Na",
+        "description": "Ibisobanuro",
+        "modules": "Ibice"
+      }
+    },
+    "aiSettings": {
+      "title": "Igenamiterere rya AI / LLM",
+      "subtitle": "Shyiraho indangagaciro ya AI ihagarariye guhuza indimi n'ibikorwa by'ubwenge.",
+      "currentConfig": "Igenamiterere rya none",
+      "testConnection": "Gerageza Połączenie",
+      "rotate": "Hindura / Vugurura",
+      "steps": {
+        "provider": "1. Hitamo Ushyira",
+        "model": "2. Hitamo Igitabo",
+        "key": "3. Injiza Urufunguzo rwa API"
+      },
+      "providerStep": {
+        "title": "Hitamo Ushyira",
+        "active": "BIRAKORA",
+        "models": "ibitabo",
+        "custom": "Aho guhurira bwite"
+      },
+      "modelStep": {
+        "primary": "Igitabo cy'ibanze",
+        "fallback": "Igitabo cy'ikigenga (atabigomba)",
+        "none": "Nta na kimwe",
+        "customModelId": "Indangagaciro y'Igitabo",
+        "customModelPlaceholder": "urugero: llama-3.1-70b-instruct",
+        "reasoning": "Gutekereza",
+        "continue": "Komeza ujye ku Rufunguzo rwa API →"
+      },
+      "keyStep": {
+        "title": "Injiza Urufunguzo rwa API",
+        "apiKeyLabel": "Urufunguzo rwa API",
+        "apiKeyHint": "Bitswe hakoreshejwe AES-256. Ntibigeze bitangwa nta gufunga.",
+        "baseUrlLabel": "URL y'ibanze",
+        "baseUrlPlaceholder": "https://api.ushyira-wawe.com/v1",
+        "validateAndSave": "Suzuma no Bika",
+        "validating": "Gusuzuma…",
+        "saving": "Bika…",
+        "success": "Urufunguzo rwemejwe — igenamiterere ryabitswe neza!",
+        "failed": "Isuzuma ryanze:",
+        "configSummary": "Incamake y'igenamiterere"
+      },
+      "config": {
+        "provider": "Ushyira",
+        "model": "Igitabo",
+        "apiKey": "Urufunguzo rwa API",
+        "validated": "Yasuzumwe",
+        "never": "Ntabwo",
+        "fallback": "Ikigenga"
+      }
+    },
+    "auditLogs": {
+      "title": "Isuzuma ry'Ibikorwa",
+      "exportCsv": "Sohora CSV",
+      "filterAction": "Shungura ibikorwa (urugero: LOGIN)…",
+      "from": "Kuva",
+      "to": "Kugeza",
+      "clear": "Siba",
+      "columns": {
+        "timestamp": "Igihe",
+        "user": "Umukoresha",
+        "action": "Igikorwa",
+        "entity": "Ibintu",
+        "details": "Amakuru"
+      },
+      "expand": "Gukora hejuru",
+      "collapse": "Gufunga",
+      "empty": "Nta makuru y'audit abonetse"
+    },
+    "security": {
+      "title": "Igenamiterere ry'Umutekano",
+      "subtitle": "Shyiraho amategeko y'umutekano w'urubuga.",
+      "passwordPolicy": {
+        "title": "Amategeko y'Ijambo ry'Ibanga",
+        "minLength": "Uburebure buke:",
+        "requireUppercase": "Saba inyuguti nkuru nibura imwe (A-Z)",
+        "requireNumber": "Saba umubare nibura umwe (0-9)",
+        "requireSymbol": "Saba ikimenyetso nibura kimwe (!@#$…)"
+      },
+      "session": {
+        "title": "Igenamiterere ry'Igihe cyo Gukoresha",
+        "timeout": "Igihe cyo Kurangira:"
+      },
+      "twoFA": {
+        "title": "Guhamya Incuro Ebyiri",
+        "subtitle": "Saba 2FA ku nzego z'urwego rw'ubuyobozi.",
+        "adminLabel": "Saba 2FA ku Nkonta za Admin",
+        "mbazaLabel": "Saba 2FA ku Nkonta za Mbaza Staff",
+        "note": "Icyitonderwa: Ishyirwa mu bikorwa rya 2FA risaba guhuza n'application y'umunyabwenge."
+      },
+      "saveButton": "Bika Igenamiterere ry'Umutekano",
+      "saved": "Byabitswe!",
+      "danger": {
+        "title": "Ahantu Hifashishwa na Mwana",
+        "forceLogout": "Sirisha Abakoresha Bose Kwinjira Ubundi",
+        "forceLogoutHint": "Hagurika ibihe byose bya none ako kanya. Abakoresha bose bazasabwa kwinjira ubundi.",
+        "forceLogoutButton": "Sirisha Kwinjira",
+        "confirm": "Emeza",
+        "cancel": "Reka",
+        "done": "Ibihe byose byahaguriwe."
+      }
+    }
+  },
+  "mbaza": {
+    "dashboard": {
+      "title": "Ikibaho cya Mbaza Staff",
+      "subtitle": "Incamake y'iterambere ry'abahinzi",
+      "kpi": {
+        "totalFarmers": "Abahinzi bose",
+        "avgCompletion": "Ikigero cy'isoko",
+        "completedThisMonth": "Barangije uku kwezi",
+        "activeFlags": "Ibimenyetso birakora"
+      },
+      "completionByCourseChart": "Ikigero cy'isoko ry'amasomo",
+      "weeklyActivityChart": "Igerageza ry'ibizamini (ibyumweru 7)",
+      "quickAccess": "Iyinjiriro ryihuse"
+    },
+    "farmers": {
+      "title": "Urutonde rw'iterambere ry'abahinzi",
+      "tracked": "abahinzi bakurikiranwa",
+      "searchPlaceholder": "Shakisha izina cyangwa imeri…",
+      "allFarmers": "Abahinzi bose",
+      "flaggedOnly": "Bashinzwe gusa",
+      "noFlags": "Nta bimenyetso",
+      "columns": {
+        "name": "Izina",
+        "groups": "Amatsinda",
+        "courses": "Amasomo",
+        "avgProgress": "Iterambere moy.",
+        "avgScore": "Amanota moy.",
+        "lastActive": "Igihe cyanyuma",
+        "flags": "Ibimenyetso"
+      },
+      "never": "Ntabwo",
+      "view": "Reba →"
+    },
+    "farmerDetail": {
+      "back": "← Garuka ku rutonde",
+      "joinedAt": "Yinjiye",
+      "activeFlags": "Ibimenyetso birakora",
+      "enrollments": "Iyandikwa mu masomo",
+      "noEnrollments": "Nta masomo yiyandikishije.",
+      "enrolledAt": "Yiyandikishije",
+      "aiTranslatedBadge": "Ikizamini cyahinduwe n'AI (rw)",
+      "completed": "Yarangije",
+      "module": "Igice",
+      "notes": "Amatangazo y'umukozi (ibanga)",
+      "noNotes": "Nta matangazo arahari.",
+      "addNote": "Ongeraho itangazo",
+      "addingNote": "Kongeraho…",
+      "notePlaceholder": "Ongeraho itangazo bwite ku muhinzi uyu…",
+      "pass": "YASHIZE",
+      "fail": "YANZE",
+      "attempt": "Agerageza"
+    },
+    "groups": {
+      "title": "Gucunga Amatsinda",
+      "groups": "amatsinda",
+      "createGroup": "Shiraho Itsinda",
+      "editGroup": "Hindura Itsinda",
+      "farmers": "Abahinzi",
+      "avgProgress": "Iterambere moy.",
+      "manageMembers": "Gucunga Abanyamuryango",
+      "viewDetail": "Reba Incamake →",
+      "deleteConfirm": "Siba itsinda? Abahinzi ntibazasibwa.",
+      "noGroups": "Nta matsinda arahari.",
+      "createFirst": "Shiraho Itsinda rya Mbere",
+      "form": {
+        "name": "Izina ry'Itsinda",
+        "region": "Intara",
+        "description": "Ibisobanuro",
+        "namePlaceholder": "urugero: Abahinzi b'Amajyaruguru",
+        "regionPlaceholder": "urugero: Intara y'Amajyaruguru",
+        "descriptionPlaceholder": "Amatangazo ku matsinda (ntabwo bisabwa)…",
+        "save": "Bika Itsinda",
+        "saving": "Bika…"
+      },
+      "members": {
+        "title": "Gucunga Abanyamuryango",
+        "selected": "bahisemo",
+        "searchPlaceholder": "Shakisha abahinzi…",
+        "save": "Bika Abanyamuryango",
+        "saving": "Bika…"
+      }
+    },
+    "interventions": {
+      "title": "Ibimenyetso by'Ubufasha",
+      "subtitle": "Abahinzi bashobora gukenesha ubufasha",
+      "runCheck": "Gukora Isuzuma",
+      "running": "Irakora…",
+      "newFlagsCreated": "ibimenyetso bishya byashyizweho",
+      "tabs": {
+        "active": "Ibimenyetso birakora",
+        "resolved": "Byarangiye"
+      },
+      "columns": {
+        "farmer": "Umuhinzi",
+        "flagType": "Ubwoko bw'ikimenyetso",
+        "course": "Isomo rihuriraho",
+        "daysSince": "Iminsi kuva hahiswe ikimenyetso",
+        "resolvedBy": "Yarangijwe na",
+        "actions": "Ibikorwa"
+      },
+      "flagLabels": {
+        "FLAG_INACTIVE": "Ntakora 14d+",
+        "FLAG_FAILING": "Yanze kenshi",
+        "FLAG_STALLED": "Iterambere rifunze"
+      },
+      "noActive": "Nta bimenyetso birakora 🎉",
+      "noResolved": "Nta bimenyetso byarangiye",
+      "actions": {
+        "resolve": "Rangiza",
+        "message": "Tumira"
+      },
+      "resolveModal": {
+        "title": "Shyiraho ko Byarangiye",
+        "farmer": "Umuhinzi",
+        "flag": "Ikimenyetso",
+        "notesPlaceholder": "Amatangazo yo kurangiza (ntabwo bisabwa)…",
+        "confirm": "Emeza Kurangiza",
+        "confirming": "Kurangiza…"
+      },
+      "messageModal": {
+        "title": "Tumira Ubutumwa",
+        "to": "Kuri",
+        "subject": "Insanganyamatsiko",
+        "body": "Ubutumwa",
+        "language": "Ururimi",
+        "subjectPlaceholder": "Ku bijyanye n'iterambere ryawe…",
+        "bodyPlaceholder": "Muhinzi wacu…",
+        "send": "Tumira",
+        "sending": "Gutumira…",
+        "sent": "Ubutumwa bwatumwe!"
+      }
+    },
+    "messages": {
+      "title": "Ubutumwa",
+      "subtitle": "Tumira ubutumwa ku muhinzi cyangwa itsinda",
+      "compose": "Andika Ubutumwa",
+      "individual": "Umuntu umwe",
+      "group": "Itsinda",
+      "recipientFarmer": "Umuhinzi utumiwe",
+      "recipientGroup": "Itsinda ritumiwe",
+      "selectFarmer": "Hitamo umuhinzi…",
+      "selectGroup": "Hitamo itsinda…",
+      "language": "Ururimi",
+      "subject": "Insanganyamatsiko",
+      "body": "Ubutumwa",
+      "send": "Tumira",
+      "sending": "Gutumira…",
+      "sent": "Ubutumwa bwatumwe",
+      "noMessages": "Nta butumwa bwatumwe",
+      "read": "Basomye",
+      "delivered": "Bwarahashyikirijwe",
+      "subjectPlaceholder": "Ibutsa ry'isomo, amakuru y'iterambere…",
+      "bodyPlaceholder": "Muhinzi wacu…"
+    },
+    "reports": {
+      "title": "Gukora Raporo",
+      "subtitle": "Kora, reba imbere, no kohereza raporo.",
+      "reportType": "Ubwoko bwa Raporo",
+      "filters": "Shungura",
+      "from": "Kuva ku itariki",
+      "to": "Kugeza ku itariki",
+      "group": "Itsinda",
+      "course": "Isomo",
+      "quizLanguage": "Ururimi rw'ikizamini",
+      "allGroups": "Amatsinda yose",
+      "allCourses": "Amasomo yose",
+      "allLanguages": "Indimi zose",
+      "generate": "Kora Raporo",
+      "generating": "Gukora…",
+      "exportExcel": "Excel",
+      "exportPdf": "PDF",
+      "exporting": "Kohereza…",
+      "noData": "Nta makuru abonetse.",
+      "noReport": "Hitamo ubwoko hanyuma ukande Kora",
+      "building": "Gukora raporo…",
+      "showingRows": "Werekana 100 mu {total} inzitizi. Sohorera kugira ngo urebe byose.",
+      "types": {
+        "completion": "Raporo y'Isoko",
+        "completionDesc": "Ikigero cy'isoko ry'amasomo, amatsinda, igihe",
+        "performance": "Raporo y'Imikorere",
+        "performanceDesc": "Amanota, ikigero cy'kuziba ibizamini",
+        "engagement": "Raporo y'Ubudatebuka",
+        "engagementDesc": "Amasomo arebwa, igihe ku rubuga",
+        "intervention": "Raporo y'Ubufasha",
+        "interventionDesc": "Umubare w'ibimenyetso n'ikigero cy'ibisubizo"
+      }
+    },
+    "farmerMessages": {
+      "title": "Ubutumwa Bwanjye",
+      "unread": "butasomwe",
+      "noMessages": "Nta butumwa arahari",
+      "selectMessage": "Hitamo ubutumwa kugira ngo usome",
+      "from": "Kuva kuri",
+      "read": "Byasomwe"
+    }
+  },
+  "notifications": {
+    "title": "Amatangazo",
+    "markAllRead": "Fata byose nk'ibyasomwe",
+    "empty": "Nta matangazo arahari",
+    "viewAll": "Reba amatangazo yose",
+    "total": "yose"
+  },
+  "certificates": {
+    "myTitle": "Impamyabumenyi zanjye",
+    "mySubtitle": "Pakurura impamyabumenyi zawe zahawe",
+    "issuedOn": "Yahawe ku",
+    "download": "Pakurura PDF",
+    "verify": "Emeza",
+    "noneYet": "Nta mpamyabumenyi irahari",
+    "noneYetHint": "Rangiza isomo kugira ngo ubone impamyabumenyi yawe",
+    "browseCourses": "Shakisha amasomo"
+  },
+  "offline": {
+    "banner": "Uri offline.",
+    "bannerHint": "Amasomo yapakuluwe arakomeza kuboneka.",
+    "download": "Pakurura kugira offline",
+    "downloaded": "Byapakuluwe ✓",
+    "removeDownload": "Kura pakurura",
+    "myLessons": "Amasomo ya offline",
+    "myLessonsSubtitle": "Amasomo abitswe kugira offline",
+    "noLessons": "Nta masomo ya offline arahari",
+    "noLessonsHint": "Fungura isomo hanyuma ukande 'Pakurura kugira offline' kubika.",
+    "savedOn": "Yabitswe ku",
+    "viewLesson": "Reba",
+    "quizSavedTitle": "Ikizamini cyabitswe offline",
+    "quizSavedBody": "Ibisubizo byawe byabitswe. Bizaohererezwa bwite ubwo uzunganye internet."
+  },
+  "common": {
+    "loading": "Gutegereza…",
+    "previous": "Ibanjirije",
+    "next": "Ikurikiraho"
   }
 }

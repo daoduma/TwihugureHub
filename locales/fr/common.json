@@ -17,7 +17,16 @@
     "knowledgeBase": "Base de connaissances",
     "supportTickets": "Tickets de support",
     "analytics": "Analytique",
-    "profile": "Profil"
+    "profile": "Profil",
+    "translations": "Révision des traductions",
+    "approvals": "Approbations",
+    "aiSettings": "IA / LLM",
+    "security": "Sécurité",
+    "groups": "Groupes",
+    "interventions": "Interventions",
+    "messages": "Messages",
+    "certificates": "Mes certificats",
+    "offlineLessons": "Leçons hors ligne"
   },
   "auth": {
     "login": {
@@ -115,5 +124,588 @@
     "unauthorized": "Vous n'êtes pas autorisé à accéder à cette page",
     "notFound": "Page introuvable",
     "serverError": "Erreur interne du serveur. Veuillez réessayer plus tard."
+  },
+  "trainer": {
+    "dashboard": {
+      "title": "Tableau de bord formateur",
+      "subtitle": "Gérez vos cours et suivez la progression des apprenants",
+      "totalCourses": "Total des cours",
+      "publishedCourses": "Publiés",
+      "pendingApproval": "En attente d'approbation",
+      "enrolledFarmers": "Agriculteurs inscrits",
+      "recentActivity": "Activité récente",
+      "noActivity": "Aucune activité récente",
+      "lastUpdated": "Dernière mise à jour"
+    },
+    "courses": {
+      "title": "Mes cours",
+      "subtitle": "Créez et gérez vos cours de formation",
+      "createNew": "Créer un nouveau cours",
+      "createSubtitle": "Remplissez les informations de base pour commencer",
+      "createAndEdit": "Créer et ouvrir l'éditeur",
+      "titleLabel": "Titre du cours",
+      "descriptionLabel": "Description",
+      "thumbnail": "Image miniature",
+      "metadata": "Détails du cours",
+      "languageAvailability": "Disponibilité linguistique",
+      "titleRequired": "Veuillez saisir un titre de cours dans au moins une langue",
+      "untitled": "Cours sans titre",
+      "empty": "Aucun cours encore",
+      "emptyHint": "Cliquez sur 'Créer un nouveau cours' pour commencer",
+      "preview": "Aperçu",
+      "submitApproval": "Soumettre pour approbation",
+      "archive": "Archiver",
+      "confirmSubmit": "Soumettre ce cours pour approbation par l'administrateur ?",
+      "confirmArchive": "Archiver ce cours ? Il ne sera plus visible par les agriculteurs.",
+      "col": {
+        "course": "Cours",
+        "modules": "Modules"
+      }
+    },
+    "modules": {
+      "title": "Modules et leçons",
+      "label": "modules",
+      "add": "Ajouter un module",
+      "untitled": "Module sans titre",
+      "empty": "Aucun module encore",
+      "emptyHint": "Cliquez sur 'Ajouter un module' pour construire votre cours",
+      "confirmDelete": "Supprimer ce module et toutes ses leçons ?"
+    },
+    "lessons": {
+      "label": "leçons",
+      "add": "Ajouter une leçon",
+      "untitled": "Leçon sans titre",
+      "editor": "Éditeur de leçon",
+      "title": "Titre de la leçon",
+      "body": "Contenu de la leçon",
+      "videoUrl": "URL vidéo",
+      "audio": "Fichier audio",
+      "images": "Images",
+      "addImage": "Ajouter une image",
+      "attachments": "Pièces jointes",
+      "addAttachment": "Ajouter une pièce jointe (PDF, DOCX)",
+      "selectLesson": "Sélectionnez une leçon dans la barre latérale pour l'apercevoir",
+      "confirmDelete": "Supprimer cette leçon ?"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "pending_approval": "En attente d'approbation",
+      "published": "Publié",
+      "archived": "Archivé"
+    }
+  },
+  "quiz": {
+    "designer": "Concepteur de quiz",
+    "createQuiz": "Créer un quiz",
+    "noQuizYet": "Pas encore de quiz",
+    "noQuizHint": "Créez un quiz pour évaluer les apprenants sur cette leçon",
+    "settings": "Paramètres du quiz",
+    "quizTitle": "Titre du quiz",
+    "passingScore": "Score de réussite",
+    "allowRetry": "Autoriser les tentatives multiples",
+    "saveSettings": "Enregistrer les paramètres",
+    "questions": "Questions",
+    "addQuestion": "Ajouter une question",
+    "noQuestions": "Aucune question encore",
+    "noQuestionsHint": "Cliquez sur 'Ajouter une question' pour créer votre quiz",
+    "questionType": "Type de question",
+    "questionStem": "Question",
+    "answerOptions": "Options de réponse",
+    "addOption": "Ajouter une option",
+    "correctAnswer": "Bonne réponse",
+    "correctFeedback": "Commentaire correct",
+    "incorrectFeedback": "Commentaire incorrect",
+    "shortAnswerNote": "Les questions à réponse courte sont corrigées manuellement par le formateur",
+    "untitledQuestion": "Question sans titre",
+    "confirmDeleteQuestion": "Supprimer cette question ?",
+    "aiTranslate": "Traduction IA",
+    "targetLanguage": "Langue cible",
+    "translateAll": "Traduire toutes les questions",
+    "translateAllHint": "Les questions déjà traduites seront ignorées",
+    "translating": "Traduction en cours…",
+    "translationQueue": "File de révision des traductions",
+    "translationQueueSubtitle": "Révisez et approuvez les traductions générées par IA",
+    "filterLanguage": "Langue",
+    "items": "éléments",
+    "original": "Original",
+    "translation": "Traduction",
+    "translatedFrom": "Traduit de",
+    "approve": "Approuver",
+    "editApprove": "Modifier et approuver",
+    "reject": "Rejeter",
+    "saveAndApprove": "Enregistrer et approuver",
+    "translationApproved": "Approuvé — cette traduction est marquée comme manuelle",
+    "noTranslations": "Aucun élément de traduction ne correspond à vos filtres"
+  },
+  "farmer": {
+    "dashboard": {
+      "welcome": "Bon retour",
+      "subtitle": "Votre parcours d'apprentissage agricole",
+      "inProgress": "En cours",
+      "completed": "Terminé",
+      "completedCourses": "Cours terminés",
+      "recommended": "Recommandé",
+      "continueLearning": "Continuer l'apprentissage",
+      "enrolled": "Mes cours inscrits",
+      "noCourses": "Aucun cours disponible pour le moment",
+      "checkBack": "Revenez bientôt pour de nouveaux contenus de formation."
+    },
+    "courses": {
+      "title": "Catalogue de cours",
+      "subtitle": "Découvrez tous les cours de formation disponibles",
+      "enrolled": "Inscrit"
+    },
+    "course": {
+      "modules": "modules",
+      "lessons": "leçons",
+      "enroll": "S'inscrire à ce cours",
+      "enrollNow": "S'inscrire →",
+      "continueLearning": "Continuer l'apprentissage",
+      "progress": "Progression",
+      "complete": "terminé",
+      "curriculum": "Programme du cours",
+      "reviews": "Avis",
+      "leaveReview": "Laisser un avis",
+      "reviewPlaceholder": "Partagez votre expérience avec ce cours...",
+      "submitReview": "Soumettre l'avis"
+    },
+    "lesson": {
+      "backToCourse": "Retour au cours",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "markComplete": "Marquer comme terminé",
+      "completed": "Leçon terminée !",
+      "takeQuiz": "Passer le quiz",
+      "audio": "Audio",
+      "attachments": "Pièces jointes",
+      "languageFallback": "Cette leçon n'est pas encore disponible dans votre langue préférée. Affichage de la meilleure version disponible."
+    },
+    "quiz": {
+      "translating": "Préparation du quiz dans votre langue...",
+      "translatingHint": "Cela peut prendre quelques secondes. Votre quiz traduit sera mis en cache pour les futurs apprenants.",
+      "passed": "Félicitations ! Vous avez réussi !",
+      "failed": "Pas encore tout à fait",
+      "correct": "correct(s)",
+      "passingScore": "Score de réussite",
+      "breakdown": "Détail des questions",
+      "yourAnswer": "Votre réponse :",
+      "correctAnswer": "Bonne réponse :",
+      "continueNext": "Passer à la leçon suivante",
+      "tryAgain": "Réessayer",
+      "contactTrainer": "Veuillez contacter votre formateur pour obtenir de l'aide.",
+      "nextQuestion": "Question suivante",
+      "submit": "Soumettre le quiz",
+      "typeAnswer": "Tapez votre réponse ici...",
+      "passingRequired": "Score requis pour réussir :"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Tableau de bord Admin",
+      "welcome": "Vue d'ensemble de la plateforme",
+      "kpi": {
+        "users": "Total Utilisateurs",
+        "courses": "Total Cours",
+        "pending": "Approbations en attente",
+        "llm": "Statut IA / LLM"
+      },
+      "recentActivity": "Activité d'audit récente",
+      "quickLinks": "Sections Admin",
+      "actionRequired": "Action requise"
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "createUser": "Créer un utilisateur",
+      "searchPlaceholder": "Rechercher par nom ou email…",
+      "allRoles": "Tous les rôles",
+      "allStatuses": "Tous les statuts",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "columns": {
+        "name": "Nom",
+        "email": "Email",
+        "role": "Rôle",
+        "language": "Langue",
+        "status": "Statut",
+        "joined": "Inscrit le",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "deactivate": "Désactiver",
+        "activate": "Activer"
+      },
+      "createModal": {
+        "title": "Créer un compte personnel",
+        "hint": "Les agriculteurs s'inscrivent eux-mêmes. Ce formulaire crée des comptes Formateur, Admin ou Mbaza.",
+        "name": "Nom complet",
+        "email": "Email",
+        "password": "Mot de passe temporaire",
+        "role": "Rôle",
+        "language": "Langue préférée",
+        "submit": "Créer le compte",
+        "creating": "Création…"
+      },
+      "editModal": {
+        "title": "Modifier l'utilisateur",
+        "newPassword": "Nouveau mot de passe (laisser vide pour conserver)",
+        "save": "Enregistrer",
+        "saving": "Enregistrement…"
+      }
+    },
+    "approvals": {
+      "title": "File d'approbation des contenus",
+      "empty": "Tout est à jour !",
+      "emptyHint": "Aucun cours en attente d'approbation.",
+      "preview": "Aperçu",
+      "approve": "Approuver",
+      "approveFull": "Approuver et publier",
+      "reject": "Rejeter",
+      "rejectModal": {
+        "title": "Rejeter le cours",
+        "hint": "Veuillez fournir un retour au formateur expliquant pourquoi ce cours a été rejeté.",
+        "notesPlaceholder": "Notes de rejet (obligatoire)…",
+        "confirm": "Confirmer le rejet",
+        "confirming": "Rejet en cours…"
+      },
+      "previewModal": {
+        "pending": "EN ATTENTE DE RÉVISION",
+        "by": "Par",
+        "description": "Description",
+        "modules": "Modules"
+      }
+    },
+    "aiSettings": {
+      "title": "Paramètres IA / LLM",
+      "subtitle": "Configurez le modèle IA qui alimente les traductions et les fonctionnalités intelligentes.",
+      "currentConfig": "Configuration actuelle",
+      "testConnection": "Tester la connexion",
+      "rotate": "Changer / Rotation",
+      "steps": {
+        "provider": "1. Choisir le fournisseur",
+        "model": "2. Sélectionner le modèle",
+        "key": "3. Entrer la clé API"
+      },
+      "providerStep": {
+        "title": "Choisir un fournisseur",
+        "active": "ACTIF",
+        "models": "modèles",
+        "custom": "Point de terminaison personnalisé"
+      },
+      "modelStep": {
+        "primary": "Modèle principal",
+        "fallback": "Modèle de secours (optionnel)",
+        "none": "Aucun",
+        "customModelId": "Identifiant du modèle",
+        "customModelPlaceholder": "ex. llama-3.1-70b-instruct",
+        "reasoning": "Raisonnement",
+        "continue": "Continuer vers la clé API →"
+      },
+      "keyStep": {
+        "title": "Entrer la clé API",
+        "apiKeyLabel": "Clé API",
+        "apiKeyHint": "Stockée chiffrée AES-256. Jamais transmise en clair.",
+        "baseUrlLabel": "URL de base",
+        "baseUrlPlaceholder": "https://api.votre-fournisseur.com/v1",
+        "validateAndSave": "Valider et enregistrer",
+        "validating": "Validation…",
+        "saving": "Enregistrement…",
+        "success": "Clé validée — configuration enregistrée avec succès !",
+        "failed": "Échec de la validation :",
+        "configSummary": "Résumé de la configuration"
+      },
+      "config": {
+        "provider": "Fournisseur",
+        "model": "Modèle",
+        "apiKey": "Clé API",
+        "validated": "Validé le",
+        "never": "Jamais",
+        "fallback": "Secours"
+      }
+    },
+    "auditLogs": {
+      "title": "Journal d'audit",
+      "exportCsv": "Exporter CSV",
+      "filterAction": "Filtrer par action (ex. LOGIN)…",
+      "from": "De",
+      "to": "À",
+      "clear": "Effacer",
+      "columns": {
+        "timestamp": "Horodatage",
+        "user": "Utilisateur",
+        "action": "Action",
+        "entity": "Entité",
+        "details": "Détails"
+      },
+      "expand": "développer",
+      "collapse": "réduire",
+      "empty": "Aucun journal trouvé"
+    },
+    "security": {
+      "title": "Paramètres de sécurité",
+      "subtitle": "Configurez les politiques de sécurité de la plateforme.",
+      "passwordPolicy": {
+        "title": "Politique de mot de passe",
+        "minLength": "Longueur minimale :",
+        "requireUppercase": "Exiger au moins une majuscule (A-Z)",
+        "requireNumber": "Exiger au moins un chiffre (0-9)",
+        "requireSymbol": "Exiger au moins un symbole (!@#$…)"
+      },
+      "session": {
+        "title": "Paramètres de session",
+        "timeout": "Expiration de session :"
+      },
+      "twoFA": {
+        "title": "Authentification à deux facteurs",
+        "subtitle": "Exiger la 2FA pour les rôles à privilèges élevés.",
+        "adminLabel": "Exiger la 2FA pour les comptes Admin",
+        "mbazaLabel": "Exiger la 2FA pour les comptes Mbaza Staff",
+        "note": "Remarque : une implémentation complète de la 2FA nécessite une intégration d'application d'authentification."
+      },
+      "saveButton": "Enregistrer les paramètres",
+      "saved": "Enregistré !",
+      "danger": {
+        "title": "Zone dangereuse",
+        "forceLogout": "Forcer la reconnexion de tous les utilisateurs",
+        "forceLogoutHint": "Invalide toutes les sessions actives immédiatement. Tous les utilisateurs devront se reconnecter.",
+        "forceLogoutButton": "Forcer la déconnexion",
+        "confirm": "Confirmer",
+        "cancel": "Annuler",
+        "done": "Toutes les sessions ont été invalidées."
+      }
+    }
+  },
+  "mbaza": {
+    "dashboard": {
+      "title": "Tableau de bord Mbaza",
+      "subtitle": "Vue d'ensemble de la progression des agriculteurs",
+      "kpi": {
+        "totalFarmers": "Total Agriculteurs",
+        "avgCompletion": "Complétion Moy.",
+        "completedThisMonth": "Complétés ce mois",
+        "activeFlags": "Signalements actifs"
+      },
+      "completionByCourseChart": "Taux de complétion par cours",
+      "weeklyActivityChart": "Tentatives de quiz hebdomadaires (7 semaines)",
+      "quickAccess": "Accès rapide"
+    },
+    "farmers": {
+      "title": "Liste de progression des agriculteurs",
+      "tracked": "agriculteurs suivis",
+      "searchPlaceholder": "Rechercher par nom ou email…",
+      "allFarmers": "Tous les agriculteurs",
+      "flaggedOnly": "Signalés uniquement",
+      "noFlags": "Sans signalement",
+      "columns": {
+        "name": "Nom",
+        "groups": "Groupes",
+        "courses": "Cours",
+        "avgProgress": "Progrès moy.",
+        "avgScore": "Score moy.",
+        "lastActive": "Dernière activité",
+        "flags": "Signalements"
+      },
+      "never": "Jamais",
+      "view": "Voir →"
+    },
+    "farmerDetail": {
+      "back": "← Retour à la liste",
+      "joinedAt": "Inscrit le",
+      "activeFlags": "Signalements actifs",
+      "enrollments": "Inscriptions aux cours",
+      "noEnrollments": "Aucun cours inscrit.",
+      "enrolledAt": "Inscrit le",
+      "aiTranslatedBadge": "Quiz traduit par IA (rw)",
+      "completed": "Terminé",
+      "module": "Module",
+      "notes": "Notes du personnel (privées)",
+      "noNotes": "Aucune note pour l'instant.",
+      "addNote": "Ajouter une note",
+      "addingNote": "Ajout…",
+      "notePlaceholder": "Ajouter une note privée sur cet agriculteur…",
+      "pass": "RÉUSSI",
+      "fail": "ÉCHOUÉ",
+      "attempt": "Tentative"
+    },
+    "groups": {
+      "title": "Gestion des groupes",
+      "groups": "groupes",
+      "createGroup": "Créer un groupe",
+      "editGroup": "Modifier le groupe",
+      "farmers": "Agriculteurs",
+      "avgProgress": "Progrès moy.",
+      "manageMembers": "Gérer les membres",
+      "viewDetail": "Voir le détail →",
+      "deleteConfirm": "Supprimer ce groupe ? Les agriculteurs ne seront pas supprimés.",
+      "noGroups": "Aucun groupe pour l'instant.",
+      "createFirst": "Créer le premier groupe",
+      "form": {
+        "name": "Nom du groupe",
+        "region": "Région",
+        "description": "Description",
+        "namePlaceholder": "ex. Agriculteurs du secteur Nord",
+        "regionPlaceholder": "ex. Province du Nord",
+        "descriptionPlaceholder": "Notes optionnelles sur ce groupe…",
+        "save": "Enregistrer le groupe",
+        "saving": "Enregistrement…"
+      },
+      "members": {
+        "title": "Gérer les membres",
+        "selected": "sélectionné(s)",
+        "searchPlaceholder": "Rechercher des agriculteurs…",
+        "save": "Enregistrer les membres",
+        "saving": "Enregistrement…"
+      }
+    },
+    "interventions": {
+      "title": "Signalements d'intervention",
+      "subtitle": "Agriculteurs pouvant avoir besoin d'aide",
+      "runCheck": "Lancer la vérification",
+      "running": "En cours…",
+      "newFlagsCreated": "nouveaux signalements créés",
+      "tabs": {
+        "active": "Signalements actifs",
+        "resolved": "Résolus"
+      },
+      "columns": {
+        "farmer": "Agriculteur",
+        "flagType": "Type de signalement",
+        "course": "Cours associé",
+        "daysSince": "Jours depuis le signalement",
+        "resolvedBy": "Résolu par",
+        "actions": "Actions"
+      },
+      "flagLabels": {
+        "FLAG_INACTIVE": "Inactif 14j+",
+        "FLAG_FAILING": "Échecs répétés",
+        "FLAG_STALLED": "Progression bloquée"
+      },
+      "noActive": "Aucun signalement actif 🎉",
+      "noResolved": "Aucun signalement résolu",
+      "actions": {
+        "resolve": "Résoudre",
+        "message": "Message"
+      },
+      "resolveModal": {
+        "title": "Marquer comme résolu",
+        "farmer": "Agriculteur",
+        "flag": "Signalement",
+        "notesPlaceholder": "Notes de résolution (optionnel)…",
+        "confirm": "Marquer résolu",
+        "confirming": "Résolution…"
+      },
+      "messageModal": {
+        "title": "Envoyer un message",
+        "to": "À",
+        "subject": "Objet",
+        "body": "Message",
+        "language": "Langue",
+        "subjectPlaceholder": "Concernant votre progression…",
+        "bodyPlaceholder": "Cher agriculteur…",
+        "send": "Envoyer",
+        "sending": "Envoi…",
+        "sent": "Message envoyé !"
+      }
+    },
+    "messages": {
+      "title": "Messagerie",
+      "subtitle": "Envoyer des messages aux agriculteurs ou groupes",
+      "compose": "Composer un message",
+      "individual": "Individuel",
+      "group": "Groupe",
+      "recipientFarmer": "Agriculteur destinataire",
+      "recipientGroup": "Groupe destinataire",
+      "selectFarmer": "Sélectionner un agriculteur…",
+      "selectGroup": "Sélectionner un groupe…",
+      "language": "Langue",
+      "subject": "Objet",
+      "body": "Corps du message",
+      "send": "Envoyer",
+      "sending": "Envoi…",
+      "sent": "Messages envoyés",
+      "noMessages": "Aucun message envoyé",
+      "read": "Lu",
+      "delivered": "Livré",
+      "subjectPlaceholder": "Rappel de cours, mise à jour…",
+      "bodyPlaceholder": "Cher agriculteur…"
+    },
+    "reports": {
+      "title": "Générateur de rapports",
+      "subtitle": "Générer, prévisualiser et exporter des rapports.",
+      "reportType": "Type de rapport",
+      "filters": "Filtres",
+      "from": "Date de début",
+      "to": "Date de fin",
+      "group": "Groupe",
+      "course": "Cours",
+      "quizLanguage": "Langue du quiz",
+      "allGroups": "Tous les groupes",
+      "allCourses": "Tous les cours",
+      "allLanguages": "Toutes les langues",
+      "generate": "Générer le rapport",
+      "generating": "Génération…",
+      "exportExcel": "Excel",
+      "exportPdf": "PDF",
+      "exporting": "Export…",
+      "noData": "Aucune donnée trouvée.",
+      "noReport": "Sélectionnez un type et cliquez sur Générer",
+      "building": "Construction du rapport…",
+      "showingRows": "Affichage de 100 sur {total} lignes. Exportez pour tout voir.",
+      "types": {
+        "completion": "Rapport de complétion",
+        "completionDesc": "Taux de complétion par cours, groupe, période",
+        "performance": "Rapport de performance",
+        "performanceDesc": "Scores aux quiz, taux de réussite",
+        "engagement": "Rapport d'engagement",
+        "engagementDesc": "Leçons vues, temps sur la plateforme",
+        "intervention": "Rapport d'intervention",
+        "interventionDesc": "Nombre de signalements par type et taux de résolution"
+      }
+    },
+    "farmerMessages": {
+      "title": "Mes Messages",
+      "unread": "non lu(s)",
+      "noMessages": "Aucun message",
+      "selectMessage": "Sélectionner un message",
+      "from": "De",
+      "read": "Lu"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Tout marquer comme lu",
+    "empty": "Aucune notification pour l'instant",
+    "viewAll": "Voir toutes les notifications",
+    "total": "total"
+  },
+  "certificates": {
+    "myTitle": "Mes certificats",
+    "mySubtitle": "Téléchargez vos certificats obtenus",
+    "issuedOn": "Délivré le",
+    "download": "Télécharger le PDF",
+    "verify": "Vérifier",
+    "noneYet": "Aucun certificat pour l'instant",
+    "noneYetHint": "Terminez un cours pour obtenir votre certificat",
+    "browseCourses": "Parcourir les cours"
+  },
+  "offline": {
+    "banner": "Vous êtes hors ligne.",
+    "bannerHint": "Les leçons téléchargées sont toujours disponibles.",
+    "download": "Télécharger hors ligne",
+    "downloaded": "Téléchargé ✓",
+    "removeDownload": "Supprimer le téléchargement",
+    "myLessons": "Leçons hors ligne",
+    "myLessonsSubtitle": "Leçons sauvegardées pour un accès hors ligne",
+    "noLessons": "Aucune leçon hors ligne",
+    "noLessonsHint": "Ouvrez une leçon et appuyez sur 'Télécharger hors ligne' pour la sauvegarder.",
+    "savedOn": "Sauvegardé le",
+    "viewLesson": "Voir",
+    "quizSavedTitle": "Quiz sauvegardé hors ligne",
+    "quizSavedBody": "Vos réponses ont été sauvegardées. Elles seront soumises automatiquement lors de votre prochaine connexion."
+  },
+  "common": {
+    "loading": "Chargement…",
+    "previous": "Précédent",
+    "next": "Suivant"
   }
 }
