@@ -185,8 +185,6 @@ export async function POST(req: Request) {
           },
           trainerId: trainer1.id,
           status: CourseStatus.PUBLISHED,
-          passingScore: 70,
-          certificateTemplate: "default",
         },
       });
 
