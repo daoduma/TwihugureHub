@@ -1,9 +1,10 @@
 // app/api/upload/route.ts
-// Stores uploads as base64 data URLs so this works on Vercel (no writable filesystem).
-// For production scale, swap the base64 storage for an S3/R2/Cloudinary client here.
+// Uploads files to Supabase Storage and returns the public CDN URL.
+// Replaces the previous base64 data-URL approach which was only a dev workaround.
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { uploadToSupabase } from "@/lib/supabaseStorage";
 
 const ALLOWED_TYPES: Record<string, string[]> = {
   image: [
@@ -79,14 +80,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Convert to base64 data URL — works on any serverless platform
+    // Upload to Supabase Storage — returns a public CDN URL
     const bytes = await file.arrayBuffer();
-    const base64 = Buffer.from(bytes).toString("base64");
-    const dataUrl = `data:${mimeType};base64,${base64}`;
+    const buffer = Buffer.from(bytes);
+    const url = await uploadToSupabase(buffer, mimeType, type, file.name);
 
     return NextResponse.json({
       success: true,
-      data: { url: dataUrl, fileName: file.name, fileType: mimeType },
+      data: { url, fileName: file.name, fileType: mimeType },
     });
   } catch (err) {
     console.error("Upload error:", err);
