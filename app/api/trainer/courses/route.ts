@@ -11,7 +11,7 @@ export async function GET() {
   }
 
   const courses = await db.course.findMany({
-    where: { trainerId: session.user.id },
+    where: { trainerId: session.user.id, status: { not: "ARCHIVED" } },
     include: {
       _count: { select: { modules: true } },
     },

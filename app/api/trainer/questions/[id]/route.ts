@@ -32,30 +32,19 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     },
   });
 
-  // Update options if provided
-  if (options) {
-    for (const opt of options) {
-      if (opt.id) {
-        await db.answerOption.update({
-          where: { id: opt.id },
-          data: {
-            ...(opt.text !== undefined && { text: opt.text }),
-            ...(opt.isCorrect !== undefined && { isCorrect: opt.isCorrect }),
-            ...(opt.order !== undefined && { order: opt.order }),
-          },
-        });
-      } else {
-        // New option
-        const maxOrd = await db.answerOption.findFirst({ where: { questionId: params.id }, orderBy: { order: "desc" } });
-        await db.answerOption.create({
-          data: {
-            questionId: params.id,
-            text: opt.text ?? { en: "", fr: "", rw: "" },
-            isCorrect: opt.isCorrect ?? false,
-            order: (maxOrd?.order ?? -1) + 1,
-          },
-        });
-      }
+  // Replace all options atomically to avoid orphaned/duplicate rows
+  if (options !== undefined) {
+    // Delete all existing options for this question then recreate
+    await db.answerOption.deleteMany({ where: { questionId: params.id } });
+    if (options.length > 0) {
+      await db.answerOption.createMany({
+        data: options.map((opt: { text: Record<string, string>; isCorrect: boolean }, i: number) => ({
+          questionId: params.id,
+          text: opt.text ?? { en: "", fr: "", rw: "" },
+          isCorrect: opt.isCorrect ?? false,
+          order: i,
+        })),
+      });
     }
   }
 

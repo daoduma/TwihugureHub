@@ -139,15 +139,29 @@ export default function CoursePreviewPage() {
                 {(selectedLesson.title as Record<string, string>)[lang] || selectedLesson.title.en}
               </h2>
 
-              {selectedLesson.videoUrl && (
-                <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
-                  <iframe
-                    src={selectedLesson.videoUrl.replace("watch?v=", "embed/")}
-                    className="w-full h-full"
-                    allowFullScreen
-                  />
-                </div>
-              )}
+              {selectedLesson.videoUrl && (() => {
+                // Support YouTube watch?v= and youtu.be/ short links; pass other URLs as-is
+                let embedSrc = selectedLesson.videoUrl;
+                try {
+                  const u = new URL(selectedLesson.videoUrl);
+                  if (u.hostname.includes("youtube.com")) {
+                    const v = u.searchParams.get("v");
+                    if (v) embedSrc = `https://www.youtube.com/embed/${v}`;
+                  } else if (u.hostname === "youtu.be") {
+                    embedSrc = `https://www.youtube.com/embed${u.pathname}`;
+                  }
+                } catch { /* invalid URL — use as-is */ }
+                return (
+                  <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
+                    <iframe
+                      src={embedSrc}
+                      className="w-full h-full"
+                      allowFullScreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    />
+                  </div>
+                );
+              })()}
 
               {selectedLesson.audioUrl && (
                 <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
@@ -165,9 +179,9 @@ export default function CoursePreviewPage() {
                 />
               )}
 
-              {selectedLesson.imageUrls.length > 0 && (
+              {(selectedLesson.imageUrls ?? []).length > 0 && (
                 <div className="grid grid-cols-2 gap-3">
-                  {selectedLesson.imageUrls.map((url, i) => (
+                  {(selectedLesson.imageUrls ?? []).map((url, i) => (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img key={i} src={url} alt="" className="rounded-lg w-full object-cover" />
                   ))}

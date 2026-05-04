@@ -27,13 +27,23 @@ export default function TrainerCoursesPage() {
 
   const handleSubmit = async (id: string) => {
     if (!confirm(t("trainer.courses.confirmSubmit"))) return;
-    await fetch(`/api/trainer/courses/${id}/submit`, { method: "POST" });
+    const res = await fetch(`/api/trainer/courses/${id}/submit`, { method: "POST" });
+    const json = await res.json();
+    if (!json.success) {
+      alert(json.error ?? "Failed to submit for approval");
+      return;
+    }
     fetchCourses();
   };
 
   const handleArchive = async (id: string) => {
     if (!confirm(t("trainer.courses.confirmArchive"))) return;
-    await fetch(`/api/trainer/courses/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/trainer/courses/${id}`, { method: "DELETE" });
+    const json = await res.json();
+    if (!json.success) {
+      alert(json.error ?? "Failed to archive course");
+      return;
+    }
     fetchCourses();
   };
 
@@ -142,7 +152,7 @@ export default function TrainerCoursesPage() {
                             <Send size={15} />
                           </button>
                         )}
-                        {(course.status === "DRAFT" || course.status === "PUBLISHED") && (
+                        {course.status === "DRAFT" && (
                           <button
                             onClick={() => handleArchive(course.id)}
                             title={t("trainer.courses.archive")}

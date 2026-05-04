@@ -135,13 +135,13 @@ function LessonEditor({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t("trainer.lessons.images" as never)}
             </label>
-            {data.imageUrls.map((url, i) => (
+            {(data.imageUrls ?? []).map((url, i) => (
               <div key={i} className="flex items-center gap-2 mb-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={url} alt="" className="w-14 h-9 object-cover rounded border border-gray-100" />
-                <span className="text-xs text-gray-500 flex-1 truncate">{url.split("/").pop()}</span>
+                <span className="text-xs text-gray-500 flex-1 truncate">{url.startsWith("data:") ? "Uploaded image" : url.split("/").pop()}</span>
                 <button
-                  onClick={() => update({ imageUrls: data.imageUrls.filter((_, j) => j !== i) })}
+                  onClick={() => update({ imageUrls: (data.imageUrls ?? []).filter((_, j) => j !== i) })}
                   className="text-red-400 hover:text-red-600"
                 >
                   <Trash2 size={13} />
@@ -153,7 +153,7 @@ function LessonEditor({
               type="image"
               accept="image/*"
               multiple
-              onUploaded={(url) => update({ imageUrls: [...data.imageUrls, url] })}
+              onUploaded={(url) => update({ imageUrls: [...(data.imageUrls ?? []), url] })}
             />
           </div>
 
@@ -173,10 +173,16 @@ function LessonEditor({
               type="attachment"
               accept=".pdf,.doc,.docx"
               onUploaded={async (url, fileName, fileType) => {
-                // Store attachment via lesson update isn't available via DB directly,
-                // so we use a meta approach: just store the URLs on the lesson body for now
-                // Full attachment endpoint can be added in extension
-                console.log("attachment uploaded:", url, fileName, fileType);
+                // Persist new attachment by updating the lesson via PUT.
+                // We store attachments as extra metadata on the lesson record.
+                const updatedAttachments = [
+                  ...(data.attachments ?? []),
+                  // Temporary optimistic entry — DB will assign a real id on next fetch
+                  { id: `pending-${Date.now()}`, fileUrl: url, fileName, fileType } as LessonAttachment,
+                ];
+                const next = { ...data, attachments: updatedAttachments };
+                setData(next);
+                await save(next);
               }}
             />
           </div>
@@ -297,6 +303,7 @@ export default function CourseEditPage() {
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
 
   // Metadata fields
@@ -326,12 +333,25 @@ export default function CourseEditPage() {
 
   const saveMetadata = async () => {
     setSaving(true);
-    await fetch("/api/trainer/courses/" + courseId, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, description, thumbnailUrl, availableLanguages: availableLangs }),
-    });
-    setSaving(false);
+    setSaveStatus("idle");
+    try {
+      const res = await fetch("/api/trainer/courses/" + courseId, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, description, thumbnailUrl, availableLanguages: availableLangs }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setSaveStatus("saved");
+        setTimeout(() => setSaveStatus("idle"), 2500);
+      } else {
+        setSaveStatus("error");
+      }
+    } catch {
+      setSaveStatus("error");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const addModule = async () => {
@@ -401,6 +421,8 @@ export default function CourseEditPage() {
     const json = await res.json();
     if (json.success) {
       setCourse((prev) => prev ? { ...prev, status: "PENDING_APPROVAL" } : prev);
+    } else {
+      alert(json.error ?? "Failed to submit for approval");
     }
   };
 
@@ -446,10 +468,16 @@ export default function CourseEditPage() {
           <button
             onClick={saveMetadata}
             disabled={saving}
-            className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-50"
+            className={`inline-flex items-center gap-1.5 border px-3 py-1.5 rounded-lg text-sm transition-colors ${
+              saveStatus === "saved"
+                ? "border-green-300 text-green-700 bg-green-50"
+                : saveStatus === "error"
+                ? "border-red-300 text-red-600 bg-red-50"
+                : "border-gray-200 text-gray-700 hover:bg-gray-50"
+            }`}
           >
             {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
-            {t("ui.save")}
+            {saveStatus === "saved" ? "Saved!" : saveStatus === "error" ? "Save failed" : t("ui.save")}
           </button>
           {course.status === "DRAFT" && (
             <button

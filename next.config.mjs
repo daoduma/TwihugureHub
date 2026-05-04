@@ -61,8 +61,15 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ["bcryptjs", "@react-pdf/renderer"],
+  // Renamed from serverComponentsExternalPackages in Next.js 14+
+  serverExternalPackages: ["bcryptjs", "@react-pdf/renderer"],
+  images: {
+    // Allow data: URLs (base64 uploads) and any remote hostname for thumbnails
+    dangerouslyAllowSVG: true,
+    remotePatterns: [
+      { protocol: "https", hostname: "**" },
+      { protocol: "http", hostname: "**" },
+    ],
   },
 };
 
