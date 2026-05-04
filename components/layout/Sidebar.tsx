@@ -23,6 +23,7 @@ import {
   ShieldCheck,
   ShieldAlert,
   MessageSquare,
+  PenLine,
   Award,
   WifiOff,
 } from "lucide-react";
@@ -48,6 +49,7 @@ const NAV_ITEMS: NavItem[] = [
 
   { href: "/trainer/dashboard", labelKey: "nav.dashboard",      icon: LayoutDashboard, roles: ["TRAINER"] },
   { href: "/trainer/courses",   labelKey: "nav.courses",        icon: GraduationCap,   roles: ["TRAINER"] },
+  { href: "/trainer/grading",   labelKey: "nav.grading",        icon: PenLine,         roles: ["TRAINER"] },
   { href: "/trainer/translations", labelKey: "nav.translations",  icon: Languages,       roles: ["TRAINER"] },
   { href: "/trainer/farmers",   labelKey: "nav.farmers",        icon: Sprout,          roles: ["TRAINER"] },
   { href: "/trainer/reports",   labelKey: "nav.reports",        icon: BarChart2,       roles: ["TRAINER"] },
@@ -56,6 +58,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/admin/dashboard",   labelKey: "nav.dashboard",      icon: LayoutDashboard,  roles: ["ADMIN"] },
   { href: "/admin/users",       labelKey: "nav.users",          icon: Users,            roles: ["ADMIN"] },
   { href: "/admin/approvals",   labelKey: "nav.approvals",      icon: ClipboardCheck,   roles: ["ADMIN"] },
+  { href: "/admin/grading",     labelKey: "nav.grading",        icon: PenLine,          roles: ["ADMIN"] },
   { href: "/admin/ai-settings", labelKey: "nav.aiSettings",     icon: Cpu,              roles: ["ADMIN"] },
   { href: "/admin/audit-logs",  labelKey: "nav.auditLogs",      icon: ScrollText,       roles: ["ADMIN"] },
   { href: "/admin/security",    labelKey: "nav.security",       icon: ShieldCheck,      roles: ["ADMIN"] },

@@ -123,6 +123,30 @@ const notificationContent: Record<
       rw: "Hari itangazo rishya rya sisiteme ku bakoresha bose.",
     },
   },
+  SHORT_ANSWER_GRADED: {
+    title: {
+      en: "Short Answer Graded",
+      fr: "Réponse courte notée",
+      rw: "Igisubizo gito girangiwe",
+    },
+    body: {
+      en: "Your short answer response has been graded. Check your quiz results for details.",
+      fr: "Votre réponse courte a été notée. Vérifiez vos résultats de quiz pour les détails.",
+      rw: "Igisubizo cyawe gito cyarangiwe. Reba ibisubizo by'ikizamini cyawe.",
+    },
+  },
+  SHORT_ANSWER_FLAGGED: {
+    title: {
+      en: "Short Answer Result Disputed",
+      fr: "Résultat de réponse courte contesté",
+      rw: "Igisubizo gito cyaburiwe",
+    },
+    body: {
+      en: "A farmer has disputed a short answer grade. Please review and address their concern.",
+      fr: "Un agriculteur a contesté une note de réponse courte. Veuillez examiner et traiter leur préoccupation.",
+      rw: "Umuhinzi yaburanye amanota y'igisubizo gito. Reba hanyuma ugire igisubizo.",
+    },
+  },
 };
 
 export async function createNotification(

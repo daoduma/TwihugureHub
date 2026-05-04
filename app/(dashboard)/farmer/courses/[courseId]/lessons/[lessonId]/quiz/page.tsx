@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle, XCircle, ArrowLeft, Loader2, AlertTriangle, WifiOff } from "lucide-react";
+import { CheckCircle, XCircle, ArrowLeft, Loader2, AlertTriangle, WifiOff, Flag } from "lucide-react";
 import { useTranslation } from "@/lib/useTranslation";
 import type { Language } from "@/types";
 import { savePendingAttempt } from "@/lib/offlineStorage";
@@ -48,10 +48,15 @@ interface AttemptResult {
   correctCount: number;
   totalQuestions: number;
   attempt: {
+    id: string;
     answers: Array<{
+      id: string;
       questionId: string;
       selectedOptionId?: string;
       isCorrect: boolean;
+      gradingStatus: string;
+      manualScore: number | null;
+      trainerFeedback: string | null;
     }>;
   };
 }
@@ -76,6 +81,10 @@ export default function QuizPage() {
   const [result, setResult] = useState<AttemptResult | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [flaggingAnswerId, setFlaggingAnswerId] = useState<string | null>(null);
+  const [flagReason, setFlagReason] = useState("");
+  const [flaggedAnswerIds, setFlaggedAnswerIds] = useState<Set<string>>(new Set());
+  const [flagSubmitting, setFlagSubmitting] = useState(false);
   const startedAt = useRef(new Date().toISOString());
 
   useEffect(() => {
@@ -168,6 +177,25 @@ export default function QuizPage() {
     setSubmitting(false);
   };
 
+  const handleFlagAnswer = async (answerId: string) => {
+    if (!flagReason.trim()) return;
+    setFlagSubmitting(true);
+    try {
+      const res = await fetch("/api/farmer/short-answer-flags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answerId, reason: flagReason.trim() }),
+      });
+      if (res.ok) {
+        setFlaggedAnswerIds((prev) => new Set([...prev, answerId]));
+        setFlaggingAnswerId(null);
+        setFlagReason("");
+      }
+    } finally {
+      setFlagSubmitting(false);
+    }
+  };
+
   const handleRetry = () => {
     setAnswers({});
     setCurrentQ(0);
@@ -251,23 +279,108 @@ export default function QuizPage() {
             const correct = ans?.isCorrect ?? false;
             const correctOption = q.options.find((o) => o.isCorrect);
             const feedback = q.feedback;
+            const isShortAnswer = q.type === "SHORT_ANSWER";
+            const isPendingGrade = isShortAnswer && ans?.gradingStatus === "PENDING";
+            const isGraded = isShortAnswer && (ans?.gradingStatus === "MANUALLY_GRADED" || ans?.gradingStatus === "AI_GRADED");
+            const isFlagged = ans?.id ? flaggedAnswerIds.has(ans.id) : false;
             return (
               <div key={q.id} className="px-5 py-4">
                 <div className="flex items-start gap-3">
-                  {correct ? <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" /> : <XCircle size={18} className="text-red-400 shrink-0 mt-0.5" />}
+                  {isShortAnswer ? (
+                    isPendingGrade ? (
+                      <AlertTriangle size={18} className="text-amber-400 shrink-0 mt-0.5" />
+                    ) : correct ? (
+                      <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" />
+                    ) : (
+                      <XCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
+                    )
+                  ) : correct ? (
+                    <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" />
+                  ) : (
+                    <XCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
+                  )}
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-800">Q{idx + 1}. {getText(q.stem, lang)}</p>
-                    {q.type !== "SHORT_ANSWER" && ans?.selectedOptionId && (
+
+                    {/* Short answer specific display */}
+                    {isShortAnswer && (
+                      <div className="mt-2 space-y-1.5">
+                        {isPendingGrade && (
+                          <p className="text-xs bg-amber-50 border border-amber-200 text-amber-700 rounded-lg px-3 py-1.5">
+                            ⏳ Awaiting grading by trainer
+                          </p>
+                        )}
+                        {isGraded && (
+                          <div className="text-xs space-y-1">
+                            <p className={`font-medium ${correct ? "text-green-700" : "text-red-600"}`}>
+                              Score: {ans?.manualScore ?? 0}/100 · {correct ? "Correct" : "Incorrect"}
+                              {ans?.gradingStatus === "AI_GRADED" && " (AI graded)"}
+                            </p>
+                            {ans?.trainerFeedback && (
+                              <p className="text-gray-600 italic">Feedback: {ans.trainerFeedback}</p>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Flag button for graded short answers */}
+                        {isGraded && ans?.id && !isFlagged && (
+                          <>
+                            {flaggingAnswerId === ans.id ? (
+                              <div className="mt-2 space-y-2">
+                                <textarea
+                                  value={flagReason}
+                                  onChange={(e) => setFlagReason(e.target.value)}
+                                  placeholder="Explain why you disagree with this grade..."
+                                  className="input w-full h-20 resize-none text-sm"
+                                />
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleFlagAnswer(ans.id)}
+                                    disabled={!flagReason.trim() || flagSubmitting}
+                                    className="btn btn-primary text-xs py-1.5 disabled:opacity-50"
+                                  >
+                                    {flagSubmitting ? <Loader2 size={12} className="animate-spin mr-1" /> : <Flag size={12} className="mr-1" />}
+                                    Submit Dispute
+                                  </button>
+                                  <button
+                                    onClick={() => { setFlaggingAnswerId(null); setFlagReason(""); }}
+                                    className="btn btn-outline text-xs py-1.5"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => setFlaggingAnswerId(ans.id)}
+                                className="flex items-center gap-1 text-xs text-amber-600 hover:text-amber-700 mt-1"
+                              >
+                                <Flag size={11} />
+                                Dispute this grade
+                              </button>
+                            )}
+                          </>
+                        )}
+                        {isFlagged && (
+                          <p className="text-xs text-amber-600 flex items-center gap-1 mt-1">
+                            <Flag size={11} /> Dispute submitted — your trainer will review it
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* MC/TF answer display */}
+                    {!isShortAnswer && ans?.selectedOptionId && (
                       <p className="text-sm text-gray-500 mt-1">
                         {t("farmer.quiz.yourAnswer" as never) || "Your answer:"} {getText(q.options.find((o) => o.id === ans.selectedOptionId)?.text || {}, lang)}
                       </p>
                     )}
-                    {!correct && correctOption && q.type !== "SHORT_ANSWER" && (
+                    {!isShortAnswer && !correct && correctOption && (
                       <p className="text-sm text-green-700 mt-0.5">
                         ✓ {t("farmer.quiz.correctAnswer" as never) || "Correct:"} {getText(correctOption.text, lang)}
                       </p>
                     )}
-                    {feedback && (
+                    {!isShortAnswer && feedback && (
                       <p className="text-xs text-gray-400 mt-1 italic">
                         {correct ? getText(feedback.correctFeedback, lang) : getText(feedback.incorrectFeedback, lang)}
                       </p>

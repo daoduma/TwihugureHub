@@ -64,6 +64,8 @@ model User {
   receivedMessages Message[]               @relation("MessageRecipient")
   notifications   Notification[]
   certificates    Certificate[]            @relation("FarmerCertificates")
+  shortAnswerFlags ShortAnswerFlag[]       @relation("FarmerFlags2")
+  resolvedShortAnswerFlags ShortAnswerFlag[] @relation("FlagResolver2")
 
   @@map("users")
 }
@@ -243,6 +245,10 @@ model Question {
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
 
+  // Short answer grading fields
+  aiGrading        Boolean  @default(false)
+  desiredResponse  Json?    // { en: string; fr: string; rw: string }
+
   quiz     Quiz               @relation(fields: [quizId], references: [id], onDelete: Cascade)
   options  AnswerOption[]
   feedback QuestionFeedback?
@@ -337,18 +343,49 @@ model QuizAttempt {
 }
 
 model QuizAnswer {
-  id               String  @id @default(cuid())
+  id               String        @id @default(cuid())
   attemptId        String
   questionId       String
   selectedOptionId String?
   shortAnswerText  String?
   isCorrect        Boolean
+  gradingStatus    GradingStatus @default(PENDING)
+  manualScore      Int?          // 0-100 for short answers
+  trainerFeedback  String?
 
   attempt  QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
   question Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  flags    ShortAnswerFlag[]
 
   @@index([attemptId])
   @@map("quiz_answers")
+}
+
+enum FlagStatus {
+  OPEN
+  REVIEWED
+  RESOLVED
+}
+
+model ShortAnswerFlag {
+  id          String     @id @default(cuid())
+  answerId    String
+  farmerId    String
+  reason      String     @db.Text
+  status      FlagStatus @default(OPEN)
+  resolution  String?    @db.Text
+  resolvedById String?
+  createdAt   DateTime   @default(now())
+  resolvedAt  DateTime?
+
+  answer     QuizAnswer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  farmer     User       @relation("FarmerFlags2", fields: [farmerId], references: [id], onDelete: Cascade)
+  resolvedBy User?      @relation("FlagResolver2", fields: [resolvedById], references: [id])
+
+  @@index([answerId])
+  @@index([farmerId])
+  @@index([status])
+  @@map("short_answer_flags")
 }
 
 model CourseReview {
@@ -426,6 +463,14 @@ enum NotificationType {
   MESSAGE_RECEIVED
   TRANSLATION_READY
   SYSTEM_ANNOUNCEMENT
+  SHORT_ANSWER_GRADED
+  SHORT_ANSWER_FLAGGED
+}
+
+enum GradingStatus {
+  PENDING
+  AI_GRADED
+  MANUALLY_GRADED
 }
 
 model Notification {

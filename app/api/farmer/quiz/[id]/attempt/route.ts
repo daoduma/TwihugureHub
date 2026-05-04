@@ -35,19 +35,23 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
   // Score calculation
   let correctCount = 0;
-  const answerResults: Array<{ questionId: string; selectedOptionId?: string; shortAnswerText?: string; isCorrect: boolean }> = [];
+  const answerResults: Array<{ questionId: string; selectedOptionId?: string; shortAnswerText?: string; isCorrect: boolean; gradingStatus: string }> = [];
 
   for (const question of quiz.questions) {
     const userAnswer = answers.find((a) => a.questionId === question.id);
     let isCorrect = false;
+    let gradingStatus = "PENDING";
     if (question.type === "SHORT_ANSWER") {
-      isCorrect = true; // Requires manual review
+      // Short answers need grading - either AI or manual
+      isCorrect = false; // Default until graded
+      gradingStatus = "PENDING";
     } else if (userAnswer?.selectedOptionId) {
       const opt = question.options.find((o) => o.id === userAnswer.selectedOptionId);
       isCorrect = opt?.isCorrect ?? false;
+      gradingStatus = "MANUALLY_GRADED"; // MC/TF are auto-graded
     }
     if (isCorrect) correctCount++;
-    answerResults.push({ questionId: question.id, selectedOptionId: userAnswer?.selectedOptionId, shortAnswerText: userAnswer?.shortAnswerText, isCorrect });
+    answerResults.push({ questionId: question.id, selectedOptionId: userAnswer?.selectedOptionId, shortAnswerText: userAnswer?.shortAnswerText, isCorrect, gradingStatus });
   }
 
   const totalQuestions = quiz.questions.length;
@@ -60,10 +64,37 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     data: {
       farmerId, quizId, attemptNumber: previousAttempts + 1, score, passed, languageUsed,
       startedAt: new Date(startedAt), completedAt: new Date(),
-      answers: { create: answerResults.map((a) => ({ questionId: a.questionId, selectedOptionId: a.selectedOptionId, shortAnswerText: a.shortAnswerText, isCorrect: a.isCorrect })) },
+      answers: { create: answerResults.map((a) => ({ questionId: a.questionId, selectedOptionId: a.selectedOptionId, shortAnswerText: a.shortAnswerText, isCorrect: a.isCorrect, gradingStatus: a.gradingStatus as any })) },
     },
-    include: { answers: true },
+    include: {
+      answers: {
+        select: {
+          id: true,
+          questionId: true,
+          selectedOptionId: true,
+          isCorrect: true,
+          gradingStatus: true,
+          manualScore: true,
+          trainerFeedback: true,
+        },
+      },
+    },
   });
+
+  // Trigger AI grading for short answers with aiGrading enabled
+  const shortAnswerQuestions = quiz.questions.filter((q) => q.type === "SHORT_ANSWER");
+  for (const question of shortAnswerQuestions) {
+    if ((question as any).aiGrading) {
+      const answerRecord = attempt.answers.find((a) => a.questionId === question.id);
+      if (answerRecord?.shortAnswerText) {
+        // Fire and forget AI grading in background
+        fetch(`${process.env.NEXTAUTH_URL || "http://localhost:3000"}/api/trainer/grading/short-answers/${answerRecord.id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }).catch((err) => console.error("[AI Grading] Background job failed:", err));
+      }
+    }
+  }
 
   // CHANGED: Audit log for quiz attempt
   await logAction(farmerId, passed ? AuditActions.QUIZ_PASSED : AuditActions.QUIZ_FAILED, "QuizAttempt", attempt.id, {

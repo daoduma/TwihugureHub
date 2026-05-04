@@ -26,7 +26,8 @@
     "interventions": "Interventions",
     "messages": "Messages",
     "certificates": "My Certificates",
-    "offlineLessons": "Offline Lessons"
+    "offlineLessons": "Offline Lessons",
+    "grading": "Grading"
   },
   "auth": {
     "login": {

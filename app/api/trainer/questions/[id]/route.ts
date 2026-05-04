@@ -21,7 +21,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   if (!question) return NextResponse.json({ success: false, error: "Question not found" }, { status: 404 });
 
   const body = await req.json();
-  const { stem, type, translationStatus, options, feedback } = body;
+  const { stem, type, translationStatus, options, feedback, aiGrading, desiredResponse } = body;
 
   const updated = await db.question.update({
     where: { id: params.id },
@@ -29,6 +29,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       ...(stem !== undefined && { stem }),
       ...(type !== undefined && { type }),
       ...(translationStatus !== undefined && { translationStatus }),
+      ...(aiGrading !== undefined && { aiGrading }),
+      ...(desiredResponse !== undefined && { desiredResponse }),
     },
   });
 

@@ -39,6 +39,8 @@ interface Question {
   translationStatus: TranslationStatus;
   options: AnswerOption[];
   feedback?: QuestionFeedback;
+  aiGrading?: boolean;
+  desiredResponse?: MLText;
 }
 
 interface Quiz {
@@ -94,16 +96,63 @@ function TypeBadge({ type }: { type: QuestionType }) {
 function OptionsEditor({
   question,
   onChange,
+  onAiGradingChange,
+  onDesiredResponseChange,
 }: {
   question: Question;
   onChange: (options: AnswerOption[]) => void;
+  onAiGradingChange?: (val: boolean) => void;
+  onDesiredResponseChange?: (val: MLText) => void;
 }) {
   const { t } = useTranslation();
   const [activeLang, setActiveLang] = useState<Lang>("en");
 
   if (question.type === "SHORT_ANSWER") {
     return (
-      <p className="text-xs text-gray-400 italic">{t("quiz.shortAnswerNote" as never)}</p>
+      <div className="space-y-4">
+        <p className="text-xs text-gray-400 italic">{t("quiz.shortAnswerNote" as never)}</p>
+
+        {/* Desired Response */}
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-1">
+            Desired / Model Answer
+            <span className="ml-1 text-gray-400 font-normal">(used for AI grading)</span>
+          </label>
+          <LangTabs
+            value={question.desiredResponse ?? EMPTY_ML}
+            onChange={(v) => onDesiredResponseChange?.(v)}
+            placeholder={{ en: "Enter the expected answer...", fr: "Entrez la réponse attendue...", rw: "Injiza igisubizo gitegerejwe..." }}
+            multiline
+            rows={3}
+          />
+        </div>
+
+        {/* AI Grading Toggle */}
+        <div className="flex items-center justify-between bg-yellow-50 border border-yellow-100 rounded-lg px-3 py-2.5">
+          <div>
+            <p className="text-sm font-medium text-gray-800 flex items-center gap-1.5">
+              <Wand2 size={13} className="text-yellow-600" />
+              AI Auto-Grading
+            </p>
+            <p className="text-xs text-gray-500 mt-0.5">
+              AI will grade this answer using the model answer above
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onAiGradingChange?.(!question.aiGrading)}
+            className={`relative w-10 h-5 rounded-full transition-colors ${
+              question.aiGrading ? "bg-yellow-500" : "bg-gray-300"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-4 w-4 bg-white rounded-full shadow transition-transform ${
+                question.aiGrading ? "translate-x-5" : "translate-x-0.5"
+              }`}
+            />
+          </button>
+        </div>
+      </div>
     );
   }
 
@@ -321,7 +370,12 @@ function QuestionEditor({
           </div>
 
           {/* Answer options */}
-          <OptionsEditor question={draft} onChange={handleOptionChange} />
+          <OptionsEditor
+            question={draft}
+            onChange={handleOptionChange}
+            onAiGradingChange={(val) => setDraft((prev) => ({ ...prev, aiGrading: val }))}
+            onDesiredResponseChange={(val) => setDraft((prev) => ({ ...prev, desiredResponse: val }))}
+          />
 
           {/* Feedback */}
           <div className="space-y-3">
@@ -439,6 +493,8 @@ export default function QuizDesignerPage() {
         translationStatus: q.translationStatus,
         options: q.options,
         feedback: q.feedback,
+        aiGrading: q.aiGrading ?? false,
+        desiredResponse: q.desiredResponse ?? EMPTY_ML,
       }),
     });
     const json = await res.json();

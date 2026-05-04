@@ -26,7 +26,8 @@
     "interventions": "Ubufasha",
     "messages": "Ubutumwa",
     "certificates": "Impamyabumenyi zanjye",
-    "offlineLessons": "Amasomo ya offline"
+    "offlineLessons": "Amasomo ya offline",
+    "grading": "Gutunga Amanota"
   },
   "auth": {
     "login": {
