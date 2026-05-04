@@ -6,6 +6,17 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { uploadToSupabase } from "@/lib/supabaseStorage";
 
+// Raise Next.js / Vercel's default 4.5 MB body limit so larger PDFs and audio
+// files can be uploaded. Attachments are capped at 20 MB and audio at 50 MB on
+// the server, so we set the route limit to 52 MB to cover the largest allowed type.
+export const config = {
+  api: {
+    bodyParser: false,        // we parse multipart ourselves via req.formData()
+    responseLimit: false,
+    sizeLimit: "52mb",
+  },
+};
+
 const ALLOWED_TYPES: Record<string, string[]> = {
   image: [
     "image/jpeg",

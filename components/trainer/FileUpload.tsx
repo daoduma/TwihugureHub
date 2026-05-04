@@ -14,6 +14,16 @@ interface FileUploadProps {
   multiple?: boolean;
 }
 
+// Max sizes per upload type — must match the server-side MAX_SIZES in /api/upload/route.ts
+const CLIENT_MAX_SIZES: Record<string, number> = {
+  image:      10 * 1024 * 1024,
+  thumbnail:   5 * 1024 * 1024,
+  audio:      50 * 1024 * 1024,
+  attachment: 20 * 1024 * 1024,
+};
+// Vercel's hard cap on multipart bodies (applies before our route even runs)
+const VERCEL_BODY_LIMIT = 4.5 * 1024 * 1024;
+
 export function FileUpload({
   label,
   accept,
@@ -32,10 +42,33 @@ export function FileUpload({
     setLoading(true);
     try {
       for (const file of Array.from(files)) {
+        // ── Client-side size guard ──────────────────────────────────────────
+        // Vercel rejects multipart bodies over 4.5 MB before our API route runs,
+        // returning an HTML "Request Entity Too Large" page that breaks res.json().
+        // Catch oversized files here with a friendly message before the upload starts.
+        const typeLimit = CLIENT_MAX_SIZES[type] ?? CLIENT_MAX_SIZES.image;
+        const effectiveLimit = Math.min(typeLimit, VERCEL_BODY_LIMIT);
+        if (file.size > effectiveLimit) {
+          const limitMB = (effectiveLimit / 1024 / 1024).toFixed(1);
+          throw new Error(`"${file.name}" is too large. Maximum size is ${limitMB} MB.`);
+        }
+
         const fd = new FormData();
         fd.append("file", file);
         fd.append("type", type);
         const res = await fetch("/api/upload", { method: "POST", body: fd });
+
+        // Guard: if the response is not JSON (e.g. Vercel 413 "Request Entity Too Large"
+        // returns an HTML page), calling res.json() throws a cryptic parse error.
+        // Check Content-Type first and handle it gracefully.
+        const contentType = res.headers.get("content-type") ?? "";
+        if (!contentType.includes("application/json")) {
+          if (res.status === 413) {
+            throw new Error("File is too large. Please upload a smaller file (max 4.5 MB).");
+          }
+          throw new Error(`Upload failed (HTTP ${res.status}). Please try again.`);
+        }
+
         const json = await res.json();
         if (!json.success) throw new Error(json.error);
         onUploaded(json.data.url, json.data.fileName, json.data.fileType);
