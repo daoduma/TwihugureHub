@@ -118,8 +118,59 @@ body {
 
 /* ── Auth pages background ──────────────────────────────────────── */
 .auth-bg {
-  background: linear-gradient(135deg, #1f5239 0%, #2D6A4F 50%, #17442d 100%);
-  background-attachment: fixed;
+  position: relative;
+  background-color: #0f2d1e; /* fallback */
+}
+
+.auth-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1920&q=85&auto=format&fit=crop");
+  background-size: cover;
+  background-position: center 30%;
+  z-index: 0;
+}
+
+/* Atmospheric overlay: dark-green vignette + warm golden bloom */
+.auth-bg::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(15, 45, 30, 0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(233, 196, 106, 0.12) 0%, transparent 60%),
+    linear-gradient(
+      160deg,
+      rgba(10, 30, 18, 0.72) 0%,
+      rgba(15, 50, 30, 0.45) 40%,
+      rgba(10, 25, 15, 0.65) 100%
+    );
+  z-index: 1;
+}
+
+.auth-bg > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Subtle animated grain for depth */
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -3%); }
+  30% { transform: translate(3%, 2%); }
+  50% { transform: translate(-1%, 4%); }
+  70% { transform: translate(4%, -1%); }
+  90% { transform: translate(-3%, 1%); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* ── Print styles for certificates ─────────────────────────────── */
