@@ -267,7 +267,7 @@ function QuestionEditor({
   translating,
 }: {
   question: Question;
-  onSave: (q: Question) => void;
+  onSave: (q: Question) => Promise<boolean>;
   onDelete: (id: string) => void;
   onTranslate: (id: string, lang: Lang) => void;
   translating: boolean;
@@ -275,6 +275,32 @@ function QuestionEditor({
   const { t } = useTranslation();
   const [draft, setDraft] = useState<Question>(question);
   const [expanded, setExpanded] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Re-sync draft when the parent replaces this question (e.g. after AI
+  // translate-all) — but only when the question identity changes, so the
+  // user's in-progress edits aren't wiped on every parent re-render.
+  useEffect(() => {
+    setDraft(question);
+  }, [question.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const ok = await onSave(draft);
+      if (ok) {
+        setSavedFlash(true);
+        setTimeout(() => setSavedFlash(false), 2000);
+      }
+    } catch (e: unknown) {
+      setSaveError(e instanceof Error ? e.message : "Could not save question. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const stemPreview = draft.stem.en || draft.stem.fr || draft.stem.rw || t("quiz.untitledQuestion" as never);
 
@@ -402,14 +428,27 @@ function QuestionEditor({
           </div>
 
           {/* Save */}
-          <div className="flex justify-end pt-2 border-t border-gray-100">
-            <button
-              onClick={() => onSave(draft)}
-              className="inline-flex items-center gap-1.5 bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-green-700"
-            >
-              <Save size={13} />
-              {t("ui.save")}
-            </button>
+          <div className="pt-2 border-t border-gray-100 space-y-2">
+            {saveError && (
+              <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">
+                ⚠ {saveError}
+              </p>
+            )}
+            <div className="flex justify-end items-center gap-3">
+              {savedFlash && (
+                <span className="text-xs text-green-600 inline-flex items-center gap-1">
+                  <CheckCircle size={11} /> Saved
+                </span>
+              )}
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="inline-flex items-center gap-1.5 bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+                {saving ? "Saving…" : t("ui.save")}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -523,7 +562,7 @@ export default function QuizDesignerPage() {
     setAddingQuestion(false);
   };
 
-  const saveQuestion = async (q: Question) => {
+  const saveQuestion = async (q: Question): Promise<boolean> => {
     const res = await fetch(`/api/trainer/questions/${q.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -537,14 +576,26 @@ export default function QuizDesignerPage() {
         desiredResponse: q.desiredResponse ?? EMPTY_ML,
       }),
     });
-    const json = await res.json();
-    if (json.success) {
-      setQuiz((prev) =>
-        prev
-          ? { ...prev, questions: prev.questions.map((q2) => (q2.id === q.id ? json.data : q2)) }
-          : prev
-      );
+
+    // Non-JSON response usually means an unhandled exception in the route
+    // handler — surface the status + body so the editor shows a real error.
+    const ct = res.headers.get("content-type") ?? "";
+    if (!ct.includes("application/json")) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`Server error ${res.status}: ${text.slice(0, 200) || res.statusText}`);
     }
+
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error ?? `Save failed (HTTP ${res.status})`);
+    }
+
+    setQuiz((prev) =>
+      prev
+        ? { ...prev, questions: prev.questions.map((q2) => (q2.id === q.id ? json.data : q2)) }
+        : prev
+    );
+    return true;
   };
 
   const deleteQuestion = async (id: string) => {
