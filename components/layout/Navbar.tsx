@@ -21,7 +21,10 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
   const { data: session } = useSession();
   const { t } = useTranslation();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const { canPrompt, platform, triggerInstall, isInstalled } = usePWAInstall();
+  const { canInstall, platform, triggerInstall, isInstalled } = usePWAInstall();
+
+  // canInstall is true whenever install is possible, even during a snooze period
+  const showInstallBtn = canInstall && platform === "desktop";
 
   const user = session?.user;
   const initials = user?.name ? getInitials(user.name) : "?";
@@ -64,8 +67,7 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
       <div className="flex items-center gap-2">
         <LanguageSelector variant="light" />
 
-        {/* Install button — shown on desktop when the prompt is available */}
-        {canPrompt && platform === "desktop" && (
+        {showInstallBtn && (
           <button
             onClick={triggerInstall}
             className="hidden md:flex items-center gap-1.5 rounded-lg border border-brand-200 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-100 transition-colors"

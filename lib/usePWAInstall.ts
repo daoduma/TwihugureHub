@@ -59,13 +59,24 @@ export type InstallPlatform =
   | "unsupported";
 
 export interface PWAInstallState {
-  canPrompt:      boolean;
+  canPrompt:      boolean;  // true only when not snoozed/installed — controls the banner
+  canInstall:     boolean;  // true whenever install is possible, ignoring snooze — for persistent buttons
   platform:       InstallPlatform;
   isDismissed:    boolean;
   isInstalled:    boolean;
   triggerInstall: () => Promise<void>;
   dismiss:        () => void;
+  resetDismiss:   () => void;
   markInstalled:  () => void;
+}
+
+// ─── Standalone detection (needed by isPermanentlyDone) ───────────────────────
+
+function isStandaloneMode(): boolean {
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true
+  );
 }
 
 // ─── localStorage helpers ─────────────────────────────────────────────────────
@@ -74,13 +85,23 @@ const SNOOZE_KEY    = "pwa-install-snoozed-until";
 const INSTALLED_KEY = "pwa-install-done";
 const SNOOZE_DAYS   = 7;
 
-function getSnoozedUntil(): number {
-  try { return parseInt(localStorage.getItem(SNOOZE_KEY) ?? "0", 10) || 0; }
-  catch { return 0; }
-}
+
+
+/**
+ * Returns true only when the install flag is set AND the app is actually
+ * running in standalone mode. If the user uninstalled the app the flag is
+ * stale — the browser will re-fire beforeinstallprompt and we should honour it.
+ */
 function isPermanentlyDone(): boolean {
-  try { return localStorage.getItem(INSTALLED_KEY) === "1"; }
-  catch { return false; }
+  try {
+    if (localStorage.getItem(INSTALLED_KEY) !== "1") return false;
+    // If we're NOT in standalone mode the app was uninstalled → clear the flag
+    if (!isStandaloneMode()) {
+      localStorage.removeItem(INSTALLED_KEY);
+      return false;
+    }
+    return true;
+  } catch { return false; }
 }
 function setInstalledFlag() {
   try { localStorage.setItem(INSTALLED_KEY, "1"); } catch {}
@@ -91,15 +112,13 @@ function setSnoozeFlag() {
     localStorage.setItem(SNOOZE_KEY, String(until));
   } catch {}
 }
+function clearSnoozeFlag() {
+  try {
+    localStorage.removeItem(SNOOZE_KEY);
+  } catch {}
+}
 
 // ─── Platform detection ───────────────────────────────────────────────────────
-
-function isStandaloneMode(): boolean {
-  return (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    window.navigator.standalone === true
-  );
-}
 
 function detectPlatform(): InstallPlatform {
   if (isStandaloneMode()) return "already-installed";
@@ -124,7 +143,8 @@ function detectPlatform(): InstallPlatform {
 function getInitialDismissed(): boolean {
   if (typeof window === "undefined") return true;
   try {
-    if (localStorage.getItem(INSTALLED_KEY) === "1") return true;
+    // Only consider "installed" flag as a dismiss reason when app is actually standalone
+    if (localStorage.getItem(INSTALLED_KEY) === "1" && isStandaloneMode()) return true;
     const snoozedUntil = parseInt(localStorage.getItem(SNOOZE_KEY) ?? "0", 10) || 0;
     if (Date.now() < snoozedUntil) return true;
   } catch {}
@@ -134,7 +154,13 @@ function getInitialDismissed(): boolean {
 function getInitialInstalled(): boolean {
   if (typeof window === "undefined") return false;
   try {
-    return localStorage.getItem(INSTALLED_KEY) === "1" || _installed;
+    // Only treat as installed if the flag is set AND app is in standalone mode
+    const flagSet = localStorage.getItem(INSTALLED_KEY) === "1" || _installed;
+    if (flagSet && !isStandaloneMode()) {
+      localStorage.removeItem(INSTALLED_KEY);
+      return false;
+    }
+    return flagSet;
   } catch {}
   return false;
 }
@@ -194,6 +220,11 @@ export function usePWAInstall(): PWAInstallState {
     setSnoozeFlag();
   }, []);
 
+  const resetDismiss = useCallback(() => {
+    clearSnoozeFlag();
+    setIsDismissed(false);
+  }, []);
+
   const markInstalled = useCallback(() => {
     setIsInstalled(true);
     setIsDismissed(true);
@@ -206,5 +237,11 @@ export function usePWAInstall(): PWAInstallState {
     (platform === "ios" || platform === "android" || platform === "desktop") &&
     (platform === "ios" || prompt !== null);
 
-  return { canPrompt, platform, isDismissed, isInstalled, triggerInstall, dismiss, markInstalled };
+  // canInstall ignores snooze — used for persistent install buttons (e.g. navbar)
+  const canInstall =
+    !isInstalled &&
+    (platform === "ios" || platform === "android" || platform === "desktop") &&
+    (platform === "ios" || prompt !== null);
+
+  return { canPrompt, canInstall, platform, isDismissed, isInstalled, triggerInstall, dismiss, resetDismiss, markInstalled };
 }
