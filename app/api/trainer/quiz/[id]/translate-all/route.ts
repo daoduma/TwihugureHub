@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import {
   translateQuizContent,
-  getLLMConfigFromEnv,
+  getLLMConfig,
   type SupportedLanguage,
   type TranslationInput,
 } from "@/lib/ai/translationClient";
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return new Response(JSON.stringify({ success: false, error: "Invalid target language" }), { status: 400 });
   }
 
-  const config = getLLMConfigFromEnv();
+  const config = await getLLMConfig();
   const questions = quiz.questions;
   const total = questions.length;
 

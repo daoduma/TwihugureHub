@@ -20,6 +20,11 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const tsObj = question.translationStatus as Record<string, string>;
 
   if (action === "approve" || action === "edit_approve") {
+    // Guard: edit_approve without text would corrupt the stem — treat as a bad request
+    if (action === "edit_approve" && !editedText) {
+      return NextResponse.json({ success: false, error: "editedText is required for edit_approve" }, { status: 400 });
+    }
+
     const newTs = { ...tsObj, [language]: "MANUAL" };
     const updates: Record<string, unknown> = { translationStatus: newTs };
 

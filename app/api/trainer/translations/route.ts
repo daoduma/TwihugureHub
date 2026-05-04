@@ -72,10 +72,12 @@ export async function GET(req: NextRequest) {
       if (filterStatus && filterStatus !== status) continue;
       if (status === "PENDING" && !stemObj[lang]) continue; // no content yet
 
-      // Find source language
-      const sourceLang = ["en", "fr", "rw"].find(
-        (l) => l !== lang && tsObj[l] === "MANUAL" && stemObj[l]
-      ) ?? "en";
+      // Find source language: prefer MANUAL-approved, then any lang with content,
+      // only fall back to "en" as last resort (avoids blank "Original" column)
+      const sourceLang =
+        ["en", "fr", "rw"].find((l) => l !== lang && tsObj[l] === "MANUAL" && stemObj[l]) ??
+        ["en", "fr", "rw"].find((l) => l !== lang && stemObj[l]) ??
+        "en";
 
       items.push({
         questionId: q.id,
