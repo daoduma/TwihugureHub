@@ -6,8 +6,7 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, XCircle, ArrowLeft, Loader2, AlertTriangle, WifiOff, Flag } from "lucide-react";
-import { useTranslation } from "@/lib/useTranslation";
-import type { Language } from "@/types";
+import { useTranslation, useContentLanguage } from "@/lib/useTranslation";
 import { savePendingAttempt } from "@/lib/offlineStorage";
 
 interface AnswerOption {
@@ -72,7 +71,7 @@ export default function QuizPage() {
   const router = useRouter();
   const courseId = params.courseId as string;
   const lessonId = params.lessonId as string;
-  const lang = (session?.user?.preferredLanguage as Language) || "en";
+  const lang = useContentLanguage();
 
   const [phase, setPhase] = useState<Phase>("loading");
   const [quiz, setQuiz] = useState<Quiz | null>(null);

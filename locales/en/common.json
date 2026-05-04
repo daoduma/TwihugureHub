@@ -419,6 +419,18 @@
       "disputeSubmitted": "Dispute submitted — your trainer will review it",
       "submitting": "Submitting...",
       "incorrect": "Incorrect"
+    },
+    "messages": {
+      "title": "My Messages",
+      "messages": "messages",
+      "unread": "unread",
+      "empty": "No messages yet",
+      "selectPrompt": "Select a message to read",
+      "from": "From",
+      "read": "Read",
+      "roleMbaza": "Mbaza Staff",
+      "roleAdmin": "Admin",
+      "roleTrainer": "Trainer"
     }
   },
   "admin": {

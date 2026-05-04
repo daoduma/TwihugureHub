@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Search, Filter, BookOpen } from "lucide-react";
-import { useTranslation } from "@/lib/useTranslation";
-import type { Language } from "@/types";
+import { useTranslation, useContentLanguage } from "@/lib/useTranslation";
 
 interface Course {
   id: string;
@@ -32,7 +31,7 @@ function getText(obj: Record<string, string>, lang: string): string {
 export default function FarmerCoursesPage() {
   const { data: session } = useSession();
   const { t } = useTranslation();
-  const lang = (session?.user?.preferredLanguage as Language) || "en";
+  const lang = useContentLanguage();
 
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [recommended, setRecommended] = useState<Course[]>([]);

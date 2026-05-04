@@ -3,16 +3,16 @@
 
 import { useState, useEffect } from "react";
 import { BookOpen, Trash2, WifiOff, ArrowRight } from "lucide-react";
-import { useTranslation } from "@/lib/useTranslation";
+import { useTranslation, useContentLanguage } from "@/lib/useTranslation";
 import { getAllLessons, deleteLesson, type OfflineLesson } from "@/lib/offlineStorage";
 import { format } from "date-fns";
 import Link from "next/link";
-import { DashboardShell } from "@/components/layout/DashboardShell";
+
 
 
 export default function OfflineLessonsPage() {
-  const { t, i18n } = useTranslation();
-  const lang = (i18n.language ?? "en") as "en" | "fr" | "rw";
+  const { t } = useTranslation();
+  const lang = useContentLanguage();
 
   const [lessons, setLessons] = useState<OfflineLesson[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +34,7 @@ export default function OfflineLessonsPage() {
   }
 
   return (
-    <DashboardShell>
+    <>
       <div className="mx-auto max-w-2xl">
         {/* Header */}
         <div className="mb-6 flex items-center gap-3">
@@ -105,6 +105,7 @@ export default function OfflineLessonsPage() {
           </div>
         )}
       </div>
-    </DashboardShell>
+    </>
   );
+
 }

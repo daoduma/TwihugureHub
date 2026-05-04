@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Navbar } from "./Navbar";
 import { Sidebar } from "./Sidebar";
 import { useOfflineSync } from "@/lib/useOfflineSync";
+import { LanguageSync } from "@/components/providers/LanguageSync";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -12,6 +13,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Silently syncs session preferredLanguage → i18n on every page */}
+      <LanguageSync />
+
       {/* Fixed top navbar */}
       <Navbar onMenuToggle={() => setSidebarOpen((v) => !v)} />
 

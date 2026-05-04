@@ -1,9 +1,10 @@
 // app/api/farmer/messages/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 
+// GET — fetch messages only; never mutate read state
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "FARMER") {
@@ -16,11 +17,31 @@ export async function GET() {
     orderBy: { sentAt: "desc" },
   });
 
-  // Mark unread as read
+  return NextResponse.json({ messages });
+}
+
+// PATCH — mark specific messages as read (called explicitly by the client)
+export async function PATCH(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== "FARMER") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const body = await req.json();
+  const { messageIds } = body as { messageIds?: string[] };
+
+  if (!Array.isArray(messageIds) || messageIds.length === 0) {
+    return NextResponse.json({ error: "messageIds array is required" }, { status: 400 });
+  }
+
   await db.message.updateMany({
-    where: { recipientId: session.user.id, readAt: null },
+    where: {
+      id: { in: messageIds },
+      recipientId: session.user.id, // safety: only own messages
+      readAt: null,
+    },
     data: { readAt: new Date() },
   });
 
-  return NextResponse.json({ messages });
+  return NextResponse.json({ success: true });
 }

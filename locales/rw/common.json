@@ -419,6 +419,18 @@
       "disputeSubmitted": "Impaka zoherejwe — umuhugura wawe azasuzuma",
       "submitting": "Biragenda...",
       "incorrect": "Ntibirangiwe"
+    },
+    "messages": {
+      "title": "Ubutumwa Bwanjye",
+      "messages": "ubutumwa",
+      "unread": "butasomwe",
+      "empty": "Nta butumwa buriho",
+      "selectPrompt": "Hitamo ubutumwa kugirango ubusome",
+      "from": "Kuva",
+      "read": "Busomwe",
+      "roleMbaza": "Umukozi wa Mbaza",
+      "roleAdmin": "Umuyobozi",
+      "roleTrainer": "Umuhugura"
     }
   },
   "admin": {

@@ -6,8 +6,7 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronDown, ChevronRight, CheckCircle, Star, ArrowLeft, BookOpen, PlayCircle } from "lucide-react";
-import { useTranslation } from "@/lib/useTranslation";
-import type { Language } from "@/types";
+import { useTranslation, useContentLanguage } from "@/lib/useTranslation";
 
 interface LessonItem {
   id: string;
@@ -47,7 +46,7 @@ export default function CourseDetailPage() {
   const params = useParams();
   const router = useRouter();
   const courseId = params.courseId as string;
-  const lang = (session?.user?.preferredLanguage as Language) || "en";
+  const lang = useContentLanguage();
 
   const [course, setCourse] = useState<CourseDetail | null>(null);
   const [enrollment, setEnrollment] = useState<{ progressPercent: number } | null>(null);

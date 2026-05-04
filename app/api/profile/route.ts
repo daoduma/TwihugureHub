@@ -10,10 +10,18 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { name, preferredLanguage } = await req.json();
+  const body = await req.json();
+  const { name, preferredLanguage } = body as {
+    name?: string;
+    preferredLanguage?: string;
+  };
 
-  if (!name?.trim()) {
-    return NextResponse.json({ error: "Name is required." }, { status: 400 });
+  // At least one field must be provided
+  if (!name?.trim() && !preferredLanguage) {
+    return NextResponse.json(
+      { error: "At least one of name or preferredLanguage is required." },
+      { status: 400 }
+    );
   }
 
   const validLangs = ["en", "fr", "rw"];
@@ -24,7 +32,7 @@ export async function PATCH(req: NextRequest) {
   await db.user.update({
     where: { id: session.user.id },
     data: {
-      name: name.trim(),
+      ...(name?.trim() ? { name: name.trim() } : {}),
       ...(preferredLanguage ? { preferredLanguage } : {}),
     },
   });

@@ -48,7 +48,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     } else if (userAnswer?.selectedOptionId) {
       const opt = question.options.find((o) => o.id === userAnswer.selectedOptionId);
       isCorrect = opt?.isCorrect ?? false;
-      gradingStatus = "MANUALLY_GRADED"; // MC/TF are auto-graded
+      gradingStatus = "AUTO_GRADED"; // MC/TF are auto-graded immediately
     }
     if (isCorrect) correctCount++;
     answerResults.push({ questionId: question.id, selectedOptionId: userAnswer?.selectedOptionId, shortAnswerText: userAnswer?.shortAnswerText, isCorrect, gradingStatus });

@@ -3,10 +3,10 @@
 
 import { useState, useEffect } from "react";
 import { Award, Download, ExternalLink } from "lucide-react";
-import { useTranslation } from "@/lib/useTranslation";
+import { useTranslation, useContentLanguage } from "@/lib/useTranslation";
 import { format } from "date-fns";
 import Link from "next/link";
-import { DashboardShell } from "@/components/layout/DashboardShell";
+
 
 interface Certificate {
   id: string;
@@ -20,8 +20,8 @@ interface Certificate {
 
 
 export default function FarmerCertificatesPage() {
-  const { t, i18n } = useTranslation();
-  const lang = (i18n.language ?? "en") as "en" | "fr" | "rw";
+  const { t } = useTranslation();
+  const lang = useContentLanguage();
 
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +38,7 @@ export default function FarmerCertificatesPage() {
   }
 
   return (
-    <DashboardShell>
+    <>
       <div className="mx-auto max-w-3xl">
         {/* Header */}
         <div className="mb-6 flex items-center gap-3">
@@ -119,6 +119,7 @@ export default function FarmerCertificatesPage() {
           </div>
         )}
       </div>
-    </DashboardShell>
+    </>
   );
+
 }

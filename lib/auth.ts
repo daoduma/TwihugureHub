@@ -72,11 +72,16 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
         token.role = user.role as Role;
         token.preferredLanguage = user.preferredLanguage as Language;
+      }
+      // When useSession().update() is called from the client, merge the new data in
+      if (trigger === "update" && session) {
+        if (session.preferredLanguage) token.preferredLanguage = session.preferredLanguage as Language;
+        if (session.name) token.name = session.name;
       }
       return token;
     },

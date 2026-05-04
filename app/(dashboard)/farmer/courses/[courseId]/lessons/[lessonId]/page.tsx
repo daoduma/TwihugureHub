@@ -6,8 +6,7 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, CheckCircle, AlertTriangle, Download, FileText } from "lucide-react";
-import { useTranslation } from "@/lib/useTranslation";
-import type { Language } from "@/types";
+import { useTranslation, useContentLanguage } from "@/lib/useTranslation";
 import { DownloadLessonButton } from "@/components/pwa/DownloadLessonButton";
 
 interface Attachment {
@@ -32,6 +31,7 @@ interface LessonDetail {
     courseId: string;
     lessons: { id: string; title: Record<string, string>; order: number }[];
     course: {
+      title: Record<string, string>;
       modules: { lessons: { id: string; order: number }[] }[];
     };
   };
@@ -59,7 +59,7 @@ export default function LessonViewerPage() {
   const router = useRouter();
   const courseId = params.courseId as string;
   const lessonId = params.lessonId as string;
-  const lang = (session?.user?.preferredLanguage as Language) || "en";
+  const lang = useContentLanguage();
 
   const [lesson, setLesson] = useState<LessonDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -127,9 +127,7 @@ export default function LessonViewerPage() {
                 audioUrl: lesson.audioUrl,
                 imageUrls: lesson.imageUrls,
                 courseId,
-                courseTitle: lesson.module?.course
-                  ? {} // course title not in response here, filled below
-                  : {},
+                courseTitle: lesson.module?.course?.title ?? {},
                 savedAt: new Date().toISOString(),
               }}
             />

@@ -419,6 +419,18 @@
       "disputeSubmitted": "Contestation soumise — votre formateur l'examinera",
       "submitting": "Envoi en cours...",
       "incorrect": "Incorrect"
+    },
+    "messages": {
+      "title": "Mes Messages",
+      "messages": "messages",
+      "unread": "non lus",
+      "empty": "Aucun message pour le moment",
+      "selectPrompt": "Selectionnez un message a lire",
+      "from": "De",
+      "read": "Lu",
+      "roleMbaza": "Personnel Mbaza",
+      "roleAdmin": "Administrateur",
+      "roleTrainer": "Formateur"
     }
   },
   "admin": {
