@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   BookOpen,
 } from "lucide-react";
+import { useTranslation } from "@/lib/useTranslation";
 
 type GradingStatus = "PENDING" | "AI_GRADED" | "MANUALLY_GRADED";
 type FlagStatus = "OPEN" | "REVIEWED" | "RESOLVED";
@@ -106,6 +107,7 @@ function GradeCard({
   item: ShortAnswerItem;
   onGraded: () => void;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [score, setScore] = useState<number>(item.manualScore ?? 0);
   const [feedback, setFeedback] = useState(item.trainerFeedback ?? "");
@@ -292,7 +294,7 @@ function GradeCard({
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
                 rows={2}
-                placeholder="Leave a comment explaining the grade..."
+                placeholder=t("trainer.grading.feedbackPlaceholder")
                 className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
               />
             </div>
@@ -339,6 +341,7 @@ function FlagCard({
   flag: FlagItem;
   onResolved: () => void;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [resolution, setResolution] = useState(flag.resolution ?? "");
   const [newScore, setNewScore] = useState<number>(flag.answer.manualScore ?? 0);
@@ -466,7 +469,7 @@ function FlagCard({
                 value={resolution}
                 onChange={(e) => setResolution(e.target.value)}
                 rows={2}
-                placeholder="Explain your decision to the farmer..."
+                placeholder=t("trainer.grading.resolutionPlaceholder")
                 className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
               />
             </div>
@@ -626,10 +629,10 @@ export default function GradingPage() {
                 }`}
               >
                 {f === "PENDING"
-                  ? "Needs Grading"
+                  ? t("trainer.grading.filterNeedsGrading")
                   : f === "AI_GRADED"
-                  ? "AI Graded (Review)"
-                  : "All"}
+                  ? t("trainer.grading.filterAiReview")
+                  : t("trainer.grading.filterAll")}
               </button>
             ))}
           </div>
@@ -643,8 +646,8 @@ export default function GradingPage() {
               <CheckCircle size={48} className="mx-auto text-green-300 mb-3" />
               <p className="text-gray-600 font-medium">
                 {gradingFilter === "PENDING"
-                  ? "No pending short answers to grade!"
-                  : "No answers found."}
+                  ? t("trainer.grading.noAnswers")
+                  : t("trainer.grading.noAnswersAlt")}
               </p>
               <p className="text-sm text-gray-400 mt-1">
                 Check back after farmers complete their quizzes.

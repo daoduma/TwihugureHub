@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { User, Mail, Globe, ShieldCheck, Loader2, CheckCircle } from "lucide-react";
+import { useTranslation } from "@/lib/useTranslation";
 
 const LANGUAGES = [
   { value: "en", label: "English" },
@@ -12,6 +13,7 @@ const LANGUAGES = [
 ];
 
 export default function TrainerProfilePage() {
+  const { t } = useTranslation();
   const { data: session, update } = useSession();
   const [name, setName]           = useState("");
   const [language, setLanguage]   = useState("en");
@@ -44,12 +46,12 @@ export default function TrainerProfilePage() {
       const data = await res.json();
       if (res.ok) {
         await update({ name });
-        setProfileMsg({ type: "ok", text: "Profile updated successfully." });
+        setProfileMsg({ type: "ok", text: t("trainer.profile.profileUpdated") });
       } else {
-        setProfileMsg({ type: "err", text: data.error ?? "Failed to update profile." });
+        setProfileMsg({ type: "err", text: data.error ?? t("trainer.profile.profileUpdateFailed") });
       }
     } catch {
-      setProfileMsg({ type: "err", text: "Network error. Please try again." });
+      setProfileMsg({ type: "err", text: t("trainer.profile.networkError") });
     } finally {
       setSaving(false);
     }
@@ -58,11 +60,11 @@ export default function TrainerProfilePage() {
   async function changePassword(e: React.FormEvent) {
     e.preventDefault();
     if (newPw !== confirmPw) {
-      setPwMsg({ type: "err", text: "New passwords do not match." });
+      setPwMsg({ type: "err", text: t("trainer.profile.passwordMismatch") });
       return;
     }
     if (newPw.length < 8) {
-      setPwMsg({ type: "err", text: "Password must be at least 8 characters." });
+      setPwMsg({ type: "err", text: t("trainer.profile.passwordTooShort") });
       return;
     }
     setPwSaving(true);
@@ -75,13 +77,13 @@ export default function TrainerProfilePage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setPwMsg({ type: "ok", text: "Password changed successfully." });
+        setPwMsg({ type: "ok", text: t("trainer.profile.passwordChanged") });
         setCurrentPw(""); setNewPw(""); setConfirmPw("");
       } else {
-        setPwMsg({ type: "err", text: data.error ?? "Failed to change password." });
+        setPwMsg({ type: "err", text: data.error ?? t("trainer.profile.passwordChangeFailed") });
       }
     } catch {
-      setPwMsg({ type: "err", text: "Network error. Please try again." });
+      setPwMsg({ type: "err", text: t("trainer.profile.networkError") });
     } finally {
       setPwSaving(false);
     }
@@ -93,9 +95,9 @@ export default function TrainerProfilePage() {
     <div className="animate-fade-in mx-auto max-w-2xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "var(--font-display)" }}>
-          My Profile
+          {t("trainer.profile.title")}
         </h1>
-        <p className="mt-1 text-sm text-gray-500">Manage your account details and preferences</p>
+        <p className="mt-1 text-sm text-gray-500">{t("trainer.profile.subtitle")}</p>
       </div>
 
       {/* Avatar + role chip */}
@@ -107,33 +109,33 @@ export default function TrainerProfilePage() {
           <p className="text-lg font-bold text-gray-900">{session?.user?.name ?? "—"}</p>
           <p className="text-sm text-gray-500">{session?.user?.email}</p>
           <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700">
-            <ShieldCheck size={11} /> Trainer
+            <ShieldCheck size={11} /> {t("trainer.profile.roleLabel")}
           </span>
         </div>
       </div>
 
       {/* Profile form */}
       <div className="card p-6">
-        <h2 className="mb-4 font-semibold text-gray-800">Personal Information</h2>
+        <h2 className="mb-4 font-semibold text-gray-800">{t("trainer.profile.personalInfo")}</h2>
         <form onSubmit={saveProfile} className="space-y-4">
           <div>
             <label className="label">
               <User size={13} className="inline mr-1 text-gray-400" />
-              Full Name
+              {t("trainer.profile.fullName")}
             </label>
             <input
               className={inputCls}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              placeholder="Your full name"
+placeholder={t("trainer.profile.fullNamePlaceholder")}
             />
           </div>
 
           <div>
             <label className="label">
               <Mail size={13} className="inline mr-1 text-gray-400" />
-              Email Address
+              {t("trainer.profile.emailAddress")}
             </label>
             <input
               className={`${inputCls} opacity-60 cursor-not-allowed`}
@@ -141,13 +143,13 @@ export default function TrainerProfilePage() {
               disabled
               readOnly
             />
-            <p className="mt-1 text-xs text-gray-400">Email cannot be changed. Contact an admin if needed.</p>
+            <p className="mt-1 text-xs text-gray-400">{t("trainer.profile.emailNote")}</p>
           </div>
 
           <div>
             <label className="label">
               <Globe size={13} className="inline mr-1 text-gray-400" />
-              Preferred Language
+              {t("trainer.profile.preferredLanguage")}
             </label>
             <select
               className={inputCls}
@@ -174,7 +176,7 @@ export default function TrainerProfilePage() {
               className="btn-primary flex items-center gap-2"
             >
               {saving && <Loader2 size={14} className="animate-spin" />}
-              {saving ? "Saving…" : "Save Changes"}
+              {saving ? t("trainer.profile.saving") : t("trainer.profile.saveChanges")}
             </button>
           </div>
         </form>
@@ -182,10 +184,10 @@ export default function TrainerProfilePage() {
 
       {/* Password form */}
       <div className="card p-6">
-        <h2 className="mb-4 font-semibold text-gray-800">Change Password</h2>
+        <h2 className="mb-4 font-semibold text-gray-800">{t("trainer.profile.changePassword")}</h2>
         <form onSubmit={changePassword} className="space-y-4">
           <div>
-            <label className="label">Current Password</label>
+            <label className="label">{t("trainer.profile.currentPassword")}</label>
             <input
               type="password"
               className={inputCls}
@@ -197,26 +199,26 @@ export default function TrainerProfilePage() {
             />
           </div>
           <div>
-            <label className="label">New Password</label>
+            <label className="label">{t("trainer.profile.newPassword")}</label>
             <input
               type="password"
               className={inputCls}
               value={newPw}
               onChange={(e) => setNewPw(e.target.value)}
               required
-              placeholder="At least 8 characters"
+placeholder={t("trainer.profile.newPasswordPlaceholder")}
               autoComplete="new-password"
             />
           </div>
           <div>
-            <label className="label">Confirm New Password</label>
+            <label className="label">{t("trainer.profile.confirmPassword")}</label>
             <input
               type="password"
               className={inputCls}
               value={confirmPw}
               onChange={(e) => setConfirmPw(e.target.value)}
               required
-              placeholder="Repeat new password"
+placeholder={t("trainer.profile.confirmPasswordPlaceholder")}
               autoComplete="new-password"
             />
           </div>
@@ -235,7 +237,7 @@ export default function TrainerProfilePage() {
               className="btn-primary flex items-center gap-2"
             >
               {pwSaving && <Loader2 size={14} className="animate-spin" />}
-              {pwSaving ? "Updating…" : "Update Password"}
+              {pwSaving ? t("trainer.profile.updating") : t("trainer.profile.updatePassword")}
             </button>
           </div>
         </form>

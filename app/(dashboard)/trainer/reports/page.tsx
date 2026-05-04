@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { BookOpen, Users, Award, TrendingUp, CheckCircle } from "lucide-react";
+import { useTranslation } from "@/lib/useTranslation";
 
 type CourseStatus = "DRAFT" | "PENDING_APPROVAL" | "PUBLISHED" | "ARCHIVED";
 
@@ -46,6 +47,7 @@ function ProgressBar({ value }: { value: number }) {
 }
 
 export default function TrainerReportsPage() {
+  const { t } = useTranslation();
   const [summary, setSummary]     = useState<Summary | null>(null);
   const [courses, setCourses]     = useState<CourseStat[]>([]);
   const [loading, setLoading]     = useState(true);
@@ -62,10 +64,10 @@ export default function TrainerReportsPage() {
 
   const statCards = summary
     ? [
-        { label: "Total Courses",     value: summary.totalCourses,     icon: BookOpen,   color: "text-blue-600",   bg: "bg-blue-50" },
-        { label: "Published",          value: summary.publishedCourses,  icon: CheckCircle, color: "text-green-600", bg: "bg-green-50" },
-        { label: "Unique Farmers",     value: summary.totalFarmers,      icon: Users,      color: "text-purple-600", bg: "bg-purple-50" },
-        { label: "Overall Completion", value: `${summary.overallCompletion}%`, icon: TrendingUp, color: "text-amber-600", bg: "bg-amber-50" },
+        { label: t("trainer.reports.statTotalCourses"),     value: summary.totalCourses,     icon: BookOpen,   color: "text-blue-600",   bg: "bg-blue-50" },
+        { label: t("trainer.reports.statPublished"),          value: summary.publishedCourses,  icon: CheckCircle, color: "text-green-600", bg: "bg-green-50" },
+        { label: t("trainer.reports.statUniqueFarmers"),     value: summary.totalFarmers,      icon: Users,      color: "text-purple-600", bg: "bg-purple-50" },
+        { label: t("trainer.reports.statOverallCompletion"), value: `${summary.overallCompletion}%`, icon: TrendingUp, color: "text-amber-600", bg: "bg-amber-50" },
       ]
     : [];
 
@@ -73,9 +75,9 @@ export default function TrainerReportsPage() {
     <div className="animate-fade-in space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "var(--font-display)" }}>
-          Reports
+          {t("trainer.reports.title")}
         </h1>
-        <p className="mt-1 text-sm text-gray-500">Performance overview across all your courses</p>
+        <p className="mt-1 text-sm text-gray-500">{t("trainer.reports.subtitle")}</p>
       </div>
 
       {/* Summary cards */}
@@ -106,12 +108,12 @@ export default function TrainerReportsPage() {
       {/* Per-course breakdown */}
       <div className="card overflow-x-auto">
         <div className="px-5 py-4 border-b border-gray-100">
-          <h2 className="font-semibold text-gray-800">Course Breakdown</h2>
+          <h2 className="font-semibold text-gray-800">{t("trainer.reports.courseBreakdown")}</h2>
         </div>
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100">
-              {["Course", "Status", "Enrolled", "Completed", "Avg Progress", "Completion Rate"].map((h) => (
+              {[t("trainer.reports.colCourse"), t("trainer.reports.colStatus"), t("trainer.reports.colEnrolled"), t("trainer.reports.colCompleted"), t("trainer.reports.colAvgProgress"), t("trainer.reports.colCompletionRate")].map((h) => (
                 <th key={h} className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
                   {h}
                 </th>
@@ -132,7 +134,7 @@ export default function TrainerReportsPage() {
               <tr>
                 <td colSpan={6} className="py-14 text-center">
                   <Award size={32} className="mx-auto mb-2 text-gray-200" />
-                  <p className="text-sm text-gray-400">No courses yet. Create your first course to see reports here.</p>
+                  <p className="text-sm text-gray-400">{t("trainer.reports.noCourses")}</p>
                 </td>
               </tr>
             )}

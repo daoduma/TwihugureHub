@@ -115,8 +115,8 @@ function OptionsEditor({
         {/* Desired Response */}
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">
-            Desired / Model Answer
-            <span className="ml-1 text-gray-400 font-normal">(used for AI grading)</span>
+            {t("trainer.grading.desiredResponseLabel" as never)}
+            <span className="ml-1 text-gray-400 font-normal">({t("trainer.grading.desiredResponseNote" as never)})</span>
           </label>
           <LangTabs
             value={question.desiredResponse ?? EMPTY_ML}
@@ -132,10 +132,10 @@ function OptionsEditor({
           <div>
             <p className="text-sm font-medium text-gray-800 flex items-center gap-1.5">
               <Wand2 size={13} className="text-yellow-600" />
-              AI Auto-Grading
+              {t("trainer.grading.aiGradingLabel" as never)}
             </p>
             <p className="text-xs text-gray-500 mt-0.5">
-              AI will grade this answer using the model answer above
+              {t("trainer.grading.aiGradingDesc" as never)}
             </p>
           </div>
           <button

@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Search, Users, Award } from "lucide-react";
+import { useTranslation } from "@/lib/useTranslation";
 
 interface FarmerRow {
   id: string;
@@ -30,6 +31,7 @@ function ProgressBar({ value }: { value: number }) {
 }
 
 export default function TrainerFarmersPage() {
+  const { t } = useTranslation();
   const [farmers, setFarmers] = useState<FarmerRow[]>([]);
   const [total, setTotal]     = useState(0);
   const [page, setPage]       = useState(1);
@@ -58,20 +60,20 @@ export default function TrainerFarmersPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "var(--font-display)" }}>
-            My Farmers
+            {t("trainer.farmers.title")}
           </h1>
           <p className="text-sm text-gray-500">
-            {total} farmer{total !== 1 ? "s" : ""} enrolled in your courses
+            {total !== 1 ? t("trainer.farmers.subtitlePlural").replace("{count}", String(total)) : t("trainer.farmers.subtitle").replace("{count}", String(total))}
           </p>
         </div>
         <div className="flex gap-3">
           <div className="flex items-center gap-1.5 rounded-lg border border-gray-100 bg-white px-3 py-1.5 text-xs text-gray-600 shadow-sm">
             <Users size={13} className="text-brand-500" />
-            <span>{total} enrolled</span>
+            <span>{total} {t("trainer.farmers.enrolled")}</span>
           </div>
           <div className="flex items-center gap-1.5 rounded-lg border border-gray-100 bg-white px-3 py-1.5 text-xs text-gray-600 shadow-sm">
             <Award size={13} className="text-amber-500" />
-            <span>{farmers.filter((f) => f.completed > 0).length} with completions</span>
+            <span>{farmers.filter((f) => f.completed > 0).length} {t("trainer.farmers.withCompletions")}</span>
           </div>
         </div>
       </div>
@@ -82,7 +84,7 @@ export default function TrainerFarmersPage() {
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             className="input-field pl-9"
-            placeholder="Search by name or email…"
+            placeholder={t("trainer.farmers.searchPlaceholder")}
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           />
@@ -94,7 +96,7 @@ export default function TrainerFarmersPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100">
-              {["Farmer", "Language", "Enrolled Courses", "Avg Progress", "Completed", "Quiz Score", "Last Active"].map((h) => (
+              {[t("trainer.farmers.colFarmer"), t("trainer.farmers.colLanguage"), t("trainer.farmers.colEnrolled"), t("trainer.farmers.colAvgProgress"), t("trainer.farmers.colCompleted"), t("trainer.farmers.colQuizScore"), t("trainer.farmers.colLastActive")].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
                   {h}
                 </th>
@@ -118,7 +120,7 @@ export default function TrainerFarmersPage() {
                 <td colSpan={7} className="py-14 text-center">
                   <Users size={32} className="mx-auto mb-2 text-gray-200" />
                   <p className="text-sm text-gray-400">
-                    {search ? "No farmers match your search." : "No farmers have enrolled in your courses yet."}
+                    {search ? t("trainer.farmers.noResults") : t("trainer.farmers.noFarmers")}
                   </p>
                 </td>
               </tr>
@@ -158,7 +160,7 @@ export default function TrainerFarmersPage() {
                   {f.avgScore !== null ? `${f.avgScore}%` : "—"}
                 </td>
                 <td className="px-4 py-3 text-xs text-gray-400">
-                  {f.lastActive ? new Date(f.lastActive).toLocaleDateString() : "Never"}
+                  {f.lastActive ? new Date(f.lastActive).toLocaleDateString() : t("trainer.farmers.never")}
                 </td>
               </tr>
             ))}

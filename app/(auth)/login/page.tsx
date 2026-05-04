@@ -17,11 +17,7 @@ const ROLE_DASHBOARD_MAP: Record<string, string> = {
   MBAZA_STAFF: "/mbaza/dashboard",
 };
 
-const STATS = [
-  { icon: Users,    value: "2,400+", label: "Farmers trained" },
-  { icon: BookOpen, value: "180+",   label: "Active courses"  },
-  { icon: Leaf,     value: "30",     label: "Districts reached" },
-];
+// STATS defined inside component to access t()
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -81,24 +77,24 @@ export default function LoginPage() {
         </div>
 
         <div className="hero-copy">
-          <p className="hero-eyebrow">🌱 Empowering Rwandan Agriculture</p>
+          <p className="hero-eyebrow">{t("auth.hero.eyebrow")}</p>
           <h2 className="hero-headline">
-            Growing knowledge,<br />
-            <span className="hero-accent">cultivating futures</span>
+            {t("auth.hero.headline1")}<br />
+            <span className="hero-accent">{t("auth.hero.headline2")}</span>
           </h2>
-          <p className="hero-body">
-            Connect trainers with farmers across Rwanda through
-            structured courses, offline-ready lessons, and
-            verifiable certificates.
-          </p>
+          <p className="hero-body">{t("auth.hero.body")}</p>
         </div>
 
         <div className="hero-stats">
-          {STATS.map(({ icon: Icon, value, label }) => (
-            <div key={label} className="hero-stat">
+          {[
+            { icon: Users,    value: "2,400+", labelKey: "auth.hero.stat1Label" },
+            { icon: BookOpen, value: "180+",   labelKey: "auth.hero.stat2Label" },
+            { icon: Leaf,     value: "30",     labelKey: "auth.hero.stat3Label" },
+          ].map(({ icon: Icon, value, labelKey }) => (
+            <div key={labelKey} className="hero-stat">
               <Icon className="stat-icon" />
               <span className="stat-value">{value}</span>
-              <span className="stat-label">{label}</span>
+              <span className="stat-label">{t(labelKey as never)}</span>
             </div>
           ))}
         </div>

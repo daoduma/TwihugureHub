@@ -307,17 +307,17 @@ export default function QuizPage() {
                       <div className="mt-2 space-y-1.5">
                         {isPendingGrade && (
                           <p className="text-xs bg-amber-50 border border-amber-200 text-amber-700 rounded-lg px-3 py-1.5">
-                            ⏳ Awaiting grading by trainer
+                            {t("farmer.quiz.awaitingGrading" as never)}
                           </p>
                         )}
                         {isGraded && (
                           <div className="text-xs space-y-1">
                             <p className={`font-medium ${correct ? "text-green-700" : "text-red-600"}`}>
-                              Score: {ans?.manualScore ?? 0}/100 · {correct ? "Correct" : "Incorrect"}
-                              {ans?.gradingStatus === "AI_GRADED" && " (AI graded)"}
+                              {t("farmer.quiz.scoreLabel" as never)}: {ans?.manualScore ?? 0}{t("farmer.quiz.outOf" as never)} · {correct ? t("farmer.quiz.correct" as never) : t("farmer.quiz.incorrect" as never)}
+                              {ans?.gradingStatus === "AI_GRADED" && ` ${t("farmer.quiz.aiGraded" as never)}`}
                             </p>
                             {ans?.trainerFeedback && (
-                              <p className="text-gray-600 italic">Feedback: {ans.trainerFeedback}</p>
+                              <p className="text-gray-600 italic">{t("farmer.quiz.feedbackLabel" as never)}: {ans.trainerFeedback}</p>
                             )}
                           </div>
                         )}
@@ -330,7 +330,7 @@ export default function QuizPage() {
                                 <textarea
                                   value={flagReason}
                                   onChange={(e) => setFlagReason(e.target.value)}
-                                  placeholder="Explain why you disagree with this grade..."
+                                  placeholder={t("farmer.quiz.disputePlaceholder" as never)}
                                   className="input w-full h-20 resize-none text-sm"
                                 />
                                 <div className="flex gap-2">
@@ -340,13 +340,12 @@ export default function QuizPage() {
                                     className="btn btn-primary text-xs py-1.5 disabled:opacity-50"
                                   >
                                     {flagSubmitting ? <Loader2 size={12} className="animate-spin mr-1" /> : <Flag size={12} className="mr-1" />}
-                                    Submit Dispute
-                                  </button>
+                                    {t("farmer.quiz.submitDispute" as never)}                                  </button>
                                   <button
                                     onClick={() => { setFlaggingAnswerId(null); setFlagReason(""); }}
                                     className="btn btn-outline text-xs py-1.5"
                                   >
-                                    Cancel
+                                    {t("ui.cancel")}
                                   </button>
                                 </div>
                               </div>
@@ -356,14 +355,14 @@ export default function QuizPage() {
                                 className="flex items-center gap-1 text-xs text-amber-600 hover:text-amber-700 mt-1"
                               >
                                 <Flag size={11} />
-                                Dispute this grade
+                                {t("farmer.quiz.disputeGrade" as never)}
                               </button>
                             )}
                           </>
                         )}
                         {isFlagged && (
                           <p className="text-xs text-amber-600 flex items-center gap-1 mt-1">
-                            <Flag size={11} /> Dispute submitted — your trainer will review it
+                            <Flag size={11} /> {t("farmer.quiz.disputeSubmitted" as never)}
                           </p>
                         )}
                       </div>
@@ -509,7 +508,7 @@ export default function QuizPage() {
               disabled={!isAnswered || submitting}
               className="btn btn-primary disabled:opacity-50"
             >
-              {submitting ? <><Loader2 size={16} className="animate-spin mr-2" /> Submitting...</> : (t("farmer.quiz.submit" as never) || "Submit Quiz")}
+              {submitting ? <><Loader2 size={16} className="animate-spin mr-2" /> {t("farmer.quiz.submitting" as never)}</> : (t("farmer.quiz.submit" as never) || "Submit Quiz")}
             </button>
           )}
         </div>
