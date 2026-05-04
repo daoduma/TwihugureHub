@@ -375,6 +375,7 @@ export default function QuizDesignerPage() {
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
   const [addingQuestion, setAddingQuestion] = useState(false);
+  const [newQuestionType, setNewQuestionType] = useState<QuestionType>("MULTIPLE_CHOICE");
   const [translatingId, setTranslatingId] = useState<string | null>(null);
   const [translateAllLang, setTranslateAllLang] = useState<Lang>("rw");
   const [translateAllProgress, setTranslateAllProgress] = useState<{
@@ -674,17 +675,16 @@ export default function QuizDesignerPage() {
               </h2>
               <div className="flex items-center gap-2">
                 <select
-                  className="text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none"
-                  onChange={(e) => addQuestion(e.target.value as QuestionType)}
-                  value=""
+                  value={newQuestionType}
+                  onChange={(e) => setNewQuestionType(e.target.value as QuestionType)}
+                  className="text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-green-500"
                 >
-                  <option value="" disabled>{t("quiz.addQuestion" as never)}</option>
                   <option value="MULTIPLE_CHOICE">Multiple Choice</option>
                   <option value="TRUE_FALSE">True / False</option>
                   <option value="SHORT_ANSWER">Short Answer</option>
                 </select>
                 <button
-                  onClick={() => addQuestion("MULTIPLE_CHOICE")}
+                  onClick={() => addQuestion(newQuestionType)}
                   disabled={addingQuestion}
                   className="inline-flex items-center gap-1 bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-green-700 disabled:opacity-50"
                 >

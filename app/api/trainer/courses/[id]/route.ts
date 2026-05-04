@@ -53,7 +53,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const updated = await db.course.update({
     where: { id: params.id },
     data: {
-      ...(title && { title }),
+      ...(title !== undefined && { title }),
       ...(description !== undefined && { description }),
       ...(thumbnailUrl !== undefined && { thumbnailUrl }),
       ...(availableLanguages !== undefined && { availableLanguages }),

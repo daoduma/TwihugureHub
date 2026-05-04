@@ -166,6 +166,19 @@ function LessonEditor({
               <div key={att.id} className="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded p-2 mb-1">
                 <span className="flex-1 truncate">{att.fileName}</span>
                 <span className="text-gray-400">{att.fileType.split("/").pop()?.toUpperCase()}</span>
+                <button
+                  onClick={async () => {
+                    await fetch(`/api/trainer/lessons/${data.id}/attachments?attachmentId=${att.id}`, { method: "DELETE" });
+                    setData((prev) => ({
+                      ...prev,
+                      attachments: (prev.attachments ?? []).filter((a) => a.id !== att.id),
+                    }));
+                  }}
+                  className="text-red-400 hover:text-red-600 ml-1"
+                  title="Remove attachment"
+                >
+                  <Trash2 size={11} />
+                </button>
               </div>
             ))}
             <FileUpload
@@ -173,16 +186,19 @@ function LessonEditor({
               type="attachment"
               accept=".pdf,.doc,.docx"
               onUploaded={async (url, fileName, fileType) => {
-                // Persist new attachment by updating the lesson via PUT.
-                // We store attachments as extra metadata on the lesson record.
-                const updatedAttachments = [
-                  ...(data.attachments ?? []),
-                  // Temporary optimistic entry — DB will assign a real id on next fetch
-                  { id: `pending-${Date.now()}`, fileUrl: url, fileName, fileType } as LessonAttachment,
-                ];
-                const next = { ...data, attachments: updatedAttachments };
-                setData(next);
-                await save(next);
+                // Persist via dedicated attachment API so it survives page reload
+                const res = await fetch(`/api/trainer/lessons/${data.id}/attachments`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ fileUrl: url, fileName, fileType }),
+                });
+                const json = await res.json();
+                if (json.success) {
+                  setData((prev) => ({
+                    ...prev,
+                    attachments: [...(prev.attachments ?? []), json.data],
+                  }));
+                }
               }}
             />
           </div>
@@ -196,19 +212,23 @@ function LessonEditor({
 function ModuleRow({
   module,
   lang,
+  courseId,
   onUpdate,
   onDelete,
   onAddLesson,
   onDeleteLesson,
   onSelectLesson,
+  onNavigateToQuiz,
 }: {
   module: Module;
   lang: Lang;
+  courseId: string;
   onUpdate: (id: string, title: { en: string; fr: string; rw: string }) => void;
   onDelete: (id: string) => void;
   onAddLesson: (moduleId: string) => void;
   onDeleteLesson: (lessonId: string, moduleId: string) => void;
   onSelectLesson: (lesson: Lesson) => void;
+  onNavigateToQuiz: (lessonId: string) => void;
 }) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(true);
@@ -268,6 +288,13 @@ function ModuleRow({
                   {lessonTitle}
                 </button>
                 <button
+                  onClick={() => onNavigateToQuiz(lesson.id)}
+                  className="opacity-0 group-hover:opacity-100 text-xs text-blue-500 hover:text-blue-700 px-2 py-0.5 rounded hover:bg-blue-50 border border-transparent hover:border-blue-200"
+                  title="Edit quiz for this lesson"
+                >
+                  Quiz
+                </button>
+                <button
                   onClick={() => onDeleteLesson(lesson.id, module.id)}
                   className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 p-0.5 rounded"
                 >
@@ -304,6 +331,7 @@ export default function CourseEditPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
+  const [submitting, setSubmitting] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
 
   // Metadata fields
@@ -415,14 +443,24 @@ export default function CourseEditPage() {
     setSelectedLesson(updated);
   };
 
+  const navigateToQuiz = (lessonId: string) => {
+    router.push(`/trainer/courses/${courseId}/lessons/${lessonId}/quiz`);
+  };
+
   const handleSubmitForApproval = async () => {
+    if (submitting) return;
     if (!confirm(t("trainer.courses.confirmSubmit" as never))) return;
-    const res = await fetch("/api/trainer/courses/" + courseId + "/submit", { method: "POST" });
-    const json = await res.json();
-    if (json.success) {
-      setCourse((prev) => prev ? { ...prev, status: "PENDING_APPROVAL" } : prev);
-    } else {
-      alert(json.error ?? "Failed to submit for approval");
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/trainer/courses/" + courseId + "/submit", { method: "POST" });
+      const json = await res.json();
+      if (json.success) {
+        setCourse((prev) => prev ? { ...prev, status: "PENDING_APPROVAL" } : prev);
+      } else {
+        alert(json.error ?? "Failed to submit for approval");
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -482,9 +520,10 @@ export default function CourseEditPage() {
           {course.status === "DRAFT" && (
             <button
               onClick={handleSubmitForApproval}
-              className="inline-flex items-center gap-1.5 bg-yellow-500 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-yellow-600"
+              disabled={submitting}
+              className="inline-flex items-center gap-1.5 bg-yellow-500 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-yellow-600 disabled:opacity-50"
             >
-              <Send size={13} />
+              {submitting ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
               {t("trainer.courses.submitApproval" as never)}
             </button>
           )}
@@ -593,11 +632,13 @@ export default function CourseEditPage() {
                     key={mod.id}
                     module={mod}
                     lang={lang}
+                    courseId={courseId}
                     onUpdate={updateModule}
                     onDelete={deleteModule}
                     onAddLesson={addLesson}
                     onDeleteLesson={deleteLesson}
                     onSelectLesson={setSelectedLesson}
+                    onNavigateToQuiz={navigateToQuiz}
                   />
                 ))}
               </div>

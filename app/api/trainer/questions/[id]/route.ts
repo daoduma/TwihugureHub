@@ -32,19 +32,47 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     },
   });
 
-  // Replace all options atomically to avoid orphaned/duplicate rows
+  // Upsert options by ID so concurrent translate-all updates aren't broken by ID churn
   if (options !== undefined) {
-    // Delete all existing options for this question then recreate
-    await db.answerOption.deleteMany({ where: { questionId: params.id } });
-    if (options.length > 0) {
-      await db.answerOption.createMany({
-        data: options.map((opt: { text: Record<string, string>; isCorrect: boolean }, i: number) => ({
-          questionId: params.id,
-          text: opt.text ?? { en: "", fr: "", rw: "" },
-          isCorrect: opt.isCorrect ?? false,
-          order: i,
-        })),
-      });
+    const incomingIds = options
+      .map((o: { id?: string }) => o.id)
+      .filter((id: string | undefined): id is string => !!id && !id.startsWith("new-"));
+
+    // Delete options that were removed
+    await db.answerOption.deleteMany({
+      where: { questionId: params.id, id: { notIn: incomingIds } },
+    });
+
+    // Upsert each option
+    for (let i = 0; i < options.length; i++) {
+      const opt = options[i] as { id?: string; text: Record<string, string>; isCorrect: boolean };
+      const isNewId = !opt.id || opt.id.startsWith("new-");
+      if (isNewId) {
+        await db.answerOption.create({
+          data: {
+            questionId: params.id,
+            text: opt.text ?? { en: "", fr: "", rw: "" },
+            isCorrect: opt.isCorrect ?? false,
+            order: i,
+          },
+        });
+      } else {
+        await db.answerOption.upsert({
+          where: { id: opt.id },
+          create: {
+            id: opt.id,
+            questionId: params.id,
+            text: opt.text ?? { en: "", fr: "", rw: "" },
+            isCorrect: opt.isCorrect ?? false,
+            order: i,
+          },
+          update: {
+            text: opt.text ?? { en: "", fr: "", rw: "" },
+            isCorrect: opt.isCorrect ?? false,
+            order: i,
+          },
+        });
+      }
     }
   }
 
