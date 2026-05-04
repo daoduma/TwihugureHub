@@ -72,6 +72,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
           id: true,
           questionId: true,
           selectedOptionId: true,
+          shortAnswerText: true,
           isCorrect: true,
           gradingStatus: true,
           manualScore: true,
