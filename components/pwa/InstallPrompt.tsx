@@ -253,7 +253,7 @@ export function InstallPrompt() {
           {[
             { icon: <Wifi size={13} />,     text: t("pwa.benefit1" as never) || "Read lessons without internet" },
             { icon: <Zap size={13} />,      text: t("pwa.benefit2" as never) || "Faster loading, no browser bar" },
-            { icon: <BookOpen size={13} />, text: t("pwa.benefit3" as never) || "Works like a real app on your phone" },
+            { icon: <BookOpen size={13} />, text: t("pwa.benefit3" as never) || "Works like a native app on any device" },
           ].map((b, i) => (
             <div key={i} className="flex items-center gap-2 text-xs text-gray-600">
               <span className="text-brand-500">{b.icon}</span>
