@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <!-- Rich layered background: deep forest green -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1f5239"/>
+      <stop offset="100%" stop-color="#0e3221"/>
+    </linearGradient>
+    <!-- Gold shimmer for letters -->
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F2D181"/>
+      <stop offset="50%" stop-color="#E9C46A"/>
+      <stop offset="100%" stop-color="#b98d33"/>
+    </linearGradient>
+    <!-- Soft inner glow on background -->
+    <radialGradient id="inner-glow" cx="50%" cy="42%" r="52%">
+      <stop offset="0%" stop-color="#2D6A4F" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#0e3221" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Rounded square base -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- Soft inner radial glow -->
+  <rect width="512" height="512" rx="112" fill="url(#inner-glow)"/>
+
+  <!-- Decorative arc / harvest arc at top — subtle gold ring segment -->
+  <path d="M 130 145 A 160 160 0 0 1 382 145" 
+        stroke="#E9C46A" stroke-width="5" stroke-linecap="round"
+        fill="none" opacity="0.25"/>
+
+  <!-- Stylized leaf / sprout accent — top center -->
+  <!-- Central stem of the sprout -->
+  <path d="M 256 148 L 256 195" stroke="#E9C46A" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.7"/>
+  <!-- Left leaf lobe -->
+  <path d="M 256 178 C 256 178 228 170 218 155 C 230 150 248 162 256 178Z" 
+        fill="#E9C46A" opacity="0.55"/>
+  <!-- Right leaf lobe -->
+  <path d="M 256 168 C 256 168 282 158 292 143 C 280 140 262 153 256 168Z" 
+        fill="#E9C46A" opacity="0.55"/>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--   THE LETTERS: TwH — custom drawn      -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <!-- === T === -->
+  <!-- Crossbar -->
+  <rect x="72" y="218" width="110" height="26" rx="13" fill="url(#gold)"/>
+  <!-- Stem -->
+  <rect x="114" y="218" width="26" height="140" rx="13" fill="url(#gold)"/>
+
+  <!-- === w === (stylized lowercase, bold) -->
+  <!-- Left downstroke -->
+  <path d="M 195 244 L 211 338 L 232 282 L 253 338 L 269 244"
+        stroke="url(#gold)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"
+        fill="none"/>
+
+  <!-- === H === -->
+  <!-- Left post -->
+  <rect x="292" y="218" width="26" height="140" rx="13" fill="url(#gold)"/>
+  <!-- Right post -->
+  <rect x="394" y="218" width="26" height="140" rx="13" fill="url(#gold)"/>
+  <!-- Crossbar -->
+  <rect x="292" y="275" width="128" height="24" rx="12" fill="url(#gold)"/>
+
+  <!-- Decorative dots / seeds (3 small circles) — bottom accent -->
+  <circle cx="202" cy="376" r="7" fill="#E9C46A" opacity="0.45"/>
+  <circle cx="256" cy="384" r="9" fill="#E9C46A" opacity="0.6"/>
+  <circle cx="310" cy="376" r="7" fill="#E9C46A" opacity="0.45"/>
+
+  <!-- Bottom thin arc echo -->
+  <path d="M 148 395 A 130 130 0 0 0 364 395"
+        stroke="#E9C46A" stroke-width="4" stroke-linecap="round"
+        fill="none" opacity="0.2"/>
+</svg>
