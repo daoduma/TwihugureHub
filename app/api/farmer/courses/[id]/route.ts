@@ -16,7 +16,7 @@ export async function GET(
   const farmerId = session.user.id;
   const courseId = params.id;
 
-  const [course, enrollment, lessonProgressRecords, reviews] = await Promise.all([
+  const [course, enrollment, reviews] = await Promise.all([
     db.course.findUnique({
       where: { id: courseId },
       include: {
@@ -33,7 +33,6 @@ export async function GET(
       },
     }),
     db.enrollment.findUnique({ where: { farmerId_courseId: { farmerId, courseId } } }),
-    db.lessonProgress.findMany({ where: { farmerId } }),
     db.courseReview.findMany({
       where: { courseId },
       include: { farmer: { select: { name: true } } },
@@ -44,6 +43,12 @@ export async function GET(
   if (!course) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+
+  // Scope lesson progress to only the lessons in this course
+  const allCourseLessonIds = course.modules.flatMap((m) => m.lessons.map((l) => l.id));
+  const lessonProgressRecords = await db.lessonProgress.findMany({
+    where: { farmerId, lessonId: { in: allCourseLessonIds } },
+  });
 
   const completedLessonIds = new Set(
     lessonProgressRecords.filter((lp) => lp.completedAt).map((lp) => lp.lessonId)

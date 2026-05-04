@@ -427,6 +427,9 @@ export default function QuizDesignerPage() {
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [savingSettings, setSavingSettings] = useState(false);
   const [addingQuestion, setAddingQuestion] = useState(false);
   const [newQuestionType, setNewQuestionType] = useState<QuestionType>("MULTIPLE_CHOICE");
@@ -437,24 +440,49 @@ export default function QuizDesignerPage() {
   }>({ done: 0, total: 0, active: false });
 
   const fetchQuiz = useCallback(() => {
+    setFetchError(null);
     fetch(`/api/trainer/lessons/${lessonId}/quiz`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.success) setQuiz(d.data);
+      .then(async (r) => {
+        const d = await r.json();
+        if (d.success) {
+          // data is the quiz object, or null if none exists yet — both are valid
+          setQuiz(d.data ?? null);
+        } else {
+          // Real API error (auth failure, lesson not found, etc.)
+          setFetchError(d.error ?? "Failed to load quiz. Please refresh.");
+        }
       })
+      .catch(() => setFetchError("Network error. Please check your connection."))
       .finally(() => setLoading(false));
   }, [lessonId]);
 
   useEffect(() => { fetchQuiz(); }, [fetchQuiz]);
 
   const createQuiz = async () => {
-    const res = await fetch(`/api/trainer/lessons/${lessonId}/quiz`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: { en: "Lesson Quiz", fr: "Quiz de la leçon", rw: "Ikizamini cy'isomo" } }),
-    });
-    const json = await res.json();
-    if (json.success) setQuiz(json.data);
+    setCreating(true);
+    setCreateError(null);
+    try {
+      const res = await fetch(`/api/trainer/lessons/${lessonId}/quiz`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: { en: "Lesson Quiz", fr: "Quiz de la leçon", rw: "Ikizamini cy'isomo" } }),
+      });
+      const json = await res.json();
+
+      if (json.success) {
+        setQuiz(json.data);
+      } else if (res.status === 409) {
+        // Quiz was already created (e.g. a previous request succeeded but the
+        // UI didn't update).  Just fetch and display the existing one.
+        fetchQuiz();
+      } else {
+        setCreateError(json.error ?? "Could not create quiz. Please try again.");
+      }
+    } catch {
+      setCreateError("Network error. Please check your connection and try again.");
+    } finally {
+      setCreating(false);
+    }
   };
 
   const saveSettings = async () => {
@@ -590,16 +618,41 @@ export default function QuizDesignerPage() {
         >
           ← {t("ui.back")}
         </button>
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-12">
-          <h1 className="text-xl font-bold text-gray-800 mb-2">{t("quiz.noQuizYet" as never)}</h1>
-          <p className="text-gray-500 text-sm mb-6">{t("quiz.noQuizHint" as never)}</p>
-          <button
-            onClick={createQuiz}
-            className="bg-green-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-green-700"
-          >
-            {t("quiz.createQuiz" as never)}
-          </button>
-        </div>
+
+        {fetchError ? (
+          /* ── API / network error when loading ── */
+          <div className="bg-white rounded-xl border border-red-100 shadow-sm p-12">
+            <h1 className="text-xl font-bold text-gray-800 mb-2">Could not load quiz</h1>
+            <p className="text-red-500 text-sm mb-6">{fetchError}</p>
+            <button
+              onClick={() => { setLoading(true); fetchQuiz(); }}
+              className="bg-green-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-green-700"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          /* ── No quiz exists yet ── */
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-12">
+            <h1 className="text-xl font-bold text-gray-800 mb-2">{t("quiz.noQuizYet" as never)}</h1>
+            <p className="text-gray-500 text-sm mb-6">{t("quiz.noQuizHint" as never)}</p>
+
+            {createError && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded px-4 py-2 mb-4">
+                ⚠ {createError}
+              </p>
+            )}
+
+            <button
+              onClick={createQuiz}
+              disabled={creating}
+              className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {creating && <Loader2 size={14} className="animate-spin" />}
+              {creating ? "Creating…" : t("quiz.createQuiz" as never)}
+            </button>
+          </div>
+        )}
       </div>
     );
   }

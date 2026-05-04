@@ -14,6 +14,14 @@ interface FileUploadProps {
   multiple?: boolean;
 }
 
+// Real per-type size limits (must match /api/upload/sign/route.ts MAX_SIZES)
+const CLIENT_MAX_SIZES: Record<string, number> = {
+  image:      10 * 1024 * 1024,  // 10 MB
+  thumbnail:   5 * 1024 * 1024,  //  5 MB
+  audio:      50 * 1024 * 1024,  // 50 MB
+  attachment: 20 * 1024 * 1024,  // 20 MB — PDFs up to 20 MB supported
+};
+
 export function FileUpload({
   label,
   accept,
@@ -32,19 +40,57 @@ export function FileUpload({
     setLoading(true);
     try {
       for (const file of Array.from(files)) {
-        const fd = new FormData();
-        fd.append("file", file);
-        fd.append("type", type);
-        const res = await fetch("/api/upload", { method: "POST", body: fd });
-        const json = await res.json();
-        if (!json.success) throw new Error(json.error);
-        onUploaded(json.data.url, json.data.fileName, json.data.fileType);
+        // ── Client-side size guard ───────────────────────────────────────────
+        const maxBytes = CLIENT_MAX_SIZES[type] ?? CLIENT_MAX_SIZES.image;
+        if (file.size > maxBytes) {
+          const maxMB = (maxBytes / 1024 / 1024).toFixed(0);
+          throw new Error(`"${file.name}" is too large. Maximum size is ${maxMB} MB.`);
+        }
+
+        // ── Step 1: Ask the server for a signed Supabase upload URL ──────────
+        // This is a tiny JSON request — no Vercel body-size limit concern.
+        const signRes = await fetch("/api/upload/sign", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fileName: file.name,
+            fileType: file.type || "application/octet-stream",
+            fileSize: file.size,
+            type,
+          }),
+        });
+
+        const signJson = await signRes.json();
+        if (!signJson.success) {
+          throw new Error(signJson.error ?? "Could not get upload URL.");
+        }
+
+        const { signedUrl, publicUrl } = signJson.data;
+
+        // ── Step 2: PUT the file directly to Supabase Storage ────────────────
+        // This goes directly to Supabase CDN — Vercel is not involved at all,
+        // so there is no 4.5 MB serverless body-size restriction.
+        const uploadRes = await fetch(signedUrl, {
+          method: "PUT",
+          headers: { "Content-Type": file.type || "application/octet-stream" },
+          body: file,
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error(`Upload failed (HTTP ${uploadRes.status}). Please try again.`);
+        }
+
+        // ── Step 3: Hand the public URL back to the parent ───────────────────
+        onUploaded(publicUrl, file.name, file.type || "application/octet-stream");
+
         if (!multiple) break;
       }
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Upload failed");
+      setError(e instanceof Error ? e.message : "Upload failed. Please try again.");
     } finally {
       setLoading(false);
+      // Reset the input so the same file can be re-selected after an error
+      if (inputRef.current) inputRef.current.value = "";
     }
   };
 
@@ -83,7 +129,7 @@ export function FileUpload({
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={loading}
-        className="flex items-center gap-2 px-3 py-2 text-sm border border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-green-500 hover:text-green-700 transition-colors w-full justify-center"
+        className="flex items-center gap-2 px-3 py-2 text-sm border border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-green-500 hover:text-green-700 transition-colors w-full justify-center disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {loading ? (
           <Loader2 size={16} className="animate-spin" />
@@ -93,7 +139,12 @@ export function FileUpload({
         {loading ? "Uploading…" : label ? `Upload ${label}` : "Upload file"}
       </button>
 
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && (
+        <p className="text-xs text-red-600 flex items-start gap-1">
+          <span className="mt-0.5">⚠</span>
+          <span>{error}</span>
+        </p>
+      )}
 
       <input
         ref={inputRef}

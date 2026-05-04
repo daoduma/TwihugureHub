@@ -389,7 +389,9 @@
       "takeQuiz": "Take Quiz",
       "audio": "Audio",
       "attachments": "Attachments",
-      "languageFallback": "This lesson is not yet available in your preferred language. Showing the best available version."
+      "languageFallback": "This lesson is not yet available in your preferred language. Showing the best available version.",
+      "errorTitle": "Could not load lesson",
+      "errorHint": "Please go back and try again."
     },
     "quiz": {
       "translating": "Preparing quiz in your language...",

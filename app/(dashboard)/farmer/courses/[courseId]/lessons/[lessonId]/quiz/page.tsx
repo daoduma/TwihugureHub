@@ -92,45 +92,19 @@ export default function QuizPage() {
 
   const loadQuiz = async () => {
     setPhase("loading");
-    setError(null);
     try {
-      // Step 1: get the lesson to find the quiz id
-      const lessonRes = await fetch(`/api/farmer/lessons/${lessonId}`);
-      if (!lessonRes.ok) {
-        setError(t("farmer.quiz.loadError" as never) || "Failed to load quiz.");
-        setPhase("quiz"); // exit loading so error shows
+      // Fetch lesson (which contains the quiz) via farmer API
+      const res = await fetch(`/api/farmer/lessons/${lessonId}`);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        setError(errData?.error || `Could not load quiz (${res.status}). Make sure you are enrolled in this course.`);
         return;
       }
-      const lessonData = await lessonRes.json();
-      const quizStub = lessonData.lesson?.quiz as { id: string } | null;
-      if (!quizStub?.id) {
-        setError(t("farmer.quiz.noQuiz" as never) || "No quiz found for this lesson.");
-        setPhase("quiz");
-        return;
-      }
+      const data = await res.json();
+      const rawQuiz: Quiz = data.lesson?.quiz;
+      if (!rawQuiz) { setError("No quiz found for this lesson."); return; }
 
-      // Step 2: fetch full quiz (questions + options) via dedicated route
-      const quizRes = await fetch(`/api/farmer/quiz/${quizStub.id}`);
-      if (!quizRes.ok) {
-        setError(t("farmer.quiz.loadError" as never) || "Failed to load quiz.");
-        setPhase("quiz");
-        return;
-      }
-      const quizData = await quizRes.json();
-      const rawQuiz: Quiz = quizData.quiz;
-      if (!rawQuiz || !rawQuiz.questions) {
-        setError(t("farmer.quiz.noQuiz" as never) || "No quiz found for this lesson.");
-        setPhase("quiz");
-        return;
-      }
-
-      if (rawQuiz.questions.length === 0) {
-        setError(t("farmer.quiz.noQuestions" as never) || "This quiz has no questions yet.");
-        setPhase("quiz");
-        return;
-      }
-
-      // Step 3: check if the preferred language is missing translations, auto-translate if so
+      // Check if translations are available
       const needsTranslation = rawQuiz.questions.some((q) => {
         const stem = q.stem[lang];
         return !stem || stem.trim() === "";
@@ -138,25 +112,20 @@ export default function QuizPage() {
 
       if (needsTranslation) {
         setPhase("translating");
-        try {
-          const transRes = await fetch(`/api/farmer/quiz/${rawQuiz.id}/translate`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ language: lang }),
-          });
-          const transData = await transRes.json();
-          setQuiz(transData.quiz || rawQuiz);
-        } catch {
-          // Translation failed — use raw quiz with whatever languages are available
-          setQuiz(rawQuiz);
-        }
+        const transRes = await fetch(`/api/farmer/quiz/${rawQuiz.id}/translate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ language: lang }),
+        });
+        const transData = await transRes.json();
+        setQuiz(transData.quiz || rawQuiz);
       } else {
         setQuiz(rawQuiz);
       }
       setPhase("quiz");
-    } catch {
-      setError(t("farmer.quiz.loadError" as never) || "Failed to load quiz.");
-      setPhase("quiz");
+    } catch (err) {
+      setError("Failed to load quiz. Please check your connection and try again.");
+      setPhase("loading");
     }
   };
 
