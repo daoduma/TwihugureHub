@@ -389,9 +389,7 @@
       "takeQuiz": "Fata ikizamini",
       "audio": "Amajwi",
       "attachments": "Inyandiko zifatanye",
-      "languageFallback": "Iri somo ntiririmo ikinyarwanda. Aragaragaza verisiyo nziza iri hafi.",
-      "errorTitle": "Ntibishoboka gufungura isomo",
-      "errorHint": "Nyamuneka garuka hanyuma ugerageze."
+      "languageFallback": "Iri somo ntiririmo ikinyarwanda. Aragaragaza verisiyo nziza iri hafi."
     },
     "quiz": {
       "translating": "Gutegura ikizamini mu rurimi rwawe...",

@@ -125,9 +125,7 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ["bcryptjs", "@react-pdf/renderer"],
-  },
+  serverExternalPackages: ["bcryptjs", "@react-pdf/renderer"],
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [

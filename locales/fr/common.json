@@ -389,9 +389,7 @@
       "takeQuiz": "Passer le quiz",
       "audio": "Audio",
       "attachments": "Pièces jointes",
-      "languageFallback": "Cette leçon n'est pas encore disponible dans votre langue préférée. Affichage de la meilleure version disponible.",
-      "errorTitle": "Impossible de charger la leçon",
-      "errorHint": "Veuillez revenir en arrière et réessayer."
+      "languageFallback": "Cette leçon n'est pas encore disponible dans votre langue préférée. Affichage de la meilleure version disponible."
     },
     "quiz": {
       "translating": "Préparation du quiz dans votre langue...",

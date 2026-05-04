@@ -6,7 +6,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { uploadToSupabase } from "@/lib/supabaseStorage";
 
-
 const ALLOWED_TYPES: Record<string, string[]> = {
   image: [
     "image/jpeg",

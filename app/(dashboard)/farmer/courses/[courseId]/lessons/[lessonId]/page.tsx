@@ -38,7 +38,7 @@ interface LessonDetail {
   moduleId: string;
   order: number;
   attachments: Attachment[];
-  quiz: { id: string } | null;
+  quiz: { id: string; passingScore: number; allowRetry: boolean; questions: { id: string }[] } | null;
   module: {
     courseId: string;
     lessons: { id: string; title: Record<string, string>; order: number }[];
@@ -106,53 +106,47 @@ export default function LessonViewerPage() {
   const lang = useContentLanguage();
   const isOnline = useOnlineStatus();
 
-  const [lesson,       setLesson]       = useState<LessonDetail | null>(null);
-  const [loading,      setLoading]      = useState(true);
+  const [lesson,        setLesson]        = useState<LessonDetail | null>(null);
+  const [loading,       setLoading]       = useState(true);
   const [isOfflineMode, setIsOfflineMode] = useState(false);
   const [notDownloaded, setNotDownloaded] = useState(false);
-  const [apiError,     setApiError]     = useState<string | null>(null);
-  const [isCompleted,  setIsCompleted]  = useState(false);
-  const [marking,      setMarking]      = useState(false);
-  const startedAt = useRef(Date.now());
+  const [isCompleted,   setIsCompleted]   = useState(false);
+  const [marking,       setMarking]       = useState(false);
+  const startedAt   = useRef(Date.now());
+  // Keep a ref so the load function can read the latest online state
+  // without being listed as a dependency (avoids re-triggering load on connectivity flicker).
+  const isOnlineRef = useRef(isOnline);
+  useEffect(() => { isOnlineRef.current = isOnline; }, [isOnline]);
 
   // ── Load lesson ─────────────────────────────────────────────────────────────
   useEffect(() => {
     startedAt.current = Date.now();
     setIsOfflineMode(false);
     setNotDownloaded(false);
-    setApiError(null);
     setLoading(true);
 
     const load = async () => {
-      // 1. If online, fetch from server (always freshest data)
-      if (isOnline) {
-        try {
-          const res = await fetch(`/api/farmer/lessons/${lessonId}`);
-          if (res.ok) {
-            const data = await res.json();
-            setLesson(data.lesson);
-            // Check completion state
-            const progressRes = await fetch(`/api/farmer/courses/${courseId}`);
-            if (progressRes.ok) {
-              const pd = await progressRes.json();
-              setIsCompleted((pd.completedLessonIds || []).includes(lessonId));
-            }
-            setLoading(false);
-            return;
+      // 1. Always attempt a network fetch first — even if navigator.onLine is
+      //    momentarily false on mount, the request itself will tell us the truth.
+      try {
+        const res = await fetch(`/api/farmer/lessons/${lessonId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setLesson(data.lesson);
+          // Check completion state
+          const progressRes = await fetch(`/api/farmer/courses/${courseId}`);
+          if (progressRes.ok) {
+            const pd = await progressRes.json();
+            setIsCompleted((pd.completedLessonIds || []).includes(lessonId));
           }
-          // Server returned an error — do NOT silently fall through to offline path
-          // Try to show a meaningful error message instead
-          const errData = await res.json().catch(() => ({}));
-          const errMsg = errData?.error || `Error loading lesson (${res.status})`;
-          setApiError(errMsg);
           setLoading(false);
           return;
-        } catch {
-          // True network failure while online — fall through to IndexedDB
         }
+      } catch {
+        // Network request failed — fall through to IndexedDB
       }
 
-      // 2. Offline or network failed → try IndexedDB
+      // 2. Network failed → try IndexedDB
       const cached = await getLesson(lessonId).catch(() => null);
       if (cached) {
         setLesson(offlineLessonToDetail(cached));
@@ -167,7 +161,10 @@ export default function LessonViewerPage() {
     };
 
     load();
-  }, [lessonId, courseId, isOnline]);
+  // isOnline intentionally omitted — we use isOnlineRef inside and don't want
+  // connectivity flickers to re-trigger the full load.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lessonId, courseId]);
 
   // ── Mark complete ───────────────────────────────────────────────────────────
   const markComplete = async () => {
@@ -189,26 +186,6 @@ export default function LessonViewerPage() {
     return (
       <div className="text-center py-12 text-gray-400">
         {t("ui.loading" as never)}
-      </div>
-    );
-  }
-
-  // API returned an error while online (e.g. not enrolled, not found, server error)
-  if (apiError) {
-    return (
-      <div className="max-w-lg mx-auto text-center py-20 space-y-4">
-        <AlertTriangle size={52} className="mx-auto text-red-400" />
-        <h2 className="text-xl font-bold text-gray-800">
-          {t("farmer.lesson.errorTitle" as never, { defaultValue: "Could not load lesson" })}
-        </h2>
-        <p className="text-sm text-gray-500">{apiError}</p>
-        <Link
-          href={`/farmer/courses/${courseId}`}
-          className="btn btn-outline flex items-center gap-2 justify-center"
-        >
-          <ArrowLeft size={15} />
-          {t("farmer.lesson.backToCourse" as never, { defaultValue: "Back to Course" })}
-        </Link>
       </div>
     );
   }
@@ -430,7 +407,7 @@ export default function LessonViewerPage() {
           </button>
         )}
 
-        {isCompleted && lesson.quiz && !isOfflineMode && (
+        {lesson.quiz && !isOfflineMode && (
           <Link
             href={`/farmer/courses/${courseId}/lessons/${lessonId}/quiz`}
             className="btn btn-outline w-full text-center block"

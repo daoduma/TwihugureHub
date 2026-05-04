@@ -96,11 +96,7 @@ export default function CourseDetailPage() {
         }
       }
     }
-    // All lessons complete — go back to first lesson (if it exists)
-    const firstLessonId = course.modules[0]?.lessons[0]?.id;
-    if (firstLessonId) {
-      router.push(`/farmer/courses/${courseId}/lessons/${firstLessonId}`);
-    }
+    router.push(`/farmer/courses/${courseId}/lessons/${course.modules[0]?.lessons[0]?.id}`);
   };
 
   const toggleModule = (id: string) => {

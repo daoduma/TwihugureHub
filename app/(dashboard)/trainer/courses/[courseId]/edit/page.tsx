@@ -33,14 +33,11 @@ function LessonEditor({
   const [data, setData] = useState<Lesson>(lesson);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  // Returns true on success, false on failure
   const save = useCallback(
-    async (payload: Lesson): Promise<boolean> => {
+    async (payload: Lesson) => {
       setSaving(true);
-      setSaveError(null);
       try {
         const res = await fetch("/api/trainer/lessons/" + payload.id, {
           method: "PUT",
@@ -58,14 +55,7 @@ function LessonEditor({
           onSaved(json.data);
           setSaved(true);
           setTimeout(() => setSaved(false), 2000);
-          return true;
-        } else {
-          setSaveError(json.error ?? "Save failed. Please try again.");
-          return false;
         }
-      } catch {
-        setSaveError("Network error. Please check your connection and try again.");
-        return false;
       } finally {
         setSaving(false);
       }
@@ -76,7 +66,6 @@ function LessonEditor({
   const update = (patch: Partial<Lesson>) => {
     const next = { ...data, ...patch };
     setData(next);
-    setSaveError(null);
     // Auto-save debounce
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => save(next), 1500);
@@ -86,37 +75,22 @@ function LessonEditor({
     <div className="fixed inset-0 z-50 flex items-start justify-end bg-black/30">
       <div className="h-full w-full max-w-xl bg-white shadow-2xl overflow-y-auto flex flex-col">
         {/* Header */}
-        <div className="flex flex-col sticky top-0 bg-white z-10 border-b border-gray-100">
-          <div className="flex items-center justify-between px-5 py-4">
-            <h2 className="font-semibold text-gray-800">{t("trainer.lessons.editor" as never)}</h2>
-            <div className="flex items-center gap-2">
-              {saving && <Loader2 size={14} className="animate-spin text-gray-400" />}
-              {saved && <span className="text-xs text-green-600">{t("ui.success")}</span>}
-              <button
-                disabled={saving}
-                onClick={async () => {
-                  // Cancel any pending auto-save so we don't double-save
-                  clearTimeout(debounceRef.current);
-                  const ok = await save(data);
-                  if (ok) onClose();
-                }}
-                className="inline-flex items-center gap-1.5 bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                <Save size={13} />
-                {saving ? "Saving…" : t("ui.save")}
-              </button>
-              <button onClick={onClose} className="p-1.5 rounded hover:bg-gray-100 text-gray-500">
-                <X size={16} />
-              </button>
-            </div>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+          <h2 className="font-semibold text-gray-800">{t("trainer.lessons.editor" as never)}</h2>
+          <div className="flex items-center gap-2">
+            {saving && <Loader2 size={14} className="animate-spin text-gray-400" />}
+            {saved && <span className="text-xs text-green-600">{t("ui.success")}</span>}
+            <button
+              onClick={() => { save(data); onClose(); }}
+              className="inline-flex items-center gap-1.5 bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-green-700"
+            >
+              <Save size={13} />
+              {t("ui.save")}
+            </button>
+            <button onClick={onClose} className="p-1.5 rounded hover:bg-gray-100 text-gray-500">
+              <X size={16} />
+            </button>
           </div>
-          {saveError && (
-            <div className="px-5 pb-3">
-              <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">
-                ⚠ {saveError}
-              </p>
-            </div>
-          )}
         </div>
 
         {/* Body */}
