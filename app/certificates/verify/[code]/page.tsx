@@ -54,14 +54,8 @@ export default function VerifyCertificatePage() {
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex flex-col items-center justify-center px-4 py-16">
       {/* Logo */}
       <Link href="/" className="mb-8 flex items-center gap-2.5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-700 shadow">
-          <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 text-white">
-            <path
-              d="M12 2C8.5 2 6 5 6 8c0 2.5 1.5 4.5 4 6l2 1.5L14 14c2.5-1.5 4-3.5 4-6 0-3-2.5-6-6-6z"
-              fill="currentColor" opacity="0.9"
-            />
-            <path d="M12 15.5V22M9 22h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg overflow-hidden shadow">
+          <img src="/icons/icon.svg" alt="TwihugureHub" className="h-9 w-9" />
         </div>
         <span className="text-lg font-bold text-brand-900">TwihugureHub</span>
       </Link>

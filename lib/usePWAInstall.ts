@@ -119,11 +119,31 @@ function detectPlatform(): InstallPlatform {
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
+// Read dismiss/installed state synchronously so the first render is correct.
+// This avoids the flash where canPrompt is always false until useEffect runs.
+function getInitialDismissed(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    if (localStorage.getItem(INSTALLED_KEY) === "1") return true;
+    const snoozedUntil = parseInt(localStorage.getItem(SNOOZE_KEY) ?? "0", 10) || 0;
+    if (Date.now() < snoozedUntil) return true;
+  } catch {}
+  return false;
+}
+
+function getInitialInstalled(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem(INSTALLED_KEY) === "1" || _installed;
+  } catch {}
+  return false;
+}
+
 export function usePWAInstall(): PWAInstallState {
   const [prompt,      setPrompt]      = useState<BeforeInstallPromptEvent | null>(_capturedPrompt);
   const [platform,    setPlatform]    = useState<InstallPlatform>("unsupported");
-  const [isDismissed, setIsDismissed] = useState(true);   // hidden by default
-  const [isInstalled, setIsInstalled] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(getInitialDismissed);
+  const [isInstalled, setIsInstalled] = useState(getInitialInstalled);
 
   useEffect(() => {
     // ── Detect platform ──────────────────────────────────────────────────────
@@ -132,15 +152,9 @@ export function usePWAInstall(): PWAInstallState {
 
     if (p === "already-installed" || isPermanentlyDone()) {
       setIsInstalled(true);
-      return;
-    }
-
-    if (Date.now() < getSnoozedUntil()) {
       setIsDismissed(true);
       return;
     }
-
-    setIsDismissed(false);
 
     // ── Pick up the module-level captured prompt (may already be set) ────────
     if (_capturedPrompt) setPrompt(_capturedPrompt);

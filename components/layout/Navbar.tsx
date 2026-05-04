@@ -48,20 +48,8 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
 
         <Link href="/" className="flex items-center gap-2.5">
           {/* Logo icon */}
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-700 shadow-sm">
-            <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 text-white">
-              <path
-                d="M12 2C8.5 2 6 5 6 8c0 2.5 1.5 4.5 4 6l2 1.5L14 14c2.5-1.5 4-3.5 4-6 0-3-2.5-6-6-6z"
-                fill="currentColor"
-                opacity="0.9"
-              />
-              <path
-                d="M12 15.5V22M9 22h6"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden shadow-sm">
+            <img src="/icons/icon.svg" alt="TwihugureHub" className="h-8 w-8" />
           </div>
           <span
             className="hidden text-lg font-semibold text-brand-900 sm:block"

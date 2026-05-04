@@ -44,16 +44,9 @@ function IOSInstructions({ onClose }: { onClose: () => void }) {
           <X size={18} />
         </button>
 
-        {/* App icon */}
-        <div className="flex justify-center mb-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-700 shadow-lg shadow-brand-900/30">
-            <svg viewBox="0 0 24 24" fill="none" className="h-9 w-9 text-white">
-              <path
-                d="M12 2C8.5 2 6 5 6 8c0 2.5 1.5 4.5 4 6l2 1.5L14 14c2.5-1.5 4-3.5 4-6 0-3-2.5-6-6-6z"
-                fill="currentColor" opacity="0.9"
-              />
-              <path d="M12 15.5V22M9 22h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
+          <div className="flex justify-center mb-4">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl overflow-hidden shadow-lg shadow-brand-900/30">
+            <img src="/icons/icon.svg" alt="TwihugureHub" className="h-16 w-16" />
           </div>
         </div>
 
@@ -161,11 +154,8 @@ export function InstallPrompt() {
         >
           <div className="flex items-start gap-3 p-4">
             {/* Icon */}
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-700">
-              <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-white">
-                <path d="M12 2C8.5 2 6 5 6 8c0 2.5 1.5 4.5 4 6l2 1.5L14 14c2.5-1.5 4-3.5 4-6 0-3-2.5-6-6-6z" fill="currentColor" opacity="0.9"/>
-                <path d="M12 15.5V22M9 22h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl overflow-hidden">
+              <img src="/icons/icon.svg" alt="TwihugureHub" className="h-11 w-11" />
             </div>
 
             <div className="flex-1 min-w-0">
@@ -238,12 +228,9 @@ export function InstallPrompt() {
       <div className="rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden">
         {/* Top bar */}
         <div className="flex items-center gap-3 p-4 pb-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-700">
-            <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-white">
-              <path d="M12 2C8.5 2 6 5 6 8c0 2.5 1.5 4.5 4 6l2 1.5L14 14c2.5-1.5 4-3.5 4-6 0-3-2.5-6-6-6z" fill="currentColor" opacity="0.9"/>
-              <path d="M12 15.5V22M9 22h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </div>
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl overflow-hidden">
+              <img src="/icons/icon.svg" alt="TwihugureHub" className="h-11 w-11" />
+            </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-gray-900">
               {t("pwa.installTitle" as never) || "Install TwihugureHub"}

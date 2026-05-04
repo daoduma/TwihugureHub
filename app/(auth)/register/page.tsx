@@ -148,8 +148,8 @@ export default function RegisterPage() {
           <div className="mb-7 flex items-start justify-between">
             <div>
               <div className="mb-4 flex items-center gap-2.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 shadow-lg shadow-brand-900/40">
-                  <Sprout className="h-5 w-5 text-white" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden shadow-lg shadow-brand-900/40">
+                  <img src="/icons/icon.svg" alt="TwihugureHub" style={{width:"100%",height:"100%",display:"block"}} />
                 </div>
                 <span
                   className="text-xl font-semibold text-white"

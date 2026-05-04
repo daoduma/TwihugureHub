@@ -70,8 +70,8 @@ export default function LoginPage() {
       {/* ── Left hero panel (hidden on mobile) ── */}
       <aside className="login-hero">
         <div className="hero-logo">
-          <div className="logo-icon">
-            <Sprout className="h-6 w-6 text-white" />
+          <div className="logo-icon" style={{overflow:"hidden",padding:0}}>
+            <img src="/icons/icon.svg" alt="TwihugureHub" style={{width:"100%",height:"100%",display:"block"}} />
           </div>
           <span className="logo-text">TwihugureHub</span>
         </div>
@@ -111,8 +111,8 @@ export default function LoginPage() {
 
           <div className="card-body">
             <div className="mobile-logo">
-              <div className="logo-icon-sm">
-                <Sprout className="h-4 w-4 text-white" />
+              <div className="logo-icon-sm" style={{overflow:"hidden",padding:0}}>
+                <img src="/icons/icon.svg" alt="TwihugureHub" style={{width:"100%",height:"100%",display:"block"}} />
               </div>
               <span className="logo-text-sm">TwihugureHub</span>
             </div>
