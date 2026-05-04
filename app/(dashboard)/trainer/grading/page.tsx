@@ -503,6 +503,7 @@ function FlagCard({
 }
 
 export default function GradingPage() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<"grading" | "flags">("grading");
   const [gradingFilter, setGradingFilter] = useState<"PENDING" | "AI_GRADED" | "ALL">("PENDING");
   const [answers, setAnswers] = useState<ShortAnswerItem[]>([]);
