@@ -13,6 +13,7 @@ import { RichTextEditor } from "@/components/trainer/RichTextEditor";
 import { FileUpload } from "@/components/trainer/FileUpload";
 import { StatusBadge } from "@/components/trainer/StatusBadge";
 import type { Course, Module, Lesson, LessonAttachment } from "@/types";
+import { VideoPlayer, isYouTubeUrl } from "@/components/ui/VideoPlayer";
 
 type Lang = "en" | "fr" | "rw";
 const LANGS: Lang[] = ["en", "fr", "rw"];
@@ -106,18 +107,34 @@ function LessonEditor({
             onChange={(v) => update({ body: v })}
           />
 
-          {/* Video URL */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          {/* Video URL + live preview */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
               {t("trainer.lessons.videoUrl" as never)}
             </label>
-            <input
-              type="url"
-              value={data.videoUrl ?? ""}
-              onChange={(e) => update({ videoUrl: e.target.value || undefined })}
-              placeholder="https://youtube.com/..."
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
+            <div className="relative">
+              <input
+                type="url"
+                value={data.videoUrl ?? ""}
+                onChange={(e) => update({ videoUrl: e.target.value || undefined })}
+                placeholder="https://youtube.com/watch?v=… or direct video URL"
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 pr-24 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              {data.videoUrl && isYouTubeUrl(data.videoUrl) && (
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-600">
+                  <svg viewBox="0 0 24 24" className="h-3 w-3 fill-red-600"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-5.8zM9.75 15.5v-7l6.25 3.5-6.25 3.5z"/></svg>
+                  YouTube
+                </span>
+              )}
+            </div>
+            {/* Live preview — renders as soon as a valid URL is entered */}
+            {data.videoUrl && (
+              <VideoPlayer
+                url={data.videoUrl}
+                title="Preview"
+                className="mt-1"
+              />
+            )}
           </div>
 
           {/* Audio */}

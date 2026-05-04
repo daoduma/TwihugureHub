@@ -7,6 +7,7 @@ import { Loader2, ChevronDown, ChevronRight, Play, FileText, Headphones } from "
 import { useTranslation } from "@/lib/useTranslation";
 import { StatusBadge } from "@/components/trainer/StatusBadge";
 import type { Course, Module, Lesson } from "@/types";
+import { VideoPlayer } from "@/components/ui/VideoPlayer";
 
 type Lang = "en" | "fr" | "rw";
 
@@ -139,29 +140,12 @@ export default function CoursePreviewPage() {
                 {(selectedLesson.title as Record<string, string>)[lang] || selectedLesson.title.en}
               </h2>
 
-              {selectedLesson.videoUrl && (() => {
-                // Support YouTube watch?v= and youtu.be/ short links; pass other URLs as-is
-                let embedSrc = selectedLesson.videoUrl;
-                try {
-                  const u = new URL(selectedLesson.videoUrl);
-                  if (u.hostname.includes("youtube.com")) {
-                    const v = u.searchParams.get("v");
-                    if (v) embedSrc = `https://www.youtube.com/embed/${v}`;
-                  } else if (u.hostname === "youtu.be") {
-                    embedSrc = `https://www.youtube.com/embed${u.pathname}`;
-                  }
-                } catch { /* invalid URL — use as-is */ }
-                return (
-                  <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
-                    <iframe
-                      src={embedSrc}
-                      className="w-full h-full"
-                      allowFullScreen
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    />
-                  </div>
-                );
-              })()}
+              {selectedLesson.videoUrl && (
+                <VideoPlayer
+                  url={selectedLesson.videoUrl}
+                  title={(selectedLesson.title as Record<string, string>)[lang] || ""}
+                />
+              )}
 
               {selectedLesson.audioUrl && (
                 <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">

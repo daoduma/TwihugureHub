@@ -8,6 +8,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, CheckCircle, AlertTriangle, Download, FileText } from "lucide-react";
 import { useTranslation, useContentLanguage } from "@/lib/useTranslation";
 import { DownloadLessonButton } from "@/components/pwa/DownloadLessonButton";
+import { VideoPlayer } from "@/components/ui/VideoPlayer";
 
 interface Attachment {
   id: string;
@@ -161,13 +162,12 @@ export default function LessonViewerPage() {
         {titleResult.text}
       </h1>
 
-      {/* Video */}
+      {/* Video — handles YouTube embeds and native video files */}
       {lesson.videoUrl && (
-        <div className="rounded-xl overflow-hidden bg-black">
-          <video controls className="w-full" src={lesson.videoUrl}>
-            Your browser does not support HTML5 video.
-          </video>
-        </div>
+        <VideoPlayer
+          url={lesson.videoUrl}
+          title={titleResult.text}
+        />
       )}
 
       {/* Images */}
