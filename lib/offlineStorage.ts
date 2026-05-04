@@ -1,49 +1,46 @@
 // lib/offlineStorage.ts
-// Offline lesson + quiz-attempt storage using a manual IndexedDB wrapper.
+// Offline lesson + quiz-attempt storage using IndexedDB.
 
 const DB_NAME    = "twihugure-offline";
-const DB_VERSION = 2; // bumped: added syncError field + cleanup support
-const LESSONS_STORE      = "lessons";
+const DB_VERSION = 3; // v3: imageDataUrls + audioDataUrl for true offline media
+const LESSONS_STORE       = "lessons";
 const QUIZ_ATTEMPTS_STORE = "quiz_attempts";
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-    request.onupgradeneeded = (event) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
-
       if (!db.objectStoreNames.contains(LESSONS_STORE)) {
         db.createObjectStore(LESSONS_STORE, { keyPath: "id" });
       }
-
       if (!db.objectStoreNames.contains(QUIZ_ATTEMPTS_STORE)) {
         const store = db.createObjectStore(QUIZ_ATTEMPTS_STORE, {
           keyPath: "localId",
           autoIncrement: true,
         });
-        store.createIndex("synced",  "synced",  { unique: false });
-        store.createIndex("quizId",  "quizId",  { unique: false });
+        store.createIndex("synced", "synced", { unique: false });
       }
     };
-
-    request.onsuccess = () => resolve(request.result);
-    request.onerror  = () => reject(request.error);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror  = () => reject(req.error);
   });
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface OfflineLesson {
-  id: string;
-  title:      Record<string, string>;
-  body:       Record<string, string>;
-  videoUrl?:  string | null;
-  audioUrl?:  string | null;
-  imageUrls:  string[];
-  courseId:   string;
+  id:          string;
+  title:       Record<string, string>;
+  body:        Record<string, string>;
+  videoUrl?:   string | null;  // URL only — video files too large to embed
+  audioUrl?:   string | null;  // original URL (kept as fallback)
+  audioDataUrl?: string | null; // base64 data URL — works offline
+  imageUrls:   string[];       // original URLs (kept as fallback)
+  imageDataUrls?: string[];    // base64 data URLs — works offline
+  courseId:    string;
   courseTitle: Record<string, string>;
-  savedAt:    string;
+  savedAt:     string;
 }
 
 export interface PendingQuizAttempt {
@@ -51,7 +48,7 @@ export interface PendingQuizAttempt {
   quizId:      string;
   farmerId:    string;
   answers: Array<{
-    questionId:       string;
+    questionId:        string;
     selectedOptionId?: string;
     shortAnswerText?:  string;
   }>;
@@ -61,6 +58,38 @@ export interface PendingQuizAttempt {
   synced:       boolean;
   syncError?:   string;
   retryCount?:  number;
+}
+
+// ─── Media download helpers ───────────────────────────────────────────────────
+
+/**
+ * Fetch a URL and return it as a base64 data URL.
+ * Returns null on CORS failure, network error, or non-200 response.
+ * Safe to call with any URL — never throws.
+ */
+export async function fetchAsDataUrl(url: string): Promise<string | null> {
+  if (!url) return null;
+  try {
+    const res = await fetch(url, { mode: "cors", cache: "no-store" });
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror  = () => reject(new Error("FileReader failed"));
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Estimate storage in use by offline lessons (bytes).
+ */
+export async function estimateLessonStorageBytes(): Promise<number> {
+  const lessons = await getAllLessons().catch(() => [] as OfflineLesson[]);
+  return lessons.reduce((acc, l) => acc + JSON.stringify(l).length, 0);
 }
 
 // ─── Lessons ──────────────────────────────────────────────────────────────────
@@ -106,20 +135,10 @@ export async function deleteLesson(id: string): Promise<void> {
 }
 
 export async function isLessonDownloaded(id: string): Promise<boolean> {
-  const lesson = await getLesson(id).catch(() => null);
-  return lesson !== null;
+  return (await getLesson(id).catch(() => null)) !== null;
 }
 
-/**
- * Estimate how many bytes the offline lessons are consuming.
- * Returns bytes.
- */
-export async function estimateLessonStorageBytes(): Promise<number> {
-  const lessons = await getAllLessons().catch(() => [] as OfflineLesson[]);
-  return lessons.reduce((acc, l) => acc + JSON.stringify(l).length, 0);
-}
-
-// ─── Offline Quiz Attempts ────────────────────────────────────────────────────
+// ─── Quiz Attempts ────────────────────────────────────────────────────────────
 
 export async function savePendingAttempt(
   attempt: Omit<PendingQuizAttempt, "localId">
@@ -144,7 +163,6 @@ export async function getPendingAttempts(): Promise<PendingQuizAttempt[]> {
   });
 }
 
-/** Delete a synced attempt permanently (keeps the DB tidy). */
 export async function deleteSyncedAttempt(localId: number): Promise<void> {
   const db = await openDB();
   return new Promise((resolve, reject) => {
@@ -155,7 +173,6 @@ export async function deleteSyncedAttempt(localId: number): Promise<void> {
   });
 }
 
-/** Mark an attempt as synced in-place (kept for backwards compat). */
 export async function markAttemptSynced(localId: number): Promise<void> {
   const db = await openDB();
   return new Promise((resolve, reject) => {
@@ -163,15 +180,14 @@ export async function markAttemptSynced(localId: number): Promise<void> {
     const store = tx.objectStore(QUIZ_ATTEMPTS_STORE);
     const getReq = store.get(localId);
     getReq.onsuccess = () => {
-      const record = getReq.result;
-      if (record) store.put({ ...record, synced: true });
+      const r = getReq.result;
+      if (r) store.put({ ...r, synced: true });
     };
     tx.oncomplete = () => resolve();
     tx.onerror    = () => reject(tx.error);
   });
 }
 
-/** Update an attempt's syncError and retryCount. */
 async function markAttemptFailed(localId: number, error: string): Promise<void> {
   const db = await openDB();
   return new Promise((resolve, reject) => {
@@ -179,14 +195,8 @@ async function markAttemptFailed(localId: number, error: string): Promise<void> 
     const store = tx.objectStore(QUIZ_ATTEMPTS_STORE);
     const getReq = store.get(localId);
     getReq.onsuccess = () => {
-      const record = getReq.result;
-      if (record) {
-        store.put({
-          ...record,
-          syncError:  error,
-          retryCount: (record.retryCount ?? 0) + 1,
-        });
-      }
+      const r = getReq.result;
+      if (r) store.put({ ...r, syncError: error, retryCount: (r.retryCount ?? 0) + 1 });
     };
     tx.oncomplete = () => resolve();
     tx.onerror    = () => reject(tx.error);
@@ -195,30 +205,14 @@ async function markAttemptFailed(localId: number, error: string): Promise<void> 
 
 const MAX_RETRIES = 5;
 
-/**
- * Sync all pending (unsynced) quiz attempts to the server.
- * Deletes attempts that succeed. Tracks retries and stops after MAX_RETRIES.
- * Call on app load or when connectivity is restored.
- */
-export async function syncPendingAttempts(): Promise<{
-  synced: number;
-  failed: number;
-}> {
-  if (typeof navigator !== "undefined" && !navigator.onLine) {
-    return { synced: 0, failed: 0 };
-  }
+export async function syncPendingAttempts(): Promise<{ synced: number; failed: number }> {
+  if (typeof navigator !== "undefined" && !navigator.onLine) return { synced: 0, failed: 0 };
 
   const pending = await getPendingAttempts().catch(() => [] as PendingQuizAttempt[]);
-  let synced = 0;
-  let failed = 0;
+  let synced = 0, failed = 0;
 
   for (const attempt of pending) {
-    // Skip attempts that have exceeded the retry limit
-    if ((attempt.retryCount ?? 0) >= MAX_RETRIES) {
-      failed++;
-      continue;
-    }
-
+    if ((attempt.retryCount ?? 0) >= MAX_RETRIES) { failed++; continue; }
     try {
       const res = await fetch(`/api/farmer/quiz/${attempt.quizId}/attempt`, {
         method: "POST",
@@ -229,22 +223,19 @@ export async function syncPendingAttempts(): Promise<{
           startedAt:    attempt.startedAt,
         }),
       });
-
       if (res.ok && attempt.localId !== undefined) {
-        // Delete on success to keep DB tidy
         await deleteSyncedAttempt(attempt.localId);
         synced++;
       } else {
-        const msg = `HTTP ${res.status}`;
-        if (attempt.localId !== undefined) await markAttemptFailed(attempt.localId, msg);
+        if (attempt.localId !== undefined)
+          await markAttemptFailed(attempt.localId, `HTTP ${res.status}`);
         failed++;
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "network error";
-      if (attempt.localId !== undefined) await markAttemptFailed(attempt.localId, msg);
+      if (attempt.localId !== undefined)
+        await markAttemptFailed(attempt.localId, err instanceof Error ? err.message : "error");
       failed++;
     }
   }
-
   return { synced, failed };
 }

@@ -2,191 +2,195 @@
 "use client";
 
 /**
- * Manages the full PWA install lifecycle:
- *   - Captures the browser's BeforeInstallPromptEvent (Android / desktop Chrome/Edge)
- *   - Detects iOS Safari (no prompt available — needs manual steps)
- *   - Detects already-installed standalone mode
- *   - Persists dismissal to localStorage (7-day snooze / permanent after install)
+ * PWA install lifecycle hook.
+ *
+ * THE TIMING PROBLEM:
+ *   `beforeinstallprompt` fires early in the page load — before React hydrates
+ *   and any useEffect runs. A naive addEventListener inside useEffect misses it.
+ *
+ * THE FIX:
+ *   Capture the event at *module load time* (a plain window.addEventListener at
+ *   the top level of this module). Modules are evaluated once, synchronously,
+ *   before React even starts. The captured event is stored in a module-level
+ *   variable and handed to the hook on first render.
  */
 
 import { useState, useEffect, useCallback } from "react";
 
-// Extend Window for the non-standard iOS standalone property
-declare global {
-  interface Navigator {
-    standalone?: boolean;
-  }
-}
-
-// Chrome/Edge fire this before showing the mini-infobar
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-export type InstallPlatform = "android" | "ios" | "desktop" | "already-installed" | "unsupported";
+declare global {
+  interface Navigator { standalone?: boolean; }
+}
+
+// ─── Module-level early capture ───────────────────────────────────────────────
+// This runs synchronously the moment the module is first imported — before
+// React hydrates, before any useEffect, before anything else. This is the ONLY
+// reliable way to catch beforeinstallprompt.
+
+let _capturedPrompt: BeforeInstallPromptEvent | null = null;
+let _installed = false;
+
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault(); // stop the browser's own mini-infobar
+    _capturedPrompt = e as BeforeInstallPromptEvent;
+    // Dispatch a custom event so any already-mounted hook can react
+    window.dispatchEvent(new CustomEvent("pwa-prompt-ready"));
+  });
+
+  window.addEventListener("appinstalled", () => {
+    _installed = true;
+    _capturedPrompt = null;
+    window.dispatchEvent(new CustomEvent("pwa-installed"));
+  });
+}
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export type InstallPlatform =
+  | "android"
+  | "ios"
+  | "desktop"
+  | "already-installed"
+  | "unsupported";
 
 export interface PWAInstallState {
-  /** True when there is something to show the user */
-  canPrompt: boolean;
-  /** Which platform/flow to use */
-  platform: InstallPlatform;
-  /** Whether the user snoozed the prompt */
-  isDismissed: boolean;
-  /** Whether the app is already installed (standalone) */
-  isInstalled: boolean;
-  /** Trigger the native install dialog (Android / desktop) */
+  canPrompt:      boolean;
+  platform:       InstallPlatform;
+  isDismissed:    boolean;
+  isInstalled:    boolean;
   triggerInstall: () => Promise<void>;
-  /** Snooze for 7 days */
-  dismiss: () => void;
-  /** Mark as permanently done (called after user installs) */
-  markInstalled: () => void;
+  dismiss:        () => void;
+  markInstalled:  () => void;
 }
+
+// ─── localStorage helpers ─────────────────────────────────────────────────────
 
 const SNOOZE_KEY    = "pwa-install-snoozed-until";
 const INSTALLED_KEY = "pwa-install-done";
 const SNOOZE_DAYS   = 7;
 
-function isStandalone(): boolean {
-  if (typeof window === "undefined") return false;
+function getSnoozedUntil(): number {
+  try { return parseInt(localStorage.getItem(SNOOZE_KEY) ?? "0", 10) || 0; }
+  catch { return 0; }
+}
+function isPermanentlyDone(): boolean {
+  try { return localStorage.getItem(INSTALLED_KEY) === "1"; }
+  catch { return false; }
+}
+function setInstalledFlag() {
+  try { localStorage.setItem(INSTALLED_KEY, "1"); } catch {}
+}
+function setSnoozeFlag() {
+  try {
+    const until = Date.now() + SNOOZE_DAYS * 24 * 60 * 60 * 1000;
+    localStorage.setItem(SNOOZE_KEY, String(until));
+  } catch {}
+}
+
+// ─── Platform detection ───────────────────────────────────────────────────────
+
+function isStandaloneMode(): boolean {
   return (
     window.matchMedia("(display-mode: standalone)").matches ||
     window.navigator.standalone === true
   );
 }
 
-function getSnoozedUntil(): number {
-  try {
-    return parseInt(localStorage.getItem(SNOOZE_KEY) ?? "0", 10) || 0;
-  } catch {
-    return 0;
-  }
-}
-
-function isPermanentlyDone(): boolean {
-  try {
-    return localStorage.getItem(INSTALLED_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
 function detectPlatform(): InstallPlatform {
-  if (typeof navigator === "undefined") return "unsupported";
+  if (isStandaloneMode()) return "already-installed";
+
   const ua = navigator.userAgent;
 
-  if (isStandalone()) return "already-installed";
-
-  // iOS Safari — must check before generic mobile check
-  const isIOS = /iphone|ipad|ipod/i.test(ua);
-  const isSafariiOS =
-    isIOS &&
+  // iOS Safari (not Chrome/Firefox on iOS — those can't install PWAs)
+  if (
+    /iphone|ipad|ipod/i.test(ua) &&
     /safari/i.test(ua) &&
-    !/crios|fxios|opios|mercury/i.test(ua); // not Chrome/Firefox on iOS
+    !/crios|fxios|opios|mercury/i.test(ua)
+  ) return "ios";
 
-  if (isSafariiOS) return "ios";
-
-  // Android or desktop with Chrome/Edge — will get beforeinstallprompt
-  // We return "android" for mobile, "desktop" for desktop
-  const isMobile = /android|mobile/i.test(ua);
-  if (isMobile) return "android";
-
-  return "desktop";
+  // Android or desktop — will receive beforeinstallprompt
+  return /android|mobile/i.test(ua) ? "android" : "desktop";
 }
 
+// ─── Hook ─────────────────────────────────────────────────────────────────────
+
 export function usePWAInstall(): PWAInstallState {
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null);
+  const [prompt,      setPrompt]      = useState<BeforeInstallPromptEvent | null>(_capturedPrompt);
   const [platform,    setPlatform]    = useState<InstallPlatform>("unsupported");
-  const [isDismissed, setIsDismissed] = useState(true); // start hidden
+  const [isDismissed, setIsDismissed] = useState(true);   // hidden by default
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
+    // ── Detect platform ──────────────────────────────────────────────────────
     const p = detectPlatform();
     setPlatform(p);
 
-    if (p === "already-installed") {
+    if (p === "already-installed" || isPermanentlyDone()) {
       setIsInstalled(true);
       return;
     }
 
-    if (isPermanentlyDone()) {
-      setIsInstalled(true);
-      return;
-    }
-
-    // Check snooze
-    const snoozedUntil = getSnoozedUntil();
-    if (Date.now() < snoozedUntil) {
+    if (Date.now() < getSnoozedUntil()) {
       setIsDismissed(true);
       return;
     }
 
-    // Not dismissed — allow showing
     setIsDismissed(false);
 
-    // Listen for Chrome/Edge install event
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-    };
-    window.addEventListener("beforeinstallprompt", handler);
+    // ── Pick up the module-level captured prompt (may already be set) ────────
+    if (_capturedPrompt) setPrompt(_capturedPrompt);
 
-    // Listen for successful install
-    const installedHandler = () => {
+    // ── Also listen for the custom event in case the prompt fires later ──────
+    const onPromptReady = () => setPrompt(_capturedPrompt);
+    const onInstalled   = () => {
       setIsInstalled(true);
       setIsDismissed(true);
-      try { localStorage.setItem(INSTALLED_KEY, "1"); } catch {}
+      setInstalledFlag();
     };
-    window.addEventListener("appinstalled", installedHandler);
+
+    window.addEventListener("pwa-prompt-ready", onPromptReady);
+    window.addEventListener("pwa-installed",    onInstalled);
 
     return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
-      window.removeEventListener("appinstalled", installedHandler);
+      window.removeEventListener("pwa-prompt-ready", onPromptReady);
+      window.removeEventListener("pwa-installed",    onInstalled);
     };
   }, []);
 
   const triggerInstall = useCallback(async () => {
-    if (!deferredPrompt) return;
-    await deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+    if (!prompt) return;
+    await prompt.prompt();
+    const { outcome } = await prompt.userChoice;
     if (outcome === "accepted") {
       setIsInstalled(true);
       setIsDismissed(true);
-      try { localStorage.setItem(INSTALLED_KEY, "1"); } catch {}
+      setInstalledFlag();
     }
-    setDeferredPrompt(null);
-  }, [deferredPrompt]);
+    setPrompt(null);
+    _capturedPrompt = null;
+  }, [prompt]);
 
   const dismiss = useCallback(() => {
     setIsDismissed(true);
-    try {
-      const until = Date.now() + SNOOZE_DAYS * 24 * 60 * 60 * 1000;
-      localStorage.setItem(SNOOZE_KEY, String(until));
-    } catch {}
+    setSnoozeFlag();
   }, []);
 
   const markInstalled = useCallback(() => {
     setIsInstalled(true);
     setIsDismissed(true);
-    try { localStorage.setItem(INSTALLED_KEY, "1"); } catch {}
+    setInstalledFlag();
   }, []);
 
-  // Can we show any install UI at all?
   const canPrompt =
     !isInstalled &&
     !isDismissed &&
     (platform === "ios" || platform === "android" || platform === "desktop") &&
-    // For Android/desktop we need the deferred prompt OR it's iOS (which never fires one)
-    (platform === "ios" || deferredPrompt !== null);
+    (platform === "ios" || prompt !== null);
 
-  return {
-    canPrompt,
-    platform,
-    isDismissed,
-    isInstalled,
-    triggerInstall,
-    dismiss,
-    markInstalled,
-  };
+  return { canPrompt, platform, isDismissed, isInstalled, triggerInstall, dismiss, markInstalled };
 }

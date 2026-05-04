@@ -76,8 +76,9 @@ function offlineLessonToDetail(ol: OfflineLesson): LessonDetail {
     title: ol.title,
     body: ol.body,
     videoUrl: ol.videoUrl ?? null,
-    audioUrl: ol.audioUrl ?? null,
-    imageUrls: ol.imageUrls,
+    // Prefer embedded data URL (works offline) over original network URL
+    audioUrl: ol.audioDataUrl ?? ol.audioUrl ?? null,
+    imageUrls: ol.imageDataUrls ?? ol.imageUrls,
     moduleId: "",
     order: 0,
     attachments: [],  // attachments not stored offline
