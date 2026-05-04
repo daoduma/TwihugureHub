@@ -854,5 +854,27 @@
     "loading": "Loading…",
     "previous": "Previous",
     "next": "Next"
+  },
+  "pwa": {
+    "installTitle": "Install TwihugureHub",
+    "installTagline": "Access your lessons offline, anytime",
+    "installButton": "Install App",
+    "installing": "Installing…",
+    "installSuccess": "App installed! 🎉",
+    "notNow": "Later",
+    "howToInstall": "How to install",
+    "gotIt": "Got it!",
+    "benefit1": "Read lessons without internet",
+    "benefit2": "Faster loading, no browser bar",
+    "benefit3": "Works like a real app on your phone",
+    "iosSubtitle": "Add to your home screen for offline access",
+    "iosStep1": "Tap the",
+    "iosShareLabel": "Share",
+    "iosStep1b": "button at the bottom of Safari",
+    "iosStep2": "Scroll down and tap",
+    "iosAddLabel": "Add to Home Screen",
+    "iosAddConfirm": "Add",
+    "iosStep3": "Tap",
+    "iosStep3b": "in the top-right corner"
   }
 }

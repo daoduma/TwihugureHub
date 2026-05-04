@@ -854,5 +854,27 @@
     "loading": "Chargement…",
     "previous": "Précédent",
     "next": "Suivant"
+  },
+  "pwa": {
+    "installTitle": "Installer TwihugureHub",
+    "installTagline": "Accédez à vos leçons hors ligne, à tout moment",
+    "installButton": "Installer l'application",
+    "installing": "Installation…",
+    "installSuccess": "Application installée ! 🎉",
+    "notNow": "Plus tard",
+    "howToInstall": "Comment installer",
+    "gotIt": "Compris !",
+    "benefit1": "Lire les leçons sans internet",
+    "benefit2": "Chargement plus rapide, sans barre de navigation",
+    "benefit3": "Fonctionne comme une vraie application",
+    "iosSubtitle": "Ajoutez à votre écran d'accueil pour un accès hors ligne",
+    "iosStep1": "Appuyez sur le bouton",
+    "iosShareLabel": "Partager",
+    "iosStep1b": "en bas de Safari",
+    "iosStep2": "Faites défiler et appuyez sur",
+    "iosAddLabel": "Sur l'écran d'accueil",
+    "iosAddConfirm": "Ajouter",
+    "iosStep3": "Appuyez sur",
+    "iosStep3b": "en haut à droite"
   }
 }

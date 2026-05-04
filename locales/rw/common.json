@@ -854,5 +854,27 @@
     "loading": "Gutegereza…",
     "previous": "Ibanjirije",
     "next": "Ikurikiraho"
+  },
+  "pwa": {
+    "installTitle": "Shyira TwihugureHub",
+    "installTagline": "Bona amasomo yawe offline, igihe cyose",
+    "installButton": "Shyira porogaramu",
+    "installing": "Gushyira…",
+    "installSuccess": "Porogaramu yashyizwe! 🎉",
+    "notNow": "Nyuma",
+    "howToInstall": "Uburyo bwo gushyira",
+    "gotIt": "Numvise!",
+    "benefit1": "Soma amasomo nta internet",
+    "benefit2": "Kwihuta, nta bar ya browser",
+    "benefit3": "Ikora nka porogaramu nyayo kuri telefone",
+    "iosSubtitle": "Ongeraho ku screen y'ahabanza kugirango ubike offline",
+    "iosStep1": "Kanda buto ya",
+    "iosShareLabel": "Sangira",
+    "iosStep1b": "hepfo ya Safari",
+    "iosStep2": "Manura hasi ukande",
+    "iosAddLabel": "Ongeraho ku Ibibaho bya Mbere",
+    "iosAddConfirm": "Ongeraho",
+    "iosStep3": "Kanda",
+    "iosStep3b": "hejuru iburyo"
   }
 }

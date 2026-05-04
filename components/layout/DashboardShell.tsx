@@ -7,6 +7,7 @@ import { Sidebar } from "./Sidebar";
 import { useOfflineSync } from "@/lib/useOfflineSync";
 import { LanguageSync } from "@/components/providers/LanguageSync";
 import { OfflineBanner } from "@/components/pwa/OfflineBanner";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,6 +17,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-gray-50">
       {/* Silently syncs session preferredLanguage → i18n on every page */}
       <LanguageSync />
+
+      {/* PWA install prompt */}
+      <InstallPrompt />
 
       {/* Offline/back-online banner — shown to all roles */}
       <OfflineBanner

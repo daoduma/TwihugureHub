@@ -5,11 +5,13 @@ import { signOut, useSession } from "next-auth/react";
 import { LogOut, Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { Download } from "lucide-react";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/lib/useTranslation";
 import { getInitials, getRoleI18nKey } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { usePWAInstall } from "@/lib/usePWAInstall";
 
 interface NavbarProps {
   onMenuToggle?: () => void;
@@ -19,6 +21,7 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
   const { data: session } = useSession();
   const { t } = useTranslation();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const { canPrompt, platform, triggerInstall, isInstalled } = usePWAInstall();
 
   const user = session?.user;
   const initials = user?.name ? getInitials(user.name) : "?";
@@ -72,6 +75,18 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
       {/* Right: language + notifications + user */}
       <div className="flex items-center gap-2">
         <LanguageSelector variant="light" />
+
+        {/* Install button — shown on desktop when the prompt is available */}
+        {canPrompt && platform === "desktop" && (
+          <button
+            onClick={triggerInstall}
+            className="hidden md:flex items-center gap-1.5 rounded-lg border border-brand-200 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-100 transition-colors"
+            title={t("pwa.installTitle" as never) || "Install App"}
+          >
+            <Download size={13} />
+            {t("pwa.installButton" as never) || "Install App"}
+          </button>
+        )}
 
         <NotificationBell />
 
