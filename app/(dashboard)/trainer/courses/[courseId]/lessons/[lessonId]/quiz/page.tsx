@@ -443,16 +443,23 @@ export default function QuizDesignerPage() {
     setFetchError(null);
     fetch(`/api/trainer/lessons/${lessonId}/quiz`)
       .then(async (r) => {
+        const ct = r.headers.get("content-type") ?? "";
+        if (!ct.includes("application/json")) {
+          // Server returned HTML (typical of a 500 error page) — show the status
+          // and a snippet of the body so the user has a real diagnostic.
+          const text = await r.text().catch(() => "");
+          throw new Error(`Server error ${r.status}: ${text.slice(0, 200) || r.statusText}`);
+        }
         const d = await r.json();
         if (d.success) {
-          // data is the quiz object, or null if none exists yet — both are valid
           setQuiz(d.data ?? null);
         } else {
-          // Real API error (auth failure, lesson not found, etc.)
-          setFetchError(d.error ?? "Failed to load quiz. Please refresh.");
+          setFetchError(d.error ?? `Failed to load quiz (HTTP ${r.status})`);
         }
       })
-      .catch(() => setFetchError("Network error. Please check your connection."))
+      .catch((e: unknown) =>
+        setFetchError(e instanceof Error ? e.message : "Network error. Please check your connection.")
+      )
       .finally(() => setLoading(false));
   }, [lessonId]);
 
@@ -467,19 +474,24 @@ export default function QuizDesignerPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: { en: "Lesson Quiz", fr: "Quiz de la leçon", rw: "Ikizamini cy'isomo" } }),
       });
-      const json = await res.json();
 
+      // If the server returned HTML (e.g. 500 error page from an unhandled
+      // exception), surface the status code and a body snippet so the user
+      // sees the actual problem instead of a generic "Network error".
+      const contentType = res.headers.get("content-type") ?? "";
+      if (!contentType.includes("application/json")) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`Server error ${res.status}: ${text.slice(0, 200) || res.statusText}`);
+      }
+
+      const json = await res.json();
       if (json.success) {
         setQuiz(json.data);
-      } else if (res.status === 409) {
-        // Quiz was already created (e.g. a previous request succeeded but the
-        // UI didn't update).  Just fetch and display the existing one.
-        fetchQuiz();
       } else {
-        setCreateError(json.error ?? "Could not create quiz. Please try again.");
+        setCreateError(json.error ?? `Could not create quiz (HTTP ${res.status})`);
       }
-    } catch {
-      setCreateError("Network error. Please check your connection and try again.");
+    } catch (e: unknown) {
+      setCreateError(e instanceof Error ? e.message : "Could not create quiz. Please try again.");
     } finally {
       setCreating(false);
     }
