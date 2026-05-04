@@ -93,8 +93,13 @@ export default function QuizPage() {
   const loadQuiz = async () => {
     setPhase("loading");
     try {
-      // Fetch quiz via trainer API
+      // Fetch lesson (which contains the quiz) via farmer API
       const res = await fetch(`/api/farmer/lessons/${lessonId}`);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        setError(errData?.error || `Could not load quiz (${res.status}). Make sure you are enrolled in this course.`);
+        return;
+      }
       const data = await res.json();
       const rawQuiz: Quiz = data.lesson?.quiz;
       if (!rawQuiz) { setError("No quiz found for this lesson."); return; }
@@ -119,7 +124,7 @@ export default function QuizPage() {
       }
       setPhase("quiz");
     } catch (err) {
-      setError("Failed to load quiz.");
+      setError("Failed to load quiz. Please check your connection and try again.");
       setPhase("loading");
     }
   };

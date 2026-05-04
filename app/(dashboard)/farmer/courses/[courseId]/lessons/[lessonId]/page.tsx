@@ -110,6 +110,7 @@ export default function LessonViewerPage() {
   const [loading,      setLoading]      = useState(true);
   const [isOfflineMode, setIsOfflineMode] = useState(false);
   const [notDownloaded, setNotDownloaded] = useState(false);
+  const [apiError,     setApiError]     = useState<string | null>(null);
   const [isCompleted,  setIsCompleted]  = useState(false);
   const [marking,      setMarking]      = useState(false);
   const startedAt = useRef(Date.now());
@@ -119,6 +120,7 @@ export default function LessonViewerPage() {
     startedAt.current = Date.now();
     setIsOfflineMode(false);
     setNotDownloaded(false);
+    setApiError(null);
     setLoading(true);
 
     const load = async () => {
@@ -138,8 +140,15 @@ export default function LessonViewerPage() {
             setLoading(false);
             return;
           }
+          // Server returned an error — do NOT silently fall through to offline path
+          // Try to show a meaningful error message instead
+          const errData = await res.json().catch(() => ({}));
+          const errMsg = errData?.error || `Error loading lesson (${res.status})`;
+          setApiError(errMsg);
+          setLoading(false);
+          return;
         } catch {
-          // Network request failed even though online — fall through to IndexedDB
+          // True network failure while online — fall through to IndexedDB
         }
       }
 
@@ -180,6 +189,26 @@ export default function LessonViewerPage() {
     return (
       <div className="text-center py-12 text-gray-400">
         {t("ui.loading" as never)}
+      </div>
+    );
+  }
+
+  // API returned an error while online (e.g. not enrolled, not found, server error)
+  if (apiError) {
+    return (
+      <div className="max-w-lg mx-auto text-center py-20 space-y-4">
+        <AlertTriangle size={52} className="mx-auto text-red-400" />
+        <h2 className="text-xl font-bold text-gray-800">
+          {t("farmer.lesson.errorTitle" as never) || "Could not load lesson"}
+        </h2>
+        <p className="text-sm text-gray-500">{apiError}</p>
+        <Link
+          href={`/farmer/courses/${courseId}`}
+          className="btn btn-outline flex items-center gap-2 justify-center"
+        >
+          <ArrowLeft size={15} />
+          {t("farmer.lesson.backToCourse" as never) || "Back to Course"}
+        </Link>
       </div>
     );
   }

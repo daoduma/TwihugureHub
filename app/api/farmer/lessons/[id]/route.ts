@@ -57,5 +57,14 @@ export async function GET(
     return NextResponse.json({ error: "Course not available" }, { status: 403 });
   }
 
+  // Ensure the farmer is enrolled in this course
+  const courseId = lesson.module.courseId;
+  const enrollment = await db.enrollment.findUnique({
+    where: { farmerId_courseId: { farmerId: session.user.id, courseId } },
+  });
+  if (!enrollment) {
+    return NextResponse.json({ error: "You are not enrolled in this course" }, { status: 403 });
+  }
+
   return NextResponse.json({ lesson });
 }
