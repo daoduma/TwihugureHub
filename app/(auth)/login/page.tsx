@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, Loader2, LogIn, Sprout } from "lucide-react";
@@ -10,6 +10,12 @@ import { useTranslation } from "@/lib/useTranslation";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { cn } from "@/lib/utils";
 
+const ROLE_DASHBOARD_MAP: Record<string, string> = {
+  ADMIN:       "/admin/dashboard",
+  TRAINER:     "/trainer/dashboard",
+  FARMER:      "/farmer/dashboard",
+  MBAZA_STAFF: "/mbaza/dashboard",
+};
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -34,7 +40,6 @@ export default function LoginPage() {
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
         redirect: false,
-        callbackUrl,
       });
 
       if (result?.error) {
@@ -46,11 +51,11 @@ export default function LoginPage() {
         return;
       }
 
-      if (result?.url) {
-        router.push(result.url);
-      } else {
-        router.push("/");
-      }
+      // Fetch fresh session to get role, then redirect to the right dashboard
+      const session = await getSession();
+      const role = session?.user?.role as string | undefined;
+      const destination = callbackUrl ?? (role ? ROLE_DASHBOARD_MAP[role] : null) ?? "/";
+      router.push(destination);
       router.refresh();
     } catch {
       setError(t("auth.login.loginError"));
@@ -88,7 +93,7 @@ export default function LoginPage() {
               <p className="mt-1 text-sm text-brand-300">{t("auth.login.subtitle")}</p>
             </div>
 
-            {/* Language switcher — works before login */}
+            {/* Language switcher */}
             <LanguageSelector variant="dark" />
           </div>
 
