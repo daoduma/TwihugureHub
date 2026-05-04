@@ -13,6 +13,7 @@ import { useTranslation, useContentLanguage } from "@/lib/useTranslation";
 import { useOnlineStatus } from "@/lib/useOnlineStatus";
 import type { Language } from "@/types";
 import { DownloadLessonButton } from "@/components/pwa/DownloadLessonButton";
+import { MarkdownContent } from "@/components/ui/MarkdownContent";
 import { VideoPlayer } from "@/components/ui/VideoPlayer";
 import {
   getLesson,
@@ -362,12 +363,7 @@ export default function LessonViewerPage() {
       )}
 
       {/* ── Body ────────────────────────────────────────────────────── */}
-      {bodyResult.text && (
-        <div
-          className="prose prose-brand max-w-none"
-          dangerouslySetInnerHTML={{ __html: bodyResult.text }}
-        />
-      )}
+      {bodyResult.text && <MarkdownContent source={bodyResult.text} />}
 
       {/* ── Audio ───────────────────────────────────────────────────── */}
       {lesson.audioUrl && (

@@ -1,5 +1,6 @@
 // tailwind.config.ts — CHANGED: Added TwihugureHub brand palette as theme tokens
 import type { Config } from "tailwindcss";
+import typography from "@tailwindcss/typography";
 
 const config: Config = {
   content: [
@@ -90,9 +91,25 @@ const config: Config = {
       animation: {
         "slide-up": "slide-up 0.35s ease-out both",
       },
+      typography: {
+        // `prose-brand` — used by lesson body / markdown rendering
+        brand: {
+          css: {
+            "--tw-prose-links": "#2D6A4F",
+            "--tw-prose-bold": "#1B1B1B",
+            "--tw-prose-headings": "#1f5239",
+            "--tw-prose-quotes": "#1f5239",
+            "--tw-prose-quote-borders": "#9bd5bf",
+            "--tw-prose-code": "#1f5239",
+            "--tw-prose-pre-bg": "#0e3221",
+            a: { textDecoration: "underline", fontWeight: "500" },
+            "a:hover": { color: "#1f5239" },
+          },
+        },
+      },
     },
   },
-  plugins: [],
+  plugins: [typography],
 };
 
 export default config;

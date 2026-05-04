@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "@/lib/useTranslation";
 import { LangTabs } from "@/components/trainer/LangTabs";
-import { RichTextEditor } from "@/components/trainer/RichTextEditor";
+import { MarkdownEditor } from "@/components/trainer/MarkdownEditor";
 import { FileUpload } from "@/components/trainer/FileUpload";
 import { StatusBadge } from "@/components/trainer/StatusBadge";
 import type { Course, Module, Lesson, LessonAttachment } from "@/types";
@@ -127,7 +127,7 @@ function LessonEditor({
             onChange={(v) => update({ title: v })}
           />
 
-          <RichTextEditor
+          <MarkdownEditor
             label={t("trainer.lessons.body" as never)}
             value={data.body as { en: string; fr: string; rw: string }}
             onChange={(v) => update({ body: v })}
