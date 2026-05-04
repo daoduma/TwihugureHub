@@ -294,7 +294,7 @@ function GradeCard({
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
                 rows={2}
-                placeholder=t("trainer.grading.feedbackPlaceholder")
+                placeholder={t("trainer.grading.feedbackPlaceholder")}
                 className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
               />
             </div>
@@ -469,7 +469,7 @@ function FlagCard({
                 value={resolution}
                 onChange={(e) => setResolution(e.target.value)}
                 rows={2}
-                placeholder=t("trainer.grading.resolutionPlaceholder")
+                placeholder={t("trainer.grading.resolutionPlaceholder")}
                 className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
               />
             </div>
