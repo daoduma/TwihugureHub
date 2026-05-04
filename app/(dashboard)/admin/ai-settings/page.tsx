@@ -105,7 +105,7 @@ export default function AISettingsPage() {
     if (data.valid) {
       setSaving(true);
       await fetch("/api/admin/llm/config", {
-        method: "PUT",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           provider: selectedProvider?.id,
@@ -129,11 +129,10 @@ export default function AISettingsPage() {
     if (!currentConfig) return;
     setValidating(true);
     setValidationResult(null);
-    // Re-validate using stored config – just trigger a minimal test
-    const res = await fetch("/api/admin/llm/validate", {
+    // Call the dedicated test endpoint which decrypts the stored key server-side
+    const res = await fetch("/api/admin/llm/test", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ provider: currentConfig.provider, modelId: currentConfig.modelId, apiKey: "_stored_", baseUrl: currentConfig.baseUrl }),
     });
     const data = await res.json();
     setValidationResult(data);

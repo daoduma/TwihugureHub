@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   const encrypted = encryptApiKey(apiKey);
   const config = await db.lLMConfig.upsert({
     where: { singleton: 1 },
-    update: { provider, modelId, apiKey: encrypted, baseUrl: baseUrl ?? null, validatedAt: null, isActive: true },
+    update: { provider, modelId, apiKey: encrypted, baseUrl: baseUrl ?? null, validatedAt: new Date(), isActive: true },
     create: { singleton: 1, provider, modelId, apiKey: encrypted, baseUrl: baseUrl ?? null, isActive: true },
   });
 
