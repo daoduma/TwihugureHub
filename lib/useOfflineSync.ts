@@ -1,28 +1,52 @@
 // lib/useOfflineSync.ts
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { syncPendingAttempts } from "@/lib/offlineStorage";
+import { useOnlineStatus } from "@/lib/useOnlineStatus";
+
+export interface SyncState {
+  isSyncing:    boolean;
+  lastSynced:   Date | null;
+  pendingCount: number;   // how many are still waiting (after last sync)
+}
 
 /**
  * Syncs pending offline quiz attempts when connectivity is restored.
- * Mount this hook once at the app level (e.g., in DashboardShell).
+ * Mount once at app level (DashboardShell). Returns sync state so the
+ * UI can show a "syncing…" indicator.
  */
-export function useOfflineSync() {
+export function useOfflineSync(): SyncState {
+  const isOnline = useOnlineStatus();
+  const [isSyncing,    setIsSyncing]    = useState(false);
+  const [lastSynced,   setLastSynced]   = useState<Date | null>(null);
+  const [pendingCount, setPendingCount] = useState(0);
+
   const sync = useCallback(async () => {
+    if (isSyncing) return;
+    setIsSyncing(true);
     try {
-      await syncPendingAttempts();
+      const { synced, failed } = await syncPendingAttempts();
+      setPendingCount(failed);
+      if (synced > 0) setLastSynced(new Date());
     } catch {
-      // Silent fail — will retry next time
+      // Silent — will retry next time
+    } finally {
+      setIsSyncing(false);
     }
+  }, [isSyncing]);
+
+  useEffect(() => {
+    // Try on mount (pending attempts from a previous offline session)
+    sync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    // Try sync on mount (in case there are pending attempts from a previous session)
-    sync();
+    // Re-sync every time we come back online
+    if (isOnline) sync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOnline]);
 
-    // Re-sync whenever we come back online
-    window.addEventListener("online", sync);
-    return () => window.removeEventListener("online", sync);
-  }, [sync]);
+  return { isSyncing, lastSynced, pendingCount };
 }

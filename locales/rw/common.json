@@ -835,7 +835,20 @@
     "savedOn": "Yabitswe ku",
     "viewLesson": "Reba",
     "quizSavedTitle": "Ikizamini cyabitswe offline",
-    "quizSavedBody": "Ibisubizo byawe byabitswe. Bizaohererezwa bwite ubwo uzunganye internet."
+    "quizSavedBody": "Ibisubizo byawe byabitswe. Bizaohererezwa bwite ubwo uzunganye internet.",
+    "downloading": "Kubika…",
+    "retryDownload": "Ongera ugerageze gukurura",
+    "syncing": "Wasubiye ku murongo — guhuza ibisubizo by'ikizamini…",
+    "backOnline": "Wasubiye ku murongo!",
+    "syncedPartial": "Wasubiye — Ibisubizo bike by'ikizamini biracyategereje",
+    "pendingAttempts": "gerageza ikizamini bizahuza igihe wasubira ku murongo",
+    "viewingOffline": "Uri offline — ureba kopi yawe yoherejwe. Aho ugeze no kohereza ikizamini bisaba umuyoboro.",
+    "notAvailableTitle": "Isomo ntiriyaboneka offline",
+    "notAvailableHint": "Uri offline kandi iri somo ntirirurutswe. Huza na internet ukomeze, cyangwa kurura amasomo mbere.",
+    "videoUnavailableOffline": "Amavidewo ya YouTube asaba umuyoboro wa internet.",
+    "attachmentsNote": "Inyandiko zifatanye ntiziboneka offline.",
+    "progressNote": "Huza na internet kugirango ushyireho ko isomo ryarangiye.",
+    "quizNote": "Ibizamini ntibiboneka offline."
   },
   "common": {
     "loading": "Gutegereza…",

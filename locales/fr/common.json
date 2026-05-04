@@ -835,7 +835,20 @@
     "savedOn": "Sauvegardé le",
     "viewLesson": "Voir",
     "quizSavedTitle": "Quiz sauvegardé hors ligne",
-    "quizSavedBody": "Vos réponses ont été sauvegardées. Elles seront soumises automatiquement lors de votre prochaine connexion."
+    "quizSavedBody": "Vos réponses ont été sauvegardées. Elles seront soumises automatiquement lors de votre prochaine connexion.",
+    "downloading": "Enregistrement…",
+    "retryDownload": "Réessayer le téléchargement",
+    "syncing": "De retour en ligne — synchronisation des réponses…",
+    "backOnline": "De retour en ligne !",
+    "syncedPartial": "Reconnecté — certaines réponses de quiz sont encore en attente",
+    "pendingAttempts": "tentative(s) de quiz seront synchronisées lors de la reconnexion",
+    "viewingOffline": "Vous êtes hors ligne — vous consultez votre copie téléchargée. La progression et la soumission du quiz nécessitent une connexion.",
+    "notAvailableTitle": "Leçon non disponible hors ligne",
+    "notAvailableHint": "Vous êtes hors ligne et cette leçon n'a pas été téléchargée. Connectez-vous à Internet pour continuer, ou téléchargez les leçons à l'avance.",
+    "videoUnavailableOffline": "Les vidéos YouTube nécessitent une connexion Internet.",
+    "attachmentsNote": "Les pièces jointes ne sont pas disponibles hors ligne.",
+    "progressNote": "Connectez-vous à Internet pour marquer cette leçon comme terminée.",
+    "quizNote": "Les quiz ne sont pas disponibles hors ligne."
   },
   "common": {
     "loading": "Chargement…",

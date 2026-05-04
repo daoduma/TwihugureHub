@@ -835,7 +835,20 @@
     "savedOn": "Saved on",
     "viewLesson": "View",
     "quizSavedTitle": "Quiz Saved Offline",
-    "quizSavedBody": "Your answers have been saved. They will be automatically submitted when you reconnect to the internet."
+    "quizSavedBody": "Your answers have been saved. They will be automatically submitted when you reconnect to the internet.",
+    "downloading": "Saving…",
+    "retryDownload": "Retry download",
+    "syncing": "Back online — syncing quiz answers…",
+    "backOnline": "Back online!",
+    "syncedPartial": "Reconnected — some quiz answers still pending",
+    "pendingAttempts": "quiz attempt(s) will sync when reconnected",
+    "viewingOffline": "You're offline — viewing your downloaded copy. Progress and quiz submission require a connection.",
+    "notAvailableTitle": "Lesson not available offline",
+    "notAvailableHint": "You are offline and this lesson hasn't been downloaded. Connect to the internet to continue, or download lessons in advance.",
+    "videoUnavailableOffline": "YouTube videos require an internet connection.",
+    "attachmentsNote": "Attachments are not available offline.",
+    "progressNote": "Connect to the internet to mark this lesson complete.",
+    "quizNote": "Quizzes are not available offline."
   },
   "common": {
     "loading": "Loading…",
