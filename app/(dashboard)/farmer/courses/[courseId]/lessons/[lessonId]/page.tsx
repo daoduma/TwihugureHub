@@ -199,7 +199,7 @@ export default function LessonViewerPage() {
       <div className="max-w-lg mx-auto text-center py-20 space-y-4">
         <AlertTriangle size={52} className="mx-auto text-red-400" />
         <h2 className="text-xl font-bold text-gray-800">
-          {t("farmer.lesson.errorTitle" as never) || "Could not load lesson"}
+          {t("farmer.lesson.errorTitle" as never, { defaultValue: "Could not load lesson" })}
         </h2>
         <p className="text-sm text-gray-500">{apiError}</p>
         <Link
@@ -207,7 +207,7 @@ export default function LessonViewerPage() {
           className="btn btn-outline flex items-center gap-2 justify-center"
         >
           <ArrowLeft size={15} />
-          {t("farmer.lesson.backToCourse" as never) || "Back to Course"}
+          {t("farmer.lesson.backToCourse" as never, { defaultValue: "Back to Course" })}
         </Link>
       </div>
     );
