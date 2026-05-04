@@ -1,19 +1,24 @@
-/* app/globals.css — CHANGED: Added TwihugureHub brand CSS custom properties */
+/* app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --color-primary:    #2D6A4F;
+  /* ── Layout dimensions ─────────────────────────────────────────── */
+  --navbar-height:  64px;
+  --sidebar-width:  220px;
+
+  /* ── Brand colours ─────────────────────────────────────────────── */
+  --color-primary:      #2D6A4F;
   --color-primary-dark: #1f5239;
-  --color-secondary:  #E9C46A;
-  --color-bg:         #F8F9FA;
-  --color-text:       #1B1B1B;
-  --color-text-muted: #6B7280;
-  --color-border:     #E5E7EB;
-  --color-success:    #2D6A4F;
-  --color-error:      #EF4444;
-  --color-warning:    #F59E0B;
+  --color-secondary:    #E9C46A;
+  --color-bg:           #F8F9FA;
+  --color-text:         #1B1B1B;
+  --color-text-muted:   #6B7280;
+  --color-border:       #E5E7EB;
+  --color-success:      #2D6A4F;
+  --color-error:        #EF4444;
+  --color-warning:      #F59E0B;
 }
 
 html {
@@ -90,10 +95,10 @@ body {
   @apply h-full bg-primary rounded-full transition-all duration-500;
 }
 
-/* ── Skeleton pulse animation ──────────────────────────────────── */
+/* ── Animations ─────────────────────────────────────────────────── */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
 
 .skeleton {
@@ -102,11 +107,13 @@ body {
   animation: shimmer 1.5s infinite;
 }
 
-/* ── Responsive sidebar ─────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .sidebar-mobile-hidden {
-    transform: translateX(-100%);
-  }
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out both;
 }
 
 /* ── Auth pages background ──────────────────────────────────────── */

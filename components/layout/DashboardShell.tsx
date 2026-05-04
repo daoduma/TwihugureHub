@@ -12,20 +12,25 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Fixed top navbar */}
       <Navbar onMenuToggle={() => setSidebarOpen((v) => !v)} />
+
+      {/* Fixed left sidebar — sits below navbar */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      {/* Main content area */}
+      {/* Main content — offset by navbar height on top, sidebar width on left (desktop) */}
       <main
         className="min-h-screen transition-all duration-300"
-        style={{
-          paddingTop: "var(--navbar-height)",
-          paddingLeft: "0px",
-        }}
+        style={{ paddingTop: "var(--navbar-height)" }}
       >
-        {/* Desktop: offset for sidebar */}
-        <div className="lg:pl-[var(--sidebar-width)]">
-          <div className="p-6">{children}</div>
+        <div
+          className="min-h-screen"
+          style={{ paddingLeft: "0" }}
+        >
+          {/* On desktop, shift content right of the sidebar */}
+          <div className="lg:pl-[220px]">
+            <div className="p-6">{children}</div>
+          </div>
         </div>
       </main>
     </div>
