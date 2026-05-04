@@ -16,6 +16,9 @@ interface User {
   createdAt: string;
 }
 
+/** Email of the protected super-admin account. Edit/Deactivate controls are hidden for this user. */
+const SUPER_ADMIN_EMAIL = "chemistgeeky1992@gmail.com";
+
 const ROLE_COLORS: Record<Role, string> = {
   FARMER: "bg-green-100 text-green-700",
   TRAINER: "bg-blue-100 text-blue-700",
@@ -105,6 +108,7 @@ function CreateUserModal({ onClose, onCreated }: { onClose: () => void; onCreate
 }
 
 function EditUserModal({ user, onClose, onSaved }: { user: User; onClose: () => void; onSaved: () => void }) {
+  const isSuperAdmin = user.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase();
   const [form, setForm] = useState({ name: user.name, email: user.email, role: user.role, preferredLanguage: user.preferredLanguage, newPassword: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -136,16 +140,29 @@ function EditUserModal({ user, onClose, onSaved }: { user: User; onClose: () => 
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Email</label>
-            <input className="input w-full" type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} />
+            <input
+              className={`input w-full ${isSuperAdmin ? "bg-gray-100 cursor-not-allowed" : ""}`}
+              type="email"
+              value={form.email}
+              onChange={e => { if (!isSuperAdmin) setForm(p => ({ ...p, email: e.target.value })); }}
+              readOnly={isSuperAdmin}
+              title={isSuperAdmin ? "Super-admin email cannot be changed" : undefined}
+            />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Role</label>
-            <select className="input w-full" value={form.role} onChange={e => setForm(p => ({ ...p, role: e.target.value as Role }))}>
-              <option value="FARMER">Farmer</option>
-              <option value="TRAINER">Trainer</option>
-              <option value="ADMIN">Admin</option>
-              <option value="MBAZA_STAFF">Mbaza Staff</option>
-            </select>
+            {isSuperAdmin ? (
+              <div className="input w-full bg-purple-50 text-purple-700 font-semibold cursor-not-allowed flex items-center gap-2">
+                <span>🔒</span> Admin (Super-admin — cannot be changed)
+              </div>
+            ) : (
+              <select className="input w-full" value={form.role} onChange={e => setForm(p => ({ ...p, role: e.target.value as Role }))}>
+                <option value="FARMER">Farmer</option>
+                <option value="TRAINER">Trainer</option>
+                <option value="ADMIN">Admin</option>
+                <option value="MBAZA_STAFF">Mbaza Staff</option>
+              </select>
+            )}
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Language</label>
@@ -283,12 +300,18 @@ export default function AdminUsersPage() {
                 </td>
                 <td className="px-4 py-3 text-gray-400 text-xs">{new Date(user.createdAt).toLocaleDateString()}</td>
                 <td className="px-4 py-3">
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => setEditUser(user)} className="rounded px-2 py-1 text-xs font-medium text-brand-600 hover:bg-brand-50">Edit</button>
-                    <button onClick={() => toggleStatus(user)} className={`rounded px-2 py-1 text-xs font-medium ${user.isActive ? "text-red-600 hover:bg-red-50" : "text-green-600 hover:bg-green-50"}`}>
-                      {user.isActive ? "Deactivate" : "Activate"}
-                    </button>
-                  </div>
+                  {user.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase() ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-purple-100 px-2 py-0.5 text-xs font-semibold text-purple-700" title="Super-admin account — protected from modification">
+                      🔒 Super Admin
+                    </span>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => setEditUser(user)} className="rounded px-2 py-1 text-xs font-medium text-brand-600 hover:bg-brand-50">Edit</button>
+                      <button onClick={() => toggleStatus(user)} className={`rounded px-2 py-1 text-xs font-medium ${user.isActive ? "text-red-600 hover:bg-red-50" : "text-green-600 hover:bg-green-50"}`}>
+                        {user.isActive ? "Deactivate" : "Activate"}
+                      </button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}

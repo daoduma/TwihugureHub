@@ -1,6 +1,9 @@
 // app/api/admin/users/[id]/route.ts
-// CHANGED: Added audit logging for user edits
+// CHANGED: Added audit logging for user edits + super-admin protection
 import { NextRequest, NextResponse } from "next/server";
+
+/** Accounts that can never be modified or demoted by other admins. */
+const SUPER_ADMIN_EMAILS = ["chemistgeeky1992@gmail.com"];
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -17,6 +20,15 @@ async function requireAdmin() {
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  // Super-admin protection: look up the target user's email before doing anything.
+  const targetUser = await db.user.findUnique({ where: { id: params.id }, select: { email: true } });
+  if (targetUser && SUPER_ADMIN_EMAILS.includes(targetUser.email.toLowerCase())) {
+    return NextResponse.json(
+      { error: "This account is protected and cannot be modified." },
+      { status: 403 }
+    );
+  }
 
   const body = await req.json();
   const { name, email, role, preferredLanguage, newPassword } = body;
