@@ -16,13 +16,25 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
   const farmerId = session.user.id;
   const quizId = params.id;
-  const body = await req.json();
+
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
   const { answers, languageUsed, startedAt } = body as {
     answers: Array<{ questionId: string; selectedOptionId?: string; shortAnswerText?: string }>;
     languageUsed: string;
     startedAt: string;
   };
 
+  if (!Array.isArray(answers) || !languageUsed || !startedAt) {
+    return NextResponse.json({ error: "Missing required fields: answers, languageUsed, startedAt" }, { status: 400 });
+  }
+
+  try {
   const quiz = await db.quiz.findUnique({
     where: { id: quizId },
     include: {
@@ -32,6 +44,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   });
 
   if (!quiz) return NextResponse.json({ error: "Quiz not found", code: "NOT_FOUND", statusCode: 404 }, { status: 404 });
+  if (!quiz.lesson) return NextResponse.json({ error: "Quiz is not associated with a lesson" }, { status: 500 });
 
   // Score calculation
   let correctCount = 0;
@@ -48,7 +61,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     } else if (userAnswer?.selectedOptionId) {
       const opt = question.options.find((o) => o.id === userAnswer.selectedOptionId);
       isCorrect = opt?.isCorrect ?? false;
-      gradingStatus = "AUTO_GRADED"; // MC/TF are auto-graded immediately
+      gradingStatus = "AI_GRADED"; // MC/TF are auto-graded immediately
     }
     if (isCorrect) correctCount++;
     answerResults.push({ questionId: question.id, selectedOptionId: userAnswer?.selectedOptionId, shortAnswerText: userAnswer?.shortAnswerText, isCorrect, gradingStatus });
@@ -135,4 +148,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   }
 
   return NextResponse.json({ attempt, score, passed, correctCount, totalQuestions });
+  } catch (err) {
+    console.error("[quiz/attempt] Unhandled error:", err);
+    const message = err instanceof Error ? err.message : "An unexpected error occurred";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
