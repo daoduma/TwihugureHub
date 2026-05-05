@@ -95,6 +95,9 @@ export async function buildReportData(filters: ReportFilters): Promise<ReportDat
         ...(from || to
           ? { startedAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } }
           : {}),
+        ...(filters.courseId
+          ? { quiz: { lesson: { module: { courseId: filters.courseId } } } }
+          : {}),
       },
       include: {
         farmer: { select: { name: true, email: true } },

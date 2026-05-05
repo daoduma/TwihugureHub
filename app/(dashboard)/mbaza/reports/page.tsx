@@ -44,7 +44,7 @@ export default function ReportsPage() {
 
   useEffect(() => {
     fetch("/api/mbaza/groups").then(r => r.json()).then(d => setGroups(d.groups ?? []));
-    fetch("/api/admin/approvals").then(r => r.json()).then(d => setCourses(d.courses ?? []));
+    fetch("/api/mbaza/courses").then(r => r.json()).then(d => setCourses(d.courses ?? []));
   }, []);
 
   const buildParams = () => {
