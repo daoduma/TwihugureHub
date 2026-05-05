@@ -114,6 +114,7 @@ export default function LessonViewerPage() {
   const [apiError,     setApiError]     = useState<string | null>(null);
   const [isCompleted,  setIsCompleted]  = useState(false);
   const [marking,      setMarking]      = useState(false);
+  const [markError,    setMarkError]    = useState<string | null>(null);
   const startedAt = useRef(Date.now());
 
   // ── Load lesson ─────────────────────────────────────────────────────────────
@@ -169,8 +170,6 @@ export default function LessonViewerPage() {
 
     load();
   }, [lessonId, courseId, isOnline]);
-
-  const [markError, setMarkError] = useState<string | null>(null);
 
   // ── Mark complete ───────────────────────────────────────────────────────────
   const markComplete = async () => {
