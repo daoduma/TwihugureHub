@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  const [totalCourses, publishedCourses, pendingApproval, recentCourses] = await Promise.all([
+  const [totalCourses, publishedCourses, pendingApproval, recentCourses, enrolledFarmers] = await Promise.all([
     db.course.count({ where: { trainerId: session.user.id } }),
     db.course.count({ where: { trainerId: session.user.id, status: "PUBLISHED" } }),
     db.course.count({ where: { trainerId: session.user.id, status: "PENDING_APPROVAL" } }),
@@ -20,6 +20,11 @@ export async function GET() {
       take: 5,
       select: { id: true, title: true, status: true, updatedAt: true },
     }),
+    db.enrollment.findMany({
+      where: { course: { trainerId: session.user.id } },
+      select: { farmerId: true },
+      distinct: ["farmerId"],
+    }),
   ]);
 
   return NextResponse.json({
@@ -28,7 +33,7 @@ export async function GET() {
       totalCourses,
       publishedCourses,
       pendingApproval,
-      totalEnrolledFarmers: 0, // enrollment feature coming later
+      totalEnrolledFarmers: enrolledFarmers.length,
       recentActivity: recentCourses,
     },
   });
