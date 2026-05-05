@@ -431,17 +431,19 @@ export default function LessonViewerPage() {
             {t("farmer.lesson.completed" as never) || "Lesson completed!"}
           </div>
         ) : (
-          <button onClick={markComplete} disabled={marking} className="btn btn-primary w-full">
-            {marking
-              ? (t("ui.loading" as never) || "…")
-              : (t("farmer.lesson.markComplete" as never) || "Mark as Complete")}
-          </button>
-          {markError && (
-            <div className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-700 mt-1">
-              <AlertTriangle size={15} className="shrink-0" />
-              {markError}
-            </div>
-          )}
+          <>
+            <button onClick={markComplete} disabled={marking} className="btn btn-primary w-full">
+              {marking
+                ? (t("ui.loading" as never) || "…")
+                : (t("farmer.lesson.markComplete" as never) || "Mark as Complete")}
+            </button>
+            {markError && (
+              <div className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-700 mt-1">
+                <AlertTriangle size={15} className="shrink-0" />
+                {markError}
+              </div>
+            )}
+          </>
         )}
 
         {isCompleted && lesson.quiz && !isOfflineMode && (
