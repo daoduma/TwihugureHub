@@ -80,6 +80,7 @@ export default function QuizPage() {
   const [result, setResult] = useState<AttemptResult | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [flaggingAnswerId, setFlaggingAnswerId] = useState<string | null>(null);
   const [flagReason, setFlagReason] = useState("");
   const [flaggedAnswerIds, setFlaggedAnswerIds] = useState<Set<string>>(new Set());
@@ -145,6 +146,7 @@ export default function QuizPage() {
   const handleSubmit = async () => {
     if (!quiz) return;
     setSubmitting(true);
+    setSubmitError(null);
     const payload = quiz.questions.map((q) => ({
       questionId: q.id,
       selectedOptionId: answers[q.id]?.selectedOptionId,
@@ -153,32 +155,45 @@ export default function QuizPage() {
 
     // If offline, store attempt in IndexedDB for later sync
     if (!navigator.onLine) {
-      await savePendingAttempt({
-        quizId: quiz.id,
-        farmerId: session?.user?.id ?? "",
-        answers: payload,
-        languageUsed: lang,
-        startedAt: startedAt.current,
-        completedAt: new Date().toISOString(),
-        synced: false,
-      });
-      setResult({ offlineSaved: true } as any);
-      setPhase("results");
-      setSubmitting(false);
+      try {
+        await savePendingAttempt({
+          quizId: quiz.id,
+          farmerId: session?.user?.id ?? "",
+          answers: payload,
+          languageUsed: lang,
+          startedAt: startedAt.current,
+          completedAt: new Date().toISOString(),
+          synced: false,
+        });
+        setResult({ offlineSaved: true } as any);
+        setPhase("results");
+      } catch {
+        setSubmitError("Failed to save your quiz offline. Please try again.");
+      } finally {
+        setSubmitting(false);
+      }
       return;
     }
 
-    const res = await fetch(`/api/farmer/quiz/${quiz.id}/attempt`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ answers: payload, languageUsed: lang, startedAt: startedAt.current }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setResult(data);
-      setPhase("results");
+    try {
+      const res = await fetch(`/api/farmer/quiz/${quiz.id}/attempt`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers: payload, languageUsed: lang, startedAt: startedAt.current }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setResult(data);
+        setPhase("results");
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setSubmitError(errData?.error || `Failed to submit quiz (${res.status}). Please try again.`);
+      }
+    } catch {
+      setSubmitError("A network error occurred. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const handleFlagAnswer = async (answerId: string) => {
@@ -497,7 +512,14 @@ export default function QuizPage() {
           </div>
         )}
 
-        <div className="flex justify-end gap-3 pt-2">
+        <div className="flex flex-col gap-3 pt-2">
+          {submitError && (
+            <div className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-700">
+              <AlertTriangle size={15} className="shrink-0" />
+              {submitError}
+            </div>
+          )}
+          <div className="flex justify-end">
           {!isLastQuestion ? (
             <button
               onClick={handleNext}
@@ -515,6 +537,7 @@ export default function QuizPage() {
               {submitting ? <><Loader2 size={16} className="animate-spin mr-2" /> {t("farmer.quiz.submitting" as never)}</> : (t("farmer.quiz.submit" as never) || "Submit Quiz")}
             </button>
           )}
+          </div>
         </div>
       </div>
 

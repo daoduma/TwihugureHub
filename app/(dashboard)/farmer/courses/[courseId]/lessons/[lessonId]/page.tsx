@@ -170,18 +170,31 @@ export default function LessonViewerPage() {
     load();
   }, [lessonId, courseId, isOnline]);
 
+  const [markError, setMarkError] = useState<string | null>(null);
+
   // ── Mark complete ───────────────────────────────────────────────────────────
   const markComplete = async () => {
     if (!isOnline) return; // can't record progress offline
     setMarking(true);
+    setMarkError(null);
     const timeSpent = Math.round((Date.now() - startedAt.current) / 1000);
-    const res = await fetch(`/api/farmer/lessons/${lessonId}/complete`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ timeSpentSeconds: timeSpent }),
-    });
-    if (res.ok) setIsCompleted(true);
-    setMarking(false);
+    try {
+      const res = await fetch(`/api/farmer/lessons/${lessonId}/complete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ timeSpentSeconds: timeSpent }),
+      });
+      if (res.ok) {
+        setIsCompleted(true);
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setMarkError(errData?.error || "Could not mark lesson complete. Please try again.");
+      }
+    } catch {
+      setMarkError("A network error occurred. Please check your connection and try again.");
+    } finally {
+      setMarking(false);
+    }
   };
 
   // ── Render states ───────────────────────────────────────────────────────────
@@ -424,6 +437,12 @@ export default function LessonViewerPage() {
               ? (t("ui.loading" as never) || "…")
               : (t("farmer.lesson.markComplete" as never) || "Mark as Complete")}
           </button>
+          {markError && (
+            <div className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-700 mt-1">
+              <AlertTriangle size={15} className="shrink-0" />
+              {markError}
+            </div>
+          )}
         )}
 
         {isCompleted && lesson.quiz && !isOfflineMode && (
